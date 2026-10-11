@@ -16,7 +16,7 @@ import build_human as bh
 
 HERE = pathlib.Path(__file__).resolve().parent
 MODEL = HERE / "chair_human.xml"
-PORT = 8790
+PORT = 8765
 
 WHEELS = ["drive_left", "drive_right", "front_left", "front_right"]
 TRACK = 0.525                     # m, drive wheel track
@@ -31,7 +31,7 @@ PEAK_RECOVERY = 0.25              # peak budget refills at 1/4 of real time belo
 TURN_RATE = 1.6                   # rad/s at full joystick, scaled with level
 OBSTACLE_SPEED = 0.5 / 3.6        # m/s, automatic low-speed traction mode threshold
 OBSTACLE_STALL_TIME = 0.35        # s below 45% of command before traction mode starts
-OBSTACLE_TORQUE_MULT = 1        # short peak for quasi-static obstacle climbing
+OBSTACLE_TORQUE_MULT = 2        # short peak for quasi-static obstacle climbing
 OBSTACLE_KV = 1600.0              # strong low-speed velocity/current response
 ROAD_FRICTION, SKID_FRICTION = 0.5, 0.5
 SKID_YAW_GAIN = 180.0            # N*m per rad/s error; represents lateral track/tyre forces
@@ -62,7 +62,7 @@ class Telemetry:
             for w in WHEELS:
                 if n == f"{w}_contact":
                     self.wheel_geom[g] = w
-        ground_names = ["floor", "threshold_30mm", "ramp_up_1_12", "ramp_down_1_8", "platform"]
+        ground_names = ["floor", "threshold_30mm", "ramp_up_1_12", "ramp_down_1_8", "platform", "long_ramp_15_up", "long_ramp_15_top"]
         ground_names += [f"hill_{deg}_{part}" for deg in (10, 15, 30) for part in ("up", "top", "down")]
         self.ground = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, n) for n in ground_names]
         self.ground = [g for g in self.ground if g >= 0]
@@ -259,20 +259,6 @@ class Sim:
         self.torque_limit = [self.mp["wheel_torque"]] * 2
         self._write_model()
         self.m = mujoco.MjModel.from_xml_path(str(MODEL))
-        for wheel in WHEELS:
-            geom_name = f"{wheel}_contact"
-
-            gid = mujoco.mj_name2id(
-                self.m,
-                mujoco.mjtObj.mjOBJ_GEOM,
-                geom_name
-            )
-
-            if gid >= 0:
-                self.m.geom_solref[gid] = [0.03, 1.0]
-                self.m.geom_solimp[gid] = [
-                    0.8, 0.95, 0.001, 0.5, 2.0
-                ]
         self.d = mujoco.MjData(self.m)
         self.tel = Telemetry(self.m)
         self._ids()
@@ -536,6 +522,22 @@ class Sim:
             d.xfrc_applied[self.frame, :3] += Fw
             d.xfrc_applied[self.frame, 3:] += np.cross(r, Fw)
 
+    def _threshold_start_x(self, clearance=0.002):
+        """Start 2 mm before actual tyre-to-30-mm-step contact (not tyre's top edge)."""
+        m = self.m
+        step_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, "threshold_30mm")
+        wheel_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, "front_left_contact")
+        if step_id < 0 or wheel_id < 0:
+            raise RuntimeError("Не найдены threshold_30mm или front_left_contact")
+        step_front = float(m.geom_pos[step_id, 0] - m.geom_size[step_id, 0])
+        step_height = float(m.geom_pos[step_id, 2] + m.geom_size[step_id, 2])
+        radius = float(m.geom_size[wheel_id, 0])
+        # A spherical tyre first touches the step's upper front corner at
+        # horizontal offset sqrt(r² - (r-h)²), not at the outermost tyre point.
+        contact_offset = math.sqrt(max(0.0, radius * radius - (radius - step_height) ** 2))
+        front_axle_x = float(self.tel.wheel_xy["front_left"][0])
+        return step_front - contact_offset - front_axle_x - clearance
+
     def handle_events(self):
         while self.events:
             ev = self.events.pop(0)
@@ -546,9 +548,10 @@ class Sim:
                 self.push = (self.d.time + 0.3, F)
                 self.msg = f"Толчок {ev.get('force', 250)} Н на высоте 0,6 м"
             elif name == "goto":
-                spots = {"start": (0.0, 0.0), "threshold": (0.3, 0.0), "ramp": (3.8, 0.0),
+                spots = {"start": (0.0, 0.0), "threshold": (self._threshold_start_x(), 0.0), "ramp": (3.8, 0.0),
                          "platform": (7.15, 2.0 / 12), "hill10": (11.2, 0.0),
-                         "hill15": (19.2, 0.0), "hill30": (25.2, 0.0)}
+                         "hill15": (19.2, 0.0), "hill30": (25.2, 0.0),
+                         "long15": (32.8, 0.0)}
                 x, z = spots[ev["where"]]
                 self.teleport(x, z=z)
                 self.msg = "Перенесено"

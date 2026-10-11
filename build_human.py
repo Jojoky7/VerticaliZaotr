@@ -185,7 +185,11 @@ WHEEL_R = 0.16                   # m, 320 mm drive wheels
 MOTORS = {
     "N150": dict(name="Norton ZW9012L3A-S · 150 Вт", T=1.0, n_rated=1500, n0=2000, ratio=30.1, eta=0.8,
                  I0=1.5, I=9.0, mass=1.7, note="стоит сейчас · dcmotorfactory.com"),
+    "N1502": dict(name="Norton ZW9012L3A-S · 150 Вт", T=1.0, n_rated=1500, n0=2000, ratio=30.1, eta=0.8,
+                 I0=1.5, I=9.0, mass=1.7, note="стоит сейчас · dcmotorfactory.com"),
     "N200": dict(name="Norton ZW9012L3A-S · 200 Вт", T=1.3, n_rated=1500, n0=2000, ratio=16.75, eta=0.8,
+                 I0=2.0, I=11.0, mass=1.8, note="та же серия, мощнее · dcmotorfactory.com"),
+    "N2002": dict(name="Norton ZW9012L3A-S · 200 Вт", T=1.3, n_rated=1500, n0=2000, ratio=30.1, eta=0.8,
                  I0=2.0, I=11.0, mass=1.8, note="та же серия, мощнее · dcmotorfactory.com"),
     "N200F": dict(name="Norton ZW1012L4F-S · 200 Вт", T=0.95, n_rated=2000, n0=2600, ratio=16.75, eta=0.8,
                   I0=1.8, I=10.9, mass=3.0, note="быстрее, тяжелее · dcmotorfactory.com"),
@@ -444,6 +448,20 @@ def add_test_track(world):
                       pos=f((top0 + top1) / 2, 0, height / 2), size=f(plateau / 2, 1.2, height / 2),
                       rgba=colours[deg], contype="2", conaffinity="1", group="0")
         slope_box(f"hill_{deg}_down", top1, end, height, 0, rgba=colours[deg])
+
+
+    # Separate 20 m ascent at 15 degrees, followed by a 2 m landing.
+    long_angle = math.radians(15.0)
+    long_length = 20.0  # measured along the slope, not horizontally
+    long_run = long_length * math.cos(long_angle)
+    long_rise = long_length * math.sin(long_angle)
+    long_start = 34.0
+    slope_box("long_ramp_15_up", long_start, long_start + long_run,
+              0.0, long_rise, width=1.2, rgba="0.23 0.58 0.83 1")
+    ET.SubElement(world, "geom", name="long_ramp_15_top", type="box",
+                  pos=f(long_start + long_run + 1.0, 0, long_rise - 0.025),
+                  size="1 1.2 0.025", rgba="0.23 0.58 0.83 1",
+                  contype="2", conaffinity="1", group="0")
 
 
 def build(mass=80.0, height=1.75, frame_mat=DEFAULT_FRAME, act=DEFAULT_ACTUATOR, motor=DEFAULT_MOTOR,

@@ -255,6 +255,8 @@
     <geom name="hill_30_up" type="box" pos="26.5991 0 0.0283494" size="0.1 1.2 0.025" euler="0 -0.523599 0" contype="2" conaffinity="1" rgba="0.82 0.32 0.25 1" group="0" />
     <geom name="hill_30_top" type="box" pos="27.0732 0 0.05" size="0.4 1.2 0.05" rgba="0.82 0.32 0.25 1" contype="2" conaffinity="1" group="0" />
     <geom name="hill_30_down" type="box" pos="27.5473 0 0.0283494" size="0.1 1.2 0.025" euler="0 0.523599 0" contype="2" conaffinity="1" rgba="0.82 0.32 0.25 1" group="0" />
+    <geom name="long_ramp_15_up" type="box" pos="43.6657 0 2.56404" size="10 1.2 0.025" euler="0 -0.261799 0" contype="2" conaffinity="1" rgba="0.23 0.58 0.83 1" group="0" />
+    <geom name="long_ramp_15_top" type="box" pos="54.3185 0 5.15138" size="1 1.2 0.025" rgba="0.23 0.58 0.83 1" contype="2" conaffinity="1" group="0" />
   </worldbody>
   <tendon />
   <equality>
