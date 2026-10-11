@@ -73,6 +73,15 @@ button.big{flex:1;padding:12px 8px;font-size:15px;font-weight:650}
 .inspect-fields{display:grid;grid-template-columns:100px minmax(0,1fr);gap:7px;margin:10px 0}
 .inspect-fields dt{color:var(--muted)} .inspect-fields dd{margin:0;user-select:text}
 .stage.inspect{cursor:crosshair}
+.part-pick{display:flex;gap:8px;align-items:center}.part-pick select{min-width:0;flex:1}
+.part-specs{display:grid;grid-template-columns:minmax(100px,35%) minmax(0,1fr);gap:9px 12px;margin:14px 0;font-size:12px}
+.part-specs dt{color:var(--muted)}.part-specs dd{margin:0;overflow-wrap:anywhere;user-select:text}
+.part-specs small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.part-build{padding:10px;border-left:2px solid var(--accent);background:rgba(80,150,255,.05);font-size:12px;line-height:1.5}
+.part-sources a{color:var(--accent);font-size:12px;display:block;margin-top:8px}
+.part-hover{position:absolute;z-index:6;pointer-events:none;max-width:300px;padding:10px;border:1px solid var(--line);border-radius:8px;background:rgba(20,24,30,.96);font-size:12px;box-shadow:0 4px 15px #0008}
+.part-hover strong{display:block;margin-bottom:5px}.part-hover div{color:var(--muted);line-height:1.5}
+.drive-path{padding:8px;border-radius:6px;background:#ffffff05;margin:6px 0;font-size:12px;line-height:1.6}
 .bar{height:4px;background:#11141a;border-radius:3px;margin-top:4px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .1s}
 .bar i.hot{background:var(--warn)} .bar i.over{background:var(--bad)}
@@ -143,6 +152,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <div><span>Запас вперёд/назад</span><b id="hTip">—</b></div>
       </div>
       <div id="hudWarn"></div>
+      <div id="partHover" class="part-hover" hidden></div>
     </div>
       <div class="camtools">
         <button data-cam="follow">Следовать</button><button data-cam="back">Сзади</button><button data-cam="side">Сбоку</button>
@@ -159,13 +169,16 @@ input[type=range]{width:100%;accent-color:var(--accent)}
     </section>
     <section class="card" id="inspector">
       <h2>Характеристики детали</h2>
-      <select class="sel" id="partSelect" aria-label="Выбрать деталь"></select>
+      <div class="part-pick"><select class="sel" id="partSelect" aria-label="Выбрать деталь"></select><button id="clearPart" disabled>Снять выделение</button></div>
       <dl class="inspect-fields">
         <dt>Габариты</dt><dd id="partSize">—</dd>
         <dt>Масса узла</dt><dd id="partMass">—</dd>
         <dt>Материалы</dt><dd id="partMaterial">—</dd>
       </dl>
       <div class="hint" id="partNote">Включи «Детали» и кликни на модель или выбери узел из списка.</div>
+      <dl class="part-specs" id="partSpecs"></dl>
+      <div class="part-build" id="partBuild" hidden></div>
+      <div class="part-sources" id="partSources"></div>
     </section>
     <section class="card">
       <canvas id="plots" width="1100" height="120" style="width:100%;height:120px"></canvas>
@@ -177,6 +190,12 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <h2>Каждое колесо</h2>
       <div class="metric-grid" id="wheelMetrics"></div>
       <div class="hint">Обороты и механическая мощность на оси. Минус означает торможение; это не потребление батареи.</div>
+    </section>
+    <section class="card">
+      <h2>Как движутся колёса</h2>
+      <div class="drive-path">Левый мотор + редуктор → заднее левое и переднее левое</div>
+      <div class="drive-path">Правый мотор + редуктор → заднее правое и переднее правое</div>
+      <div class="hint">Всего два мотора. В симуляции усилие каждого делится между двумя колёсами борта. Для реальной связи задней и передней оси ещё нужно выбрать ремень, цепь или вал. При повороте борта вращаются с разной скоростью.</div>
     </section>
     <section class="card">
       <h2>Телеметрия</h2>
@@ -258,7 +277,7 @@ const ctl = {jx:0, jy:0, lift:0, brake:false};
 let S = null, online = true;
 
 async function post(path, body){
-  try{ await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }catch(e){}
+  try{ const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return response.ok?await response.json():null; }catch(e){return null;}
 }
 const sendCmd = (extra={}) => post('/api/cmd', Object.assign({jx:ctl.jx, jy:ctl.jy, lift:ctl.lift, brake:ctl.brake}, extra));
 const sendEvent = (e) => post('/api/event', e);
@@ -399,7 +418,7 @@ tilesEl.innerHTML = TILES.filter(t=>!['att'].includes(t[0])).map(t=>`<div class=
 
 const wheelNames = {front_left:'Переднее левое', front_right:'Переднее правое', drive_left:'Заднее левое', drive_right:'Заднее правое'};
 $('#wheelMetrics').innerHTML = Object.entries(wheelNames).map(([key,name])=>`<div class="metric" id="wheel_${key}"><strong>${name}</strong><b>—</b><small class="power"></small><small class="torque"></small></div>`).join('');
-let liftCount = 0, partsVersion = -1;
+let liftCount = 0, partsVersion = -1, partDetailsKey = '';
 function renderHardware(s){
   for(const key of Object.keys(wheelNames)){
     const w=s.wheels[key], el=$('#wheel_'+key);
@@ -425,21 +444,38 @@ function renderPart(s){
   if(partsVersion!==s.model_version){
     partsVersion=s.model_version;
     const select=$('#partSelect');select.replaceChildren();
+    const empty=document.createElement('option');empty.value='';empty.textContent='Без выделения';select.append(empty);
     for(const p of s.parts){const option=document.createElement('option');option.value=p.id;option.textContent=p.name;select.append(option);}
   }
   const p=s.selection;
-  if(!p){$('#partSize').textContent='—';$('#partMass').textContent='—';$('#partMaterial').textContent='—';$('#partNote').textContent='Кликни на деталь или выбери её из списка.';$('#partSelect').value='';return;}
+  $('#clearPart').disabled=!p;
+  if(!p){partDetailsKey='';$('#partSize').textContent='—';$('#partMass').textContent='—';$('#partMaterial').textContent='—';$('#partNote').textContent='Наведи на деталь для подсказки; кликни, чтобы открыть карточку. Повторный клик снимает выделение.';$('#partSelect').value='';$('#partSpecs').replaceChildren();$('#partBuild').hidden=true;$('#partSources').replaceChildren();return;}
   $('#partSelect').value=p.id;
   $('#partSize').textContent=p.dimensions_mm?p.dimensions_mm.map(x=>fmt(x)).join(' × ')+' мм':'Бесконечная плоскость';
   $('#partMass').textContent=p.mass_kg===null?'Не моделируется':fmt(p.mass_kg,2)+' кг';
   $('#partMaterial').textContent=p.material;
   $('#partNote').textContent=p.dimensions_note+' '+p.note;
+  const detailKey=s.model_version+'/'+p.id,specs=$('#partSpecs');
+  if(partDetailsKey!==detailKey){
+    partDetailsKey=detailKey;specs.replaceChildren();
+    for(const item of p.specs||[]){
+      const dt=document.createElement('dt'),dd=document.createElement('dd'),value=document.createElement('span'),basis=document.createElement('small');
+      dt.textContent=item.label;value.textContent=item.value;basis.textContent=item.basis;dd.append(value,basis);specs.append(dt,dd);
+    }
+    $('#partBuild').hidden=!p.build_note;$('#partBuild').textContent=p.build_note?'Для изготовления: '+p.build_note:'';
+    const sources=$('#partSources');sources.replaceChildren();
+    for(const source of p.sources||[]){const link=document.createElement('a');link.href=source.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=source.label;sources.append(link);}
+  }else{
+    specs.querySelectorAll('dd span').forEach((el,i)=>{const value=p.specs[i].value;if(el.textContent!==value)el.textContent=value;});
+  }
 }
-$('#partSelect').onchange=()=>post('/api/inspect',{id:$('#partSelect').value});
+$('#partSelect').onchange=()=>post('/api/inspect',$('#partSelect').value?{id:$('#partSelect').value}:{clear:true});
+$('#clearPart').onclick=()=>{hidePartHover();post('/api/inspect',{clear:true});};
 let inspecting=false;
 $('#inspectMode').onclick=()=>{
   inspecting=!inspecting;$('#inspectMode').classList.toggle('active',inspecting);
   $('#inspectMode').setAttribute('aria-pressed',String(inspecting));$('#stage').classList.toggle('inspect',inspecting);
+  hidePartHover();if(!inspecting) post('/api/inspect',{clear:true});
 };
 let synced=false, lastPerson='', lastCfg='';
 function render(s){
@@ -582,6 +618,33 @@ new ResizeObserver(queueVideoSize).observe(stage);
 window.addEventListener('resize',queueVideoSize);
 setInterval(syncVideoSize,1000); // also detects moving to a monitor with different pixel density
 let camDrag = null, acc = {orbit:[0,0], pan:[0,0], zoom:0}, pending = false;
+let hoverTimer=null, hoverSequence=0;
+function hidePartHover(){clearTimeout(hoverTimer);hoverTimer=null;hoverSequence++;$('#partHover').hidden=true;}
+function stagePoint(clientX,clientY){
+  const rect=stage.getBoundingClientRect(),img=$('#video');
+  const scale=Math.min(rect.width/(img.naturalWidth||rect.width),rect.height/(img.naturalHeight||rect.height));
+  const width=(img.naturalWidth||rect.width)*scale,height=(img.naturalHeight||rect.height)*scale;
+  const x=(clientX-rect.left-(rect.width-width)/2)/width,y=(clientY-rect.top-(rect.height-height)/2)/height;
+  return x>=0&&x<=1&&y>=0&&y<=1?[x,y]:null;
+}
+function queuePartHover(e){
+  clearTimeout(hoverTimer);const seq=++hoverSequence,point=stagePoint(e.clientX,e.clientY),rect=stage.getBoundingClientRect();
+  if(!point){$('#partHover').hidden=true;return;}
+  const left=e.clientX-rect.left,top=e.clientY-rect.top;
+  hoverTimer=setTimeout(async()=>{
+    try{
+      const p=await post('/api/inspect',{point,preview:true});
+      if(seq!==hoverSequence||!inspecting||camDrag)return;
+      const tip=$('#partHover');tip.replaceChildren();tip.hidden=!p;if(!p)return;
+      const name=document.createElement('strong');name.textContent=p.name;tip.append(name);
+      const size=document.createElement('div');size.textContent=p.dimensions_mm?p.dimensions_mm.map(x=>fmt(x)).join(' × ')+' мм · модель':'';tip.append(size);
+      for(const item of (p.specs||[]).slice(0,4)){const line=document.createElement('div');line.textContent=item.label+': '+item.value;tip.append(line);}
+      const hint=document.createElement('div');hint.textContent='Клик — полная карточка';tip.append(hint);
+      tip.style.left=Math.max(4,Math.min(left+12,rect.width-tip.offsetWidth-4))+'px';
+      tip.style.top=Math.max(4,Math.min(top+12,rect.height-tip.offsetHeight-4))+'px';
+    }catch{if(seq===hoverSequence)$('#partHover').hidden=true;}
+  },180);
+}
 function flushCam(){
   pending = false;
   const b = {};
@@ -594,10 +657,11 @@ function flushCam(){
 const queueCam = ()=>{ if(!pending){ pending = true; setTimeout(flushCam, 40); } };
 stage.addEventListener('pointerdown', e=>{
   if(e.target.closest('button')) return;
+  hidePartHover();
   camDrag = {startX:e.clientX, startY:e.clientY, moved:false, x:e.clientX, y:e.clientY, pan:e.shiftKey || e.button===2}; stage.setPointerCapture(e.pointerId); stage.classList.add('drag');
 });
 stage.addEventListener('pointermove', e=>{
-  if(!camDrag) return;
+  if(!camDrag){if(inspecting)queuePartHover(e);return;}
   if(Math.hypot(e.clientX-camDrag.startX,e.clientY-camDrag.startY)>4) camDrag.moved=true;
   if(!camDrag.moved) return;
   const dx = e.clientX - camDrag.x, dy = e.clientY - camDrag.y; camDrag.x = e.clientX; camDrag.y = e.clientY;
@@ -606,15 +670,13 @@ stage.addEventListener('pointermove', e=>{
 });
 const endDrag = e=>{
   if(e.type==='pointerup' && inspecting && camDrag && !camDrag.moved && e.button===0){
-    const rect=stage.getBoundingClientRect(), img=$('#video');
-    const scale=Math.min(rect.width/(img.naturalWidth||rect.width),rect.height/(img.naturalHeight||rect.height));
-    const width=(img.naturalWidth||rect.width)*scale, height=(img.naturalHeight||rect.height)*scale;
-    const x=(e.clientX-rect.left-(rect.width-width)/2)/width, y=(e.clientY-rect.top-(rect.height-height)/2)/height;
-    if(x>=0&&x<=1&&y>=0&&y<=1) post('/api/inspect',{point:[x,y]});
+    const point=stagePoint(e.clientX,e.clientY);
+    post('/api/inspect',point?{point}:{clear:true});
   }
   camDrag=null;stage.classList.remove('drag');
 };
 stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
+stage.addEventListener('pointerleave',hidePartHover);
 stage.addEventListener('contextmenu', e=> e.preventDefault());
 stage.addEventListener('wheel', e=>{ e.preventDefault(); acc.zoom += e.deltaY; queueCam(); }, {passive:false});
 stage.addEventListener('dblclick', e=>{ if(!e.target.closest('button')) camPost({preset:'follow'}).catch(()=>{}); });
