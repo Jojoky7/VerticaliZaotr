@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>V5 пульт</title>
+<title>Вертикализатор · пульт</title>
 <style>
 :root{
   --bg:#14171c; --panel:#1d2128; --panel2:#252a33; --line:#323845; --text:#e8ebf0; --muted:#8c94a3;
@@ -12,9 +12,9 @@
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
 body{margin:0;color:var(--text);font:13px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;user-select:none;-webkit-user-select:none}
-header{display:flex;align-items:center;gap:12px;padding:7px 14px;border-bottom:1px solid var(--line);background:var(--bg)}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:7px 14px;border-bottom:1px solid var(--line);background:var(--bg)}
 header h1{font-size:15px;margin:0;font-weight:650;letter-spacing:.2px;white-space:nowrap}
-#status{flex:1;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#status{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pill{padding:3px 10px;border-radius:999px;background:var(--panel2);color:var(--muted);font-size:12px;white-space:nowrap}
 .pill.on{background:#3a2a10;color:var(--warn)}
 .app{display:grid;grid-template-columns:280px minmax(0,1fr) 320px;gap:10px;padding:10px 12px;align-items:start}
@@ -28,6 +28,7 @@ header h1{font-size:15px;margin:0;font-weight:650;letter-spacing:.2px;white-spac
 /* stage */
 .stage{position:relative;background:#0c0e12;border:1px solid var(--line);border-radius:12px;overflow:hidden;aspect-ratio:16/10;cursor:grab;touch-action:none}
 .stage.drag{cursor:grabbing}
+@media (max-width:820px){.stage{aspect-ratio:4/5}.camtools .tip{display:none}header h1{flex-basis:100%}}
 #video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;pointer-events:none}
 #novideo{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:30px}
 .hud{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}
@@ -37,7 +38,7 @@ header h1{font-size:15px;margin:0;font-weight:650;letter-spacing:.2px;white-spac
 #hudWarn{position:absolute;left:50%;transform:translateX(-50%);top:70px;pointer-events:none;display:flex;flex-direction:column;gap:5px;align-items:center}
 #hudWarn div{background:#3b2a12ee;color:var(--warn);padding:6px 12px;border-radius:8px;font-weight:650}
 #hudWarn div.bad{background:#5a1717ee;color:#ffb3b3}
-.camtools{position:absolute;left:10px;right:10px;bottom:10px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.camtools{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
 .camtools button{padding:5px 9px;font-size:12px;background:#0c0e12cc;border-color:#ffffff22}
 .camtools .sp{flex:1}
 .camtools .tip{color:#ffffffaa;font-size:11px;background:#0c0e12aa;padding:4px 8px;border-radius:6px}
@@ -64,6 +65,14 @@ button.big{flex:1;padding:12px 8px;font-size:15px;font-weight:650}
 .tile .k{color:var(--muted);font-size:11px}
 .tile .v{font-size:16px;font-weight:650;font-variant-numeric:tabular-nums;margin-top:1px}
 .tile .s{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}
+.metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.metric{background:var(--panel2);padding:10px;border-radius:9px;font-variant-numeric:tabular-nums}
+.metric strong{display:block;margin-bottom:6px;font-size:12px;color:var(--muted);font-weight:500}
+.metric b{font-size:19px;display:block}
+.metric small{display:block;color:var(--muted);margin-top:3px}
+.inspect-fields{display:grid;grid-template-columns:100px minmax(0,1fr);gap:7px;margin:10px 0}
+.inspect-fields dt{color:var(--muted)} .inspect-fields dd{margin:0;user-select:text}
+.stage.inspect{cursor:crosshair}
 .bar{height:4px;background:#11141a;border-radius:3px;margin-top:4px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .1s}
 .bar i.hot{background:var(--warn)} .bar i.over{background:var(--bad)}
@@ -80,9 +89,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 </style>
 </head>
 <body>
-<div id="offline">Нет связи с симулятором. Запусти «Запустить симулятор.command» и обнови страницу.</div>
+<div id="offline">Нет связи с симулятором. Запусти симулятор и обнови страницу.</div>
 <header>
-  <h1>V5 · симулятор</h1>
+  <h1>Вертикализатор · симулятор</h1>
   <div id="status">—</div>
   <span class="pill" id="pBrake">Тормоз</span>
   <span class="pill" id="pBatt">Батарея —</span>
@@ -93,7 +102,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
   <div class="col left">
     <section class="card">
       <h2>Джойстик</h2>
-      <canvas id="joy" width="190" height="190"></canvas>
+      <canvas id="joy" width="190" height="190" style="width:190px;height:190px"></canvas>
       <div class="row">
         <span style="color:var(--muted)">Скорость</span>
         <button id="lvDown">−</button>
@@ -109,8 +118,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
         <button class="big seatbtn" id="down">▼ Сесть</button>
       </div>
       <div class="hint" id="seatHint">Держи кнопку (<span class="kbd">R</span> / <span class="kbd">F</span>).</div>
-      <label class="sl" style="margin-top:8px">Быстро, угол <input type="range" id="fastSeat" min="0" max="75" step="1" value="0"><output id="fastSeatO">0°</output></label>
-      <div class="hint" style="margin-top:0">Сразу к выбранному углу (80 мм/с, не реальная скорость привода).</div>
+      <label class="sl" style="margin-top:8px">Задать угол <input type="range" id="fastSeat" min="0" max="75" step="1" value="0"><output id="fastSeatO">0°</output></label>
+      <div class="hint" style="margin-top:0">Перемещение с усилием и скоростью выбранных актуаторов. Ускорить наблюдение можно кнопками времени.</div>
     </section>
     <section class="card">
       <h2>Тормоза</h2>
@@ -130,18 +139,34 @@ input[type=range]{width:100%;accent-color:var(--accent)}
       <div class="hud">
         <div><span>Скорость</span><b id="hSpeed">—</b></div>
         <div><span>Сиденье</span><b id="hSeat">—</b></div>
-        <div><span>Привод</span><b id="hLift">—</b></div>
+        <div><span>Подъём · сумма</span><b id="hLift">—</b></div>
         <div><span>Запас вперёд/назад</span><b id="hTip">—</b></div>
       </div>
       <div id="hudWarn"></div>
+    </div>
       <div class="camtools">
         <button data-cam="follow">Следовать</button><button data-cam="back">Сзади</button><button data-cam="side">Сбоку</button>
         <button data-cam="front">Спереди</button><button data-cam="top">Сверху</button>
         <span class="sp"></span>
         <button class="tg" data-tg="human">Человек</button><button class="tg" data-tg="com">Центр масс</button><button class="tg" data-tg="forces">Силы</button>
+        <button id="inspectMode" aria-pressed="false">Детали</button>
         <span class="tip">мышь — вращать · Shift — сдвиг · колесо — зум</span>
       </div>
-    </div>
+    <section class="card">
+      <h2 id="liftTitle">Актуаторы подъёма</h2>
+      <div class="metric-grid" id="liftMetrics"></div>
+      <div class="hint" id="liftSync"></div>
+    </section>
+    <section class="card" id="inspector">
+      <h2>Характеристики детали</h2>
+      <select class="sel" id="partSelect" aria-label="Выбрать деталь"></select>
+      <dl class="inspect-fields">
+        <dt>Габариты</dt><dd id="partSize">—</dd>
+        <dt>Масса узла</dt><dd id="partMass">—</dd>
+        <dt>Материалы</dt><dd id="partMaterial">—</dd>
+      </dl>
+      <div class="hint" id="partNote">Включи «Детали» и кликни на модель или выбери узел из списка.</div>
+    </section>
     <section class="card">
       <canvas id="plots" width="1100" height="120" style="width:100%;height:120px"></canvas>
     </section>
@@ -149,12 +174,17 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
   <div class="col right">
     <section class="card">
+      <h2>Каждое колесо</h2>
+      <div class="metric-grid" id="wheelMetrics"></div>
+      <div class="hint">Обороты и механическая мощность на оси. Минус означает торможение; это не потребление батареи.</div>
+    </section>
+    <section class="card">
       <h2>Телеметрия</h2>
       <div class="tiles" id="tiles"></div>
     </section>
     <section class="card">
       <h2>Опора и центр масс</h2>
-      <canvas id="top" width="296" height="190"></canvas>
+      <canvas id="top" width="296" height="190" style="width:100%;height:190px"></canvas>
       <div class="hint" style="margin-top:2px">Оранжевый — опорная площадь, красная точка — центр масс, числа — нагрузка на колёса, Н.</div>
     </section>
   </div>
@@ -238,7 +268,11 @@ setInterval(()=>{ if(ctl.jx||ctl.jy||ctl.lift||ctl.brake) sendCmd(); }, 150);
 const joy = $('#joy'), jc = joy.getContext('2d');
 let dragging = false, keyJ = {x:0,y:0};
 function drawJoy(){
-  const w = joy.width, r = w/2 - 10, cx = w/2, cy = w/2;
+  const dpr = window.devicePixelRatio || 1, w = 190;
+  const pixels = Math.round(w*dpr);
+  if(joy.width!==pixels || joy.height!==pixels){ joy.width=pixels; joy.height=pixels; }
+  jc.setTransform(dpr,0,0,dpr,0,0);
+  const r = w/2 - 10, cx = w/2, cy = w/2;
   jc.clearRect(0,0,w,w);
   jc.fillStyle = '#11141a'; jc.beginPath(); jc.arc(cx,cy,r,0,7); jc.fill();
   jc.strokeStyle = '#323845'; jc.lineWidth = 1;
@@ -287,7 +321,7 @@ $('#applyPerson').onclick = ()=> sendEvent({name:'config', mass:+$('#mass').valu
                                                chair:$('#chair').value});
 function motorSummary(m){
   const tw = m.T*m.ratio*m.eta, vr = m.n_rated/m.ratio*2*Math.PI/60*0.16, v0 = m.n0/m.ratio*2*Math.PI/60*0.16;
-  return `На колесе ${fmt(tw,1)} Н·м (тяга ${fmt(2*tw/0.16)} Н на два колеса) · номинал ${fmt(vr,2)} м/с · х.х. ${fmt(v0,2)} м/с · ${fmt(m.mass,1)} кг`;
+  return `На борт ${fmt(tw,1)} Н·м (тяга ${fmt(2*tw/0.16)} Н на четыре колеса) · номинал ${fmt(vr,2)} м/с · х.х. ${fmt(v0,2)} м/с · ${fmt(m.mass,1)} кг`;
 }
 function showMotor(){
   const k = $('#motor').value, m = OPT.motors[k];
@@ -348,9 +382,9 @@ const TILES = [
   ['speed','Скорость', s=>fmt(s.speed*3.6,1)+' км/ч', s=>fmt(s.speed,2)+' м/с · предел '+fmt(s.vmax,2)+' м/с'],
   ['seat','Угол сиденья', s=>fmt(s.seat_angle,1)+'°', s=>'0° сидя … 75° стоя', s=>s.seat_angle/75],
   ['stroke','Ход привода', s=>fmt(s.stroke*1000)+' мм', s=>fmt(s.stroke_speed*1000,1)+' мм/с из '+fmt(s.act_info.speed*1000), s=>s.stroke/0.3],
-  ['lift','Усилие привода', s=>fmt(s.lift_force)+' Н', s=>'макс. '+fmt(s.act_info.force)+' Н · '+fmt(s.lift_power,1)+' Вт', s=>Math.abs(s.lift_force)/s.act_info.force],
-  ['tl','Момент колеса Л', s=>fmt(s.torque_left,1)+' Н·м', s=>'предел '+fmt(s.torque_limit[0],1)+' · '+fmt(s.rpm_left)+' об/мин · '+fmt(s.power_left)+' Вт', s=>Math.abs(s.torque_left)/s.motor_info.wheel_torque],
-  ['tr','Момент колеса П', s=>fmt(s.torque_right,1)+' Н·м', s=>'предел '+fmt(s.torque_limit[1],1)+' · '+fmt(s.rpm_right)+' об/мин · '+fmt(s.power_right)+' Вт', s=>Math.abs(s.torque_right)/s.motor_info.wheel_torque],
+  ['lift','Подъём · сумма усилий', s=>fmt(s.lift_force)+' Н', s=>'макс. '+fmt(s.act_info.force)+' Н · '+fmt(s.lift_power,1)+' Вт', s=>Math.abs(s.lift_force)/s.act_info.force],
+  ['tl','Левый борт · сумма', s=>fmt(s.torque_left,1)+' Н·м', s=>'предел '+fmt(s.torque_limit[0],1)+' Н·м · '+fmt(s.power_left)+' Вт', s=>Math.abs(s.torque_left)/s.motor_info.wheel_torque],
+  ['tr','Правый борт · сумма', s=>fmt(s.torque_right,1)+' Н·м', s=>'предел '+fmt(s.torque_limit[1],1)+' Н·м · '+fmt(s.power_right)+' Вт', s=>Math.abs(s.torque_right)/s.motor_info.wheel_torque],
   ['amp','Ток батареи', s=>fmt(s.battery_A,1)+' А', s=>'≈ '+fmt(s.battery_A*25.6)+' Вт · номинал моторов 2×'+fmt(s.motor_info.I,1)+' А', s=>s.battery_A/(2*s.motor_info.I*Math.max(1,s.peak))],
   ['bat','Заряд', s=>fmt(s.battery_pct,1)+' %', s=>'израсходовано '+fmt(s.energy_Wh,2)+' Вт·ч из 512', s=>s.battery_pct/100],
   ['mass','Масса кресла', s=>fmt(s.chair_mass,1)+' кг', s=>'с человеком '+fmt(s.total_mass,1)+' кг (рост '+fmt(s.height_set*100)+' см)'],
@@ -363,11 +397,58 @@ const TILES = [
 const tilesEl = $('#tiles');
 tilesEl.innerHTML = TILES.filter(t=>!['att'].includes(t[0])).map(t=>`<div class="tile" id="t_${t[0]}"><div class="k">${t[1]}</div><div class="v">—</div><div class="s"></div>${t[4]?'<div class="bar"><i></i></div>':''}</div>`).join('');
 
+const wheelNames = {front_left:'Переднее левое', front_right:'Переднее правое', drive_left:'Заднее левое', drive_right:'Заднее правое'};
+$('#wheelMetrics').innerHTML = Object.entries(wheelNames).map(([key,name])=>`<div class="metric" id="wheel_${key}"><strong>${name}</strong><b>—</b><small class="power"></small><small class="torque"></small></div>`).join('');
+let liftCount = 0, partsVersion = -1;
+function renderHardware(s){
+  for(const key of Object.keys(wheelNames)){
+    const w=s.wheels[key], el=$('#wheel_'+key);
+    el.querySelector('b').textContent=fmt(w.rpm,1)+' об/мин';
+    el.querySelector('.power').textContent=fmt(w.power,1)+' Вт';
+    el.querySelector('.torque').textContent=fmt(w.torque,1)+' Н·м';
+  }
+  if(liftCount!==s.lifts.length){
+    liftCount=s.lifts.length;
+    $('#liftMetrics').innerHTML=s.lifts.map((_,i)=>`<div class="metric" id="lift_${i}"><strong>${liftCount===1?'Актуатор':i===0?'Левый актуатор':'Правый актуатор'}</strong><b>—</b><small class="stroke"></small><small class="power"></small><div class="bar"><i></i></div></div>`).join('');
+  }
+  s.lifts.forEach((a,i)=>{
+    const el=$('#lift_'+i), limit=a.force>=0?s.act_info.unit_force:s.act_info.unit_retract_force;
+    el.querySelector('b').textContent=fmt(a.force)+' / '+fmt(limit)+' Н';
+    el.querySelector('.stroke').textContent=fmt(a.stroke*1000,1)+' мм · '+fmt(a.speed*1000,1)+' мм/с';
+    el.querySelector('.power').textContent=fmt(a.power,1)+' Вт мех.';
+    const bar=el.querySelector('.bar i'), fraction=Math.min(1,Math.abs(a.force)/limit);
+    bar.style.width=fraction*100+'%';bar.className=fraction>.95?'over':fraction>.8?'hot':'';
+  });
+  $('#liftSync').textContent=(s.lifts.length===2?'Разница хода: '+fmt(s.lift_skew_mm,2)+' мм. ':'')+'Удерживающее усилие сохраняется в покое. В модели остановленный винтовой привод удерживает пассивно.';
+}
+function renderPart(s){
+  if(partsVersion!==s.model_version){
+    partsVersion=s.model_version;
+    const select=$('#partSelect');select.replaceChildren();
+    for(const p of s.parts){const option=document.createElement('option');option.value=p.id;option.textContent=p.name;select.append(option);}
+  }
+  const p=s.selection;
+  if(!p){$('#partSize').textContent='—';$('#partMass').textContent='—';$('#partMaterial').textContent='—';$('#partNote').textContent='Кликни на деталь или выбери её из списка.';$('#partSelect').value='';return;}
+  $('#partSelect').value=p.id;
+  $('#partSize').textContent=p.dimensions_mm?p.dimensions_mm.map(x=>fmt(x)).join(' × ')+' мм':'Бесконечная плоскость';
+  $('#partMass').textContent=p.mass_kg===null?'Не моделируется':fmt(p.mass_kg,2)+' кг';
+  $('#partMaterial').textContent=p.material;
+  $('#partNote').textContent=p.dimensions_note+' '+p.note;
+}
+$('#partSelect').onchange=()=>post('/api/inspect',{id:$('#partSelect').value});
+let inspecting=false;
+$('#inspectMode').onclick=()=>{
+  inspecting=!inspecting;$('#inspectMode').classList.toggle('active',inspecting);
+  $('#inspectMode').setAttribute('aria-pressed',String(inspecting));$('#stage').classList.toggle('inspect',inspecting);
+};
 let synced=false, lastPerson='', lastCfg='';
 function render(s){
   const pk = s.mass_set + '/' + s.height_set;
   if(!fastDrag){ fs.value = Math.round(s.seat_angle); $('#fastSeatO').textContent = Math.round(s.seat_angle) + '°'; }
-  const ai = s.act_info; $('#seatHint').innerHTML = `Держи кнопку (<span class="kbd">R</span> / <span class="kbd">F</span>). Привод ${ai.name}: полный ход 300 мм ≈ ${Math.round(0.3/ai.speed/0.9)} с. Чтобы не ждать, включи ускорение времени или ползунок ниже.`;
+  const ai = s.act_info;
+  $('#seatHint').textContent = `Держи R / F. ${ai.count} × ${fmt(ai.unit_force)} Н, до ${fmt(ai.speed*1000)} мм/с на штоке; без нагрузки полный ход ≈ ${fmt(0.3/ai.speed,1)} с. Под нагрузкой медленнее.`;
+  renderHardware(s);
+  renderPart(s);
   const ck = s.chair + '/' + s.act + '/' + s.frame_mat + '/' + s.motor_info.key + '/' + JSON.stringify(s.motor_params) + '/' + s.peak;
   if(OPT && ck !== lastCfg){ lastCfg = ck; $('#act').value = s.act; $('#frameMat').value = s.frame_mat; $('#actNote').textContent = OPT.actuators[s.act].note;
     $('#motor').value = s.motor_info.key; $('#chair').value = s.chair; $('#peak').value = String(s.peak);
@@ -403,8 +484,8 @@ function render(s){
 // top view
 const topC = $('#top'), tc = topC.getContext('2d');
 function drawTop(s){
-  const dpr = window.devicePixelRatio || 1, W = 296, H = 190;
-  if(topC.width !== Math.round(W*dpr)){ topC.width = Math.round(W*dpr); topC.height = Math.round(H*dpr); topC.style.width = W+'px'; topC.style.height = H+'px'; }
+  const dpr = window.devicePixelRatio || 1, W = topC.clientWidth || 296, H = 190;
+  if(topC.width !== Math.round(W*dpr) || topC.height !== Math.round(H*dpr)){ topC.width = Math.round(W*dpr); topC.height = Math.round(H*dpr); }
   tc.setTransform(dpr,0,0,dpr,0,0); tc.clearRect(0,0,W,H);
   const sc = 185, ox = 45, oy = H/2;              // chassis x forward -> right on screen
   const P = (x,y)=>[ox + x*sc, oy - y*sc];
@@ -444,7 +525,7 @@ const SERIES = [
 ];
 function drawPlots(h){
   const dpr = window.devicePixelRatio || 1, W = pl.clientWidth || 800, H = 120, n = SERIES.length, pw = W/n;
-  if(pl.width !== Math.round(W*dpr)){ pl.width = Math.round(W*dpr); pl.height = Math.round(H*dpr); }
+  if(pl.width !== Math.round(W*dpr) || pl.height !== Math.round(H*dpr)){ pl.width = Math.round(W*dpr); pl.height = Math.round(H*dpr); }
   pc.setTransform(dpr,0,0,dpr,0,0);
   pc.clearRect(0,0,W,H); pc.font='12px -apple-system, sans-serif';
   if(!h.length) return;
@@ -474,8 +555,32 @@ async function poll(){
 }
 // ---------- video & camera ----------
 const stage = $('#stage');
-const camPost = b => fetch('/api/cam',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)})
-  .then(r=>r.json()).then(v=>{ document.querySelectorAll('.tg').forEach(t=>t.classList.toggle('active', !!v[t.dataset.tg])); }).catch(()=>{});
+async function camPost(b){
+  const r = await fetch('/api/cam',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
+  if(!r.ok) throw new Error('Camera request failed');
+  const v = await r.json();
+  document.querySelectorAll('.tg').forEach(t=>t.classList.toggle('active', !!v[t.dataset.tg]));
+  return v;
+}
+let videoEnabled = false, maxVideoSize = [3840,2400], lastVideoSize = '', sizeBusy = false, sizeTimer;
+function queueVideoSize(){ clearTimeout(sizeTimer); sizeTimer=setTimeout(syncVideoSize,200); }
+async function syncVideoSize(){
+  drawJoy();
+  if(!videoEnabled || sizeBusy || !stage.clientWidth || !stage.clientHeight) return;
+  const dpr = window.devicePixelRatio || 1;
+  const w = stage.clientWidth*dpr, h = stage.clientHeight*dpr;
+  const scale = Math.min(1,maxVideoSize[0]/w,maxVideoSize[1]/h);
+  const size = [w,h].map((v,i)=>Math.max(2,Math.min(maxVideoSize[i],2*Math.ceil(v*scale/2))));
+  const key = size.join('x');
+  if(key === lastVideoSize) return;
+  sizeBusy = true;
+  try{ await camPost({size}); lastVideoSize=key; }
+  catch(e){ lastVideoSize=''; }
+  finally{ sizeBusy=false; queueVideoSize(); }
+}
+new ResizeObserver(queueVideoSize).observe(stage);
+window.addEventListener('resize',queueVideoSize);
+setInterval(syncVideoSize,1000); // also detects moving to a monitor with different pixel density
 let camDrag = null, acc = {orbit:[0,0], pan:[0,0], zoom:0}, pending = false;
 function flushCam(){
   pending = false;
@@ -484,28 +589,42 @@ function flushCam(){
   if(acc.pan[0]||acc.pan[1]) b.pan = acc.pan;
   if(acc.zoom) b.zoom = acc.zoom;
   acc = {orbit:[0,0], pan:[0,0], zoom:0};
-  if(Object.keys(b).length) camPost(b);
+  if(Object.keys(b).length) camPost(b).catch(()=>{});
 }
 const queueCam = ()=>{ if(!pending){ pending = true; setTimeout(flushCam, 40); } };
 stage.addEventListener('pointerdown', e=>{
   if(e.target.closest('button')) return;
-  camDrag = {x:e.clientX, y:e.clientY, pan:e.shiftKey || e.button===2}; stage.setPointerCapture(e.pointerId); stage.classList.add('drag');
+  camDrag = {startX:e.clientX, startY:e.clientY, moved:false, x:e.clientX, y:e.clientY, pan:e.shiftKey || e.button===2}; stage.setPointerCapture(e.pointerId); stage.classList.add('drag');
 });
 stage.addEventListener('pointermove', e=>{
   if(!camDrag) return;
+  if(Math.hypot(e.clientX-camDrag.startX,e.clientY-camDrag.startY)>4) camDrag.moved=true;
+  if(!camDrag.moved) return;
   const dx = e.clientX - camDrag.x, dy = e.clientY - camDrag.y; camDrag.x = e.clientX; camDrag.y = e.clientY;
   if(camDrag.pan || e.shiftKey){ acc.pan[0]+=dx; acc.pan[1]+=dy; } else { acc.orbit[0]+=dx; acc.orbit[1]+=dy; }
   queueCam();
 });
-const endDrag = ()=>{ camDrag = null; stage.classList.remove('drag'); };
+const endDrag = e=>{
+  if(e.type==='pointerup' && inspecting && camDrag && !camDrag.moved && e.button===0){
+    const rect=stage.getBoundingClientRect(), img=$('#video');
+    const scale=Math.min(rect.width/(img.naturalWidth||rect.width),rect.height/(img.naturalHeight||rect.height));
+    const width=(img.naturalWidth||rect.width)*scale, height=(img.naturalHeight||rect.height)*scale;
+    const x=(e.clientX-rect.left-(rect.width-width)/2)/width, y=(e.clientY-rect.top-(rect.height-height)/2)/height;
+    if(x>=0&&x<=1&&y>=0&&y<=1) post('/api/inspect',{point:[x,y]});
+  }
+  camDrag=null;stage.classList.remove('drag');
+};
 stage.addEventListener('pointerup', endDrag); stage.addEventListener('pointercancel', endDrag);
 stage.addEventListener('contextmenu', e=> e.preventDefault());
 stage.addEventListener('wheel', e=>{ e.preventDefault(); acc.zoom += e.deltaY; queueCam(); }, {passive:false});
-stage.addEventListener('dblclick', e=>{ if(!e.target.closest('button')) camPost({preset:'follow'}); });
-document.querySelectorAll('[data-cam]').forEach(b=> b.onclick = ()=> camPost({preset:b.dataset.cam}));
-document.querySelectorAll('.tg').forEach(b=> b.onclick = ()=> camPost({[b.dataset.tg]: !b.classList.contains('active')}));
+stage.addEventListener('dblclick', e=>{ if(!e.target.closest('button')) camPost({preset:'follow'}).catch(()=>{}); });
+document.querySelectorAll('[data-cam]').forEach(b=> b.onclick = ()=> camPost({preset:b.dataset.cam}).catch(()=>{}));
+document.querySelectorAll('.tg').forEach(b=> b.onclick = ()=> camPost({[b.dataset.tg]: !b.classList.contains('active')}).catch(()=>{}));
 fetch('/api/options').then(r=>r.json()).then(o=>{
   if(o.video){
+    videoEnabled=true;
+    maxVideoSize=o.view?.max_size || maxVideoSize;
+    queueVideoSize();
     const img = $('#video');
     const start = ()=>{ img.src = '/stream?t=' + Date.now(); };
     img.onerror = ()=> setTimeout(start, 1000);

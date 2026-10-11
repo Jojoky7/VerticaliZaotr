@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mujoco model="Vert V5 + human">
-  <!-- chair esleh, frame steel, actuator DTL6000, motor N150, human 80 kg / 1.75 m -->
+<mujoco model="Verticalizer + human">
+  <!-- chair esleh, frame steel, actuator 2xPTL, motor N150, human 80 kg / 1.75 m -->
   <compiler angle="radian" inertiafromgeom="false" autolimits="true" />
   <option timestep="0.002" gravity="0 0 -9.80665" integrator="implicitfast" iterations="100" tolerance="1e-10" noslip_iterations="4" />
   <default>
@@ -10,6 +10,7 @@
   <visual>
     <global azimuth="140" elevation="-20" offwidth="1920" offheight="1200" />
     <headlight diffuse="0.8 0.8 0.8" ambient="0.35 0.35 0.35" />
+    <quality numslices="64" numstacks="32" offsamples="4" shadowsize="4096" />
   </visual>
   <asset />
   <worldbody>
@@ -31,11 +32,12 @@
       <geom type="capsule" size="0.0125" fromto="0 -0.205 0.22 0 0.205 0.22" rgba="0.13 0.22 0.58 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.0125" fromto="0.3 -0.21 0.17 0.3 0.21 0.17" rgba="0.13 0.22 0.58 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.0125" fromto="0.6 -0.214 0.335 0.6 0.214 0.335" rgba="0.13 0.22 0.58 1" contype="0" conaffinity="0" group="1" />
-      <geom type="capsule" size="0.0125" fromto="0.15 -0.06 0.19 0.15 0.06 0.19" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
-      <geom type="capsule" size="0.0125" fromto="0 0.06 0.22 0.15 0.06 0.19" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
-      <geom type="capsule" size="0.0125" fromto="0 -0.06 0.22 0.15 -0.06 0.19" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
-      <geom type="box" pos="0.195 0.035 0.14" size="0.05 0.004 0.05" euler="0 0.7 0" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
-      <geom type="box" pos="0.195 -0.035 0.14" size="0.05 0.004 0.05" euler="0 0.7 0" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+      <geom type="capsule" size="0.0125" fromto="0.3 -0.21 0.17 0.3 -0.25 0.17" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+      <geom type="capsule" size="0.0125" fromto="0.3 -0.25 0.17 0.267759 -0.25 0.08074" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+      <geom type="capsule" size="0.0125" fromto="0.267759 -0.25 0.08074 0.327759 -0.25 0.08074" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+      <geom type="capsule" size="0.0125" fromto="0.3 0.21 0.17 0.3 0.25 0.17" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+      <geom type="capsule" size="0.0125" fromto="0.3 0.25 0.17 0.267759 0.25 0.08074" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+      <geom type="capsule" size="0.0125" fromto="0.267759 0.25 0.08074 0.327759 0.25 0.08074" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.015" fromto="0.7 0.272 0.196 0.7 0.272 0.665" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.015" fromto="0.7 -0.272 0.196 0.7 -0.272 0.665" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.0125" fromto="0.7 0.215 0.206 0.7 0.272 0.206" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
@@ -56,7 +58,7 @@
       <geom type="capsule" size="0.008" fromto="0.14 0.16 0.585 0.14 0.2 0.36" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.008" fromto="0.14 -0.16 0.585 0.14 -0.2 0.36" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <geom name="belly_guard" type="box" pos="0.30 0 0.17" size="0.12 0.18 0.012" rgba="0 0 0 0" contype="1" conaffinity="2" group="3" />
-      <inertial mass="13.21" pos="0.336322 0 0.243027" diaginertia="0.155136 0.697956 0.674922" />
+      <inertial mass="13.179" pos="0.336528 0 0.242962" diaginertia="0.154799 0.697384 0.674374" />
       <body name="Motor150_Left">
         <inertial mass="1.7" pos="0.1 0.175 0.15" diaginertia="0.0015 0.006 0.006" />
         <geom type="box" pos="0 0.175 0.16" size="0.05 0.035 0.05" rgba="0.72 0.74 0.77 1" contype="0" conaffinity="0" group="1" />
@@ -80,7 +82,7 @@
         <geom type="capsule" size="0.0125" fromto="-0.53 0.235 -0.15 -0.02 0.235 -0.15" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
         <geom type="capsule" size="0.0125" fromto="-0.53 -0.235 -0.15 -0.02 -0.235 -0.15" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
         <geom type="capsule" size="0.01" fromto="-0.51 -0.235 -0.15 -0.51 0.235 -0.15" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
-        <geom type="capsule" size="0.01" fromto="-0.2176 -0.235 -0.15 -0.2176 0.235 -0.15" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
+        <geom type="capsule" size="0.01" fromto="-0.218 -0.235 -0.15 -0.218 0.235 -0.15" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
         <geom type="capsule" size="0.01" fromto="-0.05 -0.235 -0.15 -0.05 0.235 -0.15" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
         <geom name="seat_cushion" type="box" pos="-0.29 0 -0.104" size="0.215 0.23 0.036" rgba="0.16 0.17 0.19 1" contype="0" conaffinity="0" group="1" />
         <geom name="seat_roll" type="capsule" size="0.035" fromto="-0.075 -0.23 -0.103 -0.075 0.23 -0.103" rgba="0.16 0.17 0.19 1" contype="0" conaffinity="0" group="1" />
@@ -93,7 +95,7 @@
         <geom type="cylinder" size="0.03" fromto="0 0.241 0 0 0.253 0" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
         <geom type="box" pos="-0.045 -0.247 -0.075" size="0.065 0.005 0.085" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
         <geom type="cylinder" size="0.03" fromto="0 -0.241 0 0 -0.253 0" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
-        <site name="seat_actuator_tip" pos="-0.2176 0 -0.1515" size="0.005" rgba="1 0.5 0 1" group="4" />
+        <site name="seat_actuator_tip" pos="-0.218 0.25 -0.12" size="0.005" rgba="1 0.5 0 1" group="4" />
         <body name="back" pos="-0.52 0 -0.15">
           <joint name="back_compensation" axis="0 1 0" range="-1.308996939 0" damping="0.8" />
           <inertial mass="6.5" pos="0.04 0 0.33" diaginertia="0.330417 0.216667 0.157083" />
@@ -126,42 +128,47 @@
           <geom name="h_pelvis" type="capsule" size="0.085" fromto="0 -0.09 0.02 0 0.09 0.02" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
           <geom name="h_thigh_L" type="capsule" size="0.068" fromto="0 0.09 0 0.42875 0.09 0" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
           <geom name="h_thigh_R" type="capsule" size="0.068" fromto="0 -0.09 0 0.42875 -0.09 0" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
-          <inertial mass="31.592" pos="0.123083 0 0.0113143" fullinertia="0.347539 0.658259 0.878848 0 0.047569 0" />
+          <inertial mass="31.592" pos="0.123082575 0 0.0113142568" fullinertia="0.347538539 0.658259483 0.878847686 0 0.0475690357 0" />
           <site name="human_seat_site" pos="0 0 0" size="0.01" group="4" />
           <body name="human_torso" pos="0 0 0">
             <joint name="hip" axis="0 1 0" range="-1.75 0.35" damping="15" />
             <geom name="h_torso" type="box" pos="0 0 0.262" size="0.1 0.16 0.252" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
             <geom name="h_neck" type="capsule" size="0.05" fromto="0.01 0 0.504 0.01 0 0.584" rgba="0.93 0.72 0.58 1" contype="0" conaffinity="0" group="2" />
             <geom name="h_head" type="sphere" size="0.105" pos="0.01 0 0.684" rgba="0.93 0.72 0.58 1" contype="0" conaffinity="0" group="2" />
-            <geom name="h_uarm_L" type="capsule" size="0.04" fromto="0 0.205 0.474 0.02 0.205 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
-            <geom name="h_farm_L" type="capsule" size="0.034" fromto="0.02 0.205 0.1485 0.2755 0.205 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
-            <geom name="h_hand_L" type="capsule" size="0.028" fromto="0.2755 0.205 0.1485 0.4645 0.205 0.1485" rgba="0.93 0.72 0.58 1" contype="0" conaffinity="0" group="2" />
-            <geom name="h_uarm_R" type="capsule" size="0.04" fromto="0 -0.205 0.474 0.02 -0.205 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
-            <geom name="h_farm_R" type="capsule" size="0.034" fromto="0.02 -0.205 0.1485 0.2755 -0.205 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
-            <geom name="h_hand_R" type="capsule" size="0.028" fromto="0.2755 -0.205 0.1485 0.4645 -0.205 0.1485" rgba="0.93 0.72 0.58 1" contype="0" conaffinity="0" group="2" />
-            <inertial mass="39.288" pos="0.0124075 1.41293e-18 0.314845" fullinertia="1.88465 1.79427 0.837027 -6.93889e-18 0.0911967 6.93889e-18" />
+            <geom name="h_uarm_L" type="capsule" size="0.04" fromto="0 0.2 0.474 0.02 0.2 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
+            <geom name="h_farm_L" type="capsule" size="0.034" fromto="0.02 0.2 0.1485 0.2755 0.2 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
+            <geom name="h_hand_L" type="capsule" size="0.028" fromto="0.2755 0.2 0.1485 0.4645 0.2 0.1485" rgba="0.93 0.72 0.58 1" contype="0" conaffinity="0" group="2" />
+            <geom name="h_uarm_R" type="capsule" size="0.04" fromto="0 -0.2 0.474 0.02 -0.2 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
+            <geom name="h_farm_R" type="capsule" size="0.034" fromto="0.02 -0.2 0.1485 0.2755 -0.2 0.1485" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
+            <geom name="h_hand_R" type="capsule" size="0.028" fromto="0.2755 -0.2 0.1485 0.4645 -0.2 0.1485" rgba="0.93 0.72 0.58 1" contype="0" conaffinity="0" group="2" />
+            <inertial mass="39.288" pos="0.0124074842 1.41292892e-18 0.314844716" fullinertia="1.86864182 1.79426863 0.821021576 6.9388939e-18 0.0911967415 -3.46944695e-18" />
           </body>
           <body name="human_shank_L" pos="0.42875 0.09 0" euler="0 -0.17 0">
-            <joint name="knee_L" axis="0 1 0" range="-1.4008 1.2" damping="4" />
-            <inertial mass="3.464" pos="0 0 -0.19196" fullinertia="0.0552523 0.0552523 0.0035073 0 0 0" />
+            <joint name="knee_L" axis="0 1 0" range="-1.40079633 1.2" damping="4" />
+            <inertial mass="3.464" pos="0 0 -0.19195995" fullinertia="0.0552523155 0.0552523155 0.0035073 0 0 0" />
             <geom name="h_shank_L" type="capsule" size="0.045" fromto="0 0 0 0 0 -0.4305" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
             <body name="human_foot_L" pos="0 0 -0.4305" euler="0 0.17 0">
               <joint name="ankle_L" axis="0 1 0" range="-0.9 0.9" damping="1" />
-              <inertial mass="1.096" pos="0.067439 0 -0.034125" fullinertia="0.0008768 0.00690078 0.00690078 0 0 0" />
+              <inertial mass="1.096" pos="0.067439 0 -0.034125" fullinertia="0.0008768 0.00690078133 0.00690078133 0 0 0" />
               <geom name="h_foot_L" type="box" pos="0.083 0 -0.034125" size="0.133 0.045 0.034125" contype="8" conaffinity="0" condim="3" friction="0.5 0.005 0.0001" rgba="0.15 0.15 0.17 1" group="2" />
             </body>
           </body>
           <body name="human_shank_R" pos="0.42875 -0.09 0" euler="0 -0.17 0">
-            <joint name="knee_R" axis="0 1 0" range="-1.4008 1.2" damping="4" />
-            <inertial mass="3.464" pos="0 0 -0.19196" fullinertia="0.0552523 0.0552523 0.0035073 0 0 0" />
+            <joint name="knee_R" axis="0 1 0" range="-1.40079633 1.2" damping="4" />
+            <inertial mass="3.464" pos="0 0 -0.19195995" fullinertia="0.0552523155 0.0552523155 0.0035073 0 0 0" />
             <geom name="h_shank_R" type="capsule" size="0.045" fromto="0 0 0 0 0 -0.4305" rgba="0.25 0.32 0.45 1" contype="0" conaffinity="0" group="2" />
             <body name="human_foot_R" pos="0 0 -0.4305" euler="0 0.17 0">
               <joint name="ankle_R" axis="0 1 0" range="-0.9 0.9" damping="1" />
-              <inertial mass="1.096" pos="0.067439 0 -0.034125" fullinertia="0.0008768 0.00690078 0.00690078 0 0 0" />
+              <inertial mass="1.096" pos="0.067439 0 -0.034125" fullinertia="0.0008768 0.00690078133 0.00690078133 0 0 0" />
               <geom name="h_foot_R" type="box" pos="0.083 0 -0.034125" size="0.133 0.045 0.034125" contype="8" conaffinity="0" condim="3" friction="0.5 0.005 0.0001" rgba="0.15 0.15 0.17 1" group="2" />
             </body>
           </body>
         </body>
+        <site name="seat_actuator_tip_right" pos="-0.218 -0.25 -0.12" size="0.005" rgba="1 0.5 0 1" group="4" />
+        <geom type="box" pos="-0.218 0.235 -0.12" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" pos="-0.218 0.265 -0.12" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" pos="-0.218 -0.265 -0.12" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" pos="-0.218 -0.235 -0.12" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
       </body>
       <body name="lower_link" pos="0.7 0 0.4">
         <joint name="lower_angle" axis="0 1 0" range="0 1.308996939" damping="1" />
@@ -170,19 +177,19 @@
         <geom type="capsule" size="0.011" fromto="0 -0.25 0 -0.52 -0.25 -0.15" rgba="0.5 0.53 0.57 1" contype="0" conaffinity="0" group="1" />
         <site name="lower_back_pin" pos="-0.52 0 -0.15" size="0.005" group="4" />
       </body>
-      <body name="actuator_cylinder" pos="0.24 0 0.09">
+      <body name="actuator_cylinder" pos="0.327758592 0.25 0.080739955">
         <joint name="actuator_pivot" axis="0 1 0" range="-1 1" damping="0.5" />
-        <inertial mass="2.8" pos="0.05 0 0.18" diaginertia="0.05 0.05 0.005" />
-        <body name="actuator_rod" pos="0.2424 0 0.4085">
-          <joint name="actuator_extension" type="slide" axis="0.51031 0 0.85999" range="0 0.3" damping="50" armature="1280" />
-          <inertial mass="1.2" pos="0 0 -0.15" diaginertia="0.01 0.01 0.001" />
+        <inertial mass="1.82" pos="0.0758837226 0 0.174833237" diaginertia="0.025 0.025 0.0025" />
+        <body name="actuator_rod" pos="0.154241408 0 0.449260045">
+          <joint name="actuator_extension" type="slide" axis="0.324718754 0 0.945810621" range="0 0.3" damping="50" armature="200" />
+          <inertial mass="0.78" pos="-0.0487078131 -0 -0.141871593" diaginertia="0.005 0.005 0.0005" />
           <site name="rod_tip" pos="0 0 0" size="0.005" group="4" />
-          <geom name="act_rod" type="cylinder" size="0.01" fromto="-0.183712 -0 -0.309597 -0.0051031 -0 -0.0085999" rgba="0.85 0.86 0.88 1" contype="0" conaffinity="0" group="1" />
+          <geom name="act_rod" type="cylinder" size="0.01" fromto="-0.116898751 -0 -0.340491824 -0.00324718754 -0 -0.00945810621" rgba="0.85 0.86 0.88 1" contype="0" conaffinity="0" group="1" />
           <geom name="act_front_eye" type="cylinder" size="0.011 0.018" quat="0.7071068 0.7071068 0 0" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
         </body>
-        <geom name="act_tube" type="cylinder" size="0.022" fromto="0.0153093 0 0.0257997 0.219436 0 0.3698" rgba="0.75 0.76 0.78 1" contype="0" conaffinity="0" group="1" />
-        <geom name="act_motor" type="cylinder" size="0.028" fromto="0.0549257 0 -0.00933632 0.141678 0 0.136862" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
-        <geom name="act_gearbox" type="box" size="0.03 0.03 0.035" pos="0.0453237 0 0.0254315" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
+        <geom name="act_tube" type="cylinder" size="0.022" fromto="0.00974156262 0 0.0283743186 0.139629064 0 0.406698567" rgba="0.75 0.76 0.78 1" contype="0" conaffinity="0" group="1" />
+        <geom name="act_motor" type="cylinder" size="0.028" fromto="0.0556765274 0 0.00203083721 0.110878716 0 0.162818643" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
+        <geom name="act_gearbox" type="box" size="0.03 0.03 0.035" pos="0.0392034201 0 0.0341187903" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
         <geom name="act_rear_eye" type="cylinder" size="0.012 0.02" quat="0.7071068 0.7071068 0 0" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
       </body>
       <body name="drive_left" pos="0 0.2625 0.16">
@@ -201,10 +208,10 @@
         <geom type="cylinder" size="0.16 0.0425" quat="0.7071067812 0.7071067812 0 0" rgba="0.16 0.16 0.17 1" contype="0" conaffinity="0" group="1" mass="0" />
         <site name="drive_right_site" type="sphere" size="0.19" rgba="1 0 0 0.1" group="4" />
       </body>
-      <geom name="foot_support" type="box" pos="0.834333 0 0.148456" size="0.1715 0.2 0.008" rgba="0 0 0 0" contype="0" conaffinity="8" group="3" friction="0.5 0.005 0.0001" />
-      <geom name="heel_loop_L" type="box" pos="0.672833 0.09 0.186456" size="0.008 0.06 0.03" rgba="0.12 0.12 0.14 1" contype="0" conaffinity="8" group="1" />
-      <geom name="heel_loop_R" type="box" pos="0.672833 -0.09 0.186456" size="0.008 0.06 0.03" rgba="0.12 0.12 0.14 1" contype="0" conaffinity="8" group="1" />
-      <site name="footplate_site" type="box" pos="0.834333 0 0.156456" size="0.2015 0.23 0.05" rgba="0 1 0 0.15" group="4" />
+      <geom name="foot_support" type="box" pos="0.834333001 0 0.148455758" size="0.1715 0.2 0.008" rgba="0 0 0 0" contype="0" conaffinity="8" group="3" friction="0.5 0.005 0.0001" />
+      <geom name="heel_loop_L" type="box" pos="0.672833001 0.09 0.186455758" size="0.008 0.06 0.03" rgba="0.12 0.12 0.14 1" contype="0" conaffinity="8" group="1" />
+      <geom name="heel_loop_R" type="box" pos="0.672833001 -0.09 0.186455758" size="0.008 0.06 0.03" rgba="0.12 0.12 0.14 1" contype="0" conaffinity="8" group="1" />
+      <site name="footplate_site" type="box" pos="0.834333001 0 0.156455758" size="0.2015 0.23 0.05" rgba="0 1 0 0.15" group="4" />
       <site name="chassis_site" pos="0 0 0.16" size="0.01" group="4" />
       <geom type="capsule" size="0.011" fromto="0.745 0.205 0.33 0.752833 0.19 0.131456" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <geom type="capsule" size="0.011" fromto="0.745 -0.205 0.33 0.752833 -0.19 0.131456" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
@@ -215,9 +222,9 @@
       <geom type="capsule" size="0.007" fromto="0.845263 -0.17 0.451387 0.740211 -0.19 0.451387" rgba="0.07 0.07 0.08 1" contype="0" conaffinity="0" group="1" />
       <body name="front_fork_left" pos="0.745 0.2625 0.16">
         <inertial mass="0.3" pos="-0.0225 0 0.04" diaginertia="0.0004 0.0004 0.0002" />
-        <geom type="box" size="0.0325 0.03 0.006" pos="-0.0225 0 0.115" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
-        <geom type="box" size="0.012 0.004 0.06" pos="-0.045 0.028 0.055" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
-        <geom type="box" size="0.012 0.004 0.06" pos="-0.045 -0.028 0.055" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" size="0.0325 0.056 0.006" pos="-0.0225 0 0.18" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" size="0.012 0.004 0.095" pos="-0.045 0.052 0.09" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" size="0.012 0.004 0.095" pos="-0.045 -0.052 0.09" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
         <body name="front_left" pos="-0.045 0 0">
           <joint name="front_left_spin" axis="0 1 0" damping="0.015" />
           <inertial mass="3.0" pos="0 0 0" diaginertia="0.0210062 0.0384 0.0210062" />
@@ -229,9 +236,9 @@
       </body>
       <body name="front_fork_right" pos="0.745 -0.2625 0.16">
         <inertial mass="0.3" pos="-0.0225 0 0.04" diaginertia="0.0004 0.0004 0.0002" />
-        <geom type="box" size="0.0325 0.03 0.006" pos="-0.0225 0 0.115" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
-        <geom type="box" size="0.012 0.004 0.06" pos="-0.045 0.028 0.055" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
-        <geom type="box" size="0.012 0.004 0.06" pos="-0.045 -0.028 0.055" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" size="0.0325 0.056 0.006" pos="-0.0225 0 0.18" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" size="0.012 0.004 0.095" pos="-0.045 0.052 0.09" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
+        <geom type="box" size="0.012 0.004 0.095" pos="-0.045 -0.052 0.09" rgba="0.1 0.1 0.12 1" contype="0" conaffinity="0" group="1" />
         <body name="front_right" pos="-0.045 0 0">
           <joint name="front_right_spin" axis="0 1 0" damping="0.015" />
           <inertial mass="3.0" pos="0 0 0" diaginertia="0.0210062 0.0384 0.0210062" />
@@ -241,22 +248,41 @@
           <site name="front_right_site" type="sphere" size="0.19" rgba="1 0 0 0.1" group="4" />
         </body>
       </body>
+      <body name="actuator_cylinder_right" pos="0.327758592 -0.25 0.080739955">
+        <joint name="actuator_pivot_right" axis="0 1 0" range="-1 1" damping="0.5" />
+        <inertial mass="1.82" pos="0.0758837226 0 0.174833237" diaginertia="0.025 0.025 0.0025" />
+        <body name="actuator_rod_right" pos="0.154241408 0 0.449260045">
+          <joint name="actuator_extension_right" type="slide" axis="0.324718754 0 0.945810621" range="0 0.3" damping="50" armature="200" />
+          <inertial mass="0.78" pos="-0.0487078131 -0 -0.141871593" diaginertia="0.005 0.005 0.0005" />
+          <site name="rod_tip_right" pos="0 0 0" size="0.005" group="4" />
+          <geom name="act_rod_right" type="cylinder" size="0.01" fromto="-0.116898751 -0 -0.340491824 -0.00324718754 -0 -0.00945810621" rgba="0.85 0.86 0.88 1" contype="0" conaffinity="0" group="1" />
+          <geom name="act_front_eye_right" type="cylinder" size="0.011 0.018" quat="0.7071068 0.7071068 0 0" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
+        </body>
+        <geom name="act_tube_right" type="cylinder" size="0.022" fromto="0.00974156262 0 0.0283743186 0.139629064 0 0.406698567" rgba="0.75 0.76 0.78 1" contype="0" conaffinity="0" group="1" />
+        <geom name="act_motor_right" type="cylinder" size="0.028" fromto="0.0556765274 0 0.00203083721 0.110878716 0 0.162818643" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
+        <geom name="act_gearbox_right" type="box" size="0.03 0.03 0.035" pos="0.0392034201 0 0.0341187903" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
+        <geom name="act_rear_eye_right" type="cylinder" size="0.012 0.02" quat="0.7071068 0.7071068 0 0" rgba="0.15 0.15 0.16 1" contype="0" conaffinity="0" group="1" />
+      </body>
+      <geom type="box" pos="0.327758592 0.235 0.080739955" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
+      <geom type="box" pos="0.327758592 0.265 0.080739955" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
+      <geom type="box" pos="0.327758592 -0.265 0.080739955" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
+      <geom type="box" pos="0.327758592 -0.235 0.080739955" size="0.025 0.004 0.024" rgba="0.16 0.18 0.21 1" contype="0" conaffinity="0" group="1" />
     </body>
     <geom name="threshold_30mm" type="box" pos="2.5 0 0.015" size="0.03 1.2 0.015" rgba="0.85 0.55 0.2 1" contype="2" conaffinity="1" />
-    <geom name="ramp_up_1_12" type="box" pos="6.00208 0 0.0584197" size="1.00347 1.2 0.025" euler="0 -0.0831412 0" contype="2" conaffinity="1" rgba="0.72 0.74 0.78 1" group="0" />
-    <geom name="ramp_down_1_8" type="box" pos="9.66357 0 0.0585264" size="0.671855 1.2 0.025" euler="0 0.124355 0" contype="2" conaffinity="1" rgba="0.72 0.74 0.78 1" group="0" />
-    <geom name="platform" type="box" pos="8 0 0.0833333" size="1 1.2 0.0833333" contype="2" conaffinity="1" rgba="0.72 0.74 0.78 1" group="0" />
-    <geom name="hill_10_up" type="box" pos="12.7879 0 0.0253798" size="0.287939 1.2 0.025" euler="0 -0.174533 0" contype="2" conaffinity="1" rgba="0.35 0.65 0.38 1" group="0" />
-    <geom name="hill_10_top" type="box" pos="13.4671 0 0.05" size="0.4 1.2 0.05" rgba="0.35 0.65 0.38 1" contype="2" conaffinity="1" group="0" />
-    <geom name="hill_10_down" type="box" pos="14.1464 0 0.0253798" size="0.287939 1.2 0.025" euler="0 0.174533 0" contype="2" conaffinity="1" rgba="0.35 0.65 0.38 1" group="0" />
-    <geom name="hill_15_up" type="box" pos="20.6931 0 0.0258519" size="0.193185 1.2 0.025" euler="0 -0.261799 0" contype="2" conaffinity="1" rgba="0.88 0.65 0.22 1" group="0" />
-    <geom name="hill_15_top" type="box" pos="21.2732 0 0.05" size="0.4 1.2 0.05" rgba="0.88 0.65 0.22 1" contype="2" conaffinity="1" group="0" />
-    <geom name="hill_15_down" type="box" pos="21.8533 0 0.0258519" size="0.193185 1.2 0.025" euler="0 0.261799 0" contype="2" conaffinity="1" rgba="0.88 0.65 0.22 1" group="0" />
-    <geom name="hill_30_up" type="box" pos="26.5991 0 0.0283494" size="0.1 1.2 0.025" euler="0 -0.523599 0" contype="2" conaffinity="1" rgba="0.82 0.32 0.25 1" group="0" />
-    <geom name="hill_30_top" type="box" pos="27.0732 0 0.05" size="0.4 1.2 0.05" rgba="0.82 0.32 0.25 1" contype="2" conaffinity="1" group="0" />
-    <geom name="hill_30_down" type="box" pos="27.5473 0 0.0283494" size="0.1 1.2 0.025" euler="0 0.523599 0" contype="2" conaffinity="1" rgba="0.82 0.32 0.25 1" group="0" />
-    <geom name="long_ramp_15_up" type="box" pos="43.6657 0 2.56404" size="10 1.2 0.025" euler="0 -0.261799 0" contype="2" conaffinity="1" rgba="0.23 0.58 0.83 1" group="0" />
-    <geom name="long_ramp_15_top" type="box" pos="54.3185 0 5.15138" size="1 1.2 0.025" rgba="0.23 0.58 0.83 1" contype="2" conaffinity="1" group="0" />
+    <geom name="ramp_up_1_12" type="box" pos="6.00207614 0 0.0584196894" size="1.00346621 1.2 0.025" euler="0 -0.0831412319 0" contype="2" conaffinity="1" rgba="0.72 0.74 0.78 1" group="0" />
+    <geom name="ramp_down_1_8" type="box" pos="9.6635658 0 0.0585263864" size="0.671854812 1.2 0.025" euler="0 0.124354995 0" contype="2" conaffinity="1" rgba="0.72 0.74 0.78 1" group="0" />
+    <geom name="platform" type="box" pos="8 0 0.0833333333" size="1 1.2 0.0833333333" contype="2" conaffinity="1" rgba="0.72 0.74 0.78 1" group="0" />
+    <geom name="hill_10_up" type="box" pos="12.7879053 0 0.0253798062" size="0.287938524 1.2 0.025" euler="0 -0.174532925 0" contype="2" conaffinity="1" rgba="0.35 0.65 0.38 1" group="0" />
+    <geom name="hill_10_top" type="box" pos="13.4671282 0 0.05" size="0.4 1.2 0.05" rgba="0.35 0.65 0.38 1" contype="2" conaffinity="1" group="0" />
+    <geom name="hill_10_down" type="box" pos="14.1463511 0 0.0253798062" size="0.287938524 1.2 0.025" euler="0 0.174532925 0" contype="2" conaffinity="1" rgba="0.35 0.65 0.38 1" group="0" />
+    <geom name="hill_15_up" type="box" pos="20.693073 0 0.0258518543" size="0.193185165 1.2 0.025" euler="0 -0.261799388 0" contype="2" conaffinity="1" rgba="0.88 0.65 0.22 1" group="0" />
+    <geom name="hill_15_top" type="box" pos="21.2732051 0 0.05" size="0.4 1.2 0.05" rgba="0.88 0.65 0.22 1" contype="2" conaffinity="1" group="0" />
+    <geom name="hill_15_down" type="box" pos="21.8533371 0 0.0258518543" size="0.193185165 1.2 0.025" euler="0 0.261799388 0" contype="2" conaffinity="1" rgba="0.88 0.65 0.22 1" group="0" />
+    <geom name="hill_30_up" type="box" pos="26.5991025 0 0.0283493649" size="0.1 1.2 0.025" euler="0 -0.523598776 0" contype="2" conaffinity="1" rgba="0.82 0.32 0.25 1" group="0" />
+    <geom name="hill_30_top" type="box" pos="27.0732051 0 0.05" size="0.4 1.2 0.05" rgba="0.82 0.32 0.25 1" contype="2" conaffinity="1" group="0" />
+    <geom name="hill_30_down" type="box" pos="27.5473076 0 0.0283493649" size="0.1 1.2 0.025" euler="0 0.523598776 0" contype="2" conaffinity="1" rgba="0.82 0.32 0.25 1" group="0" />
+    <geom name="long_ramp_15_up" type="box" pos="43.6657287 0 2.56404231" size="10 1.2 0.025" euler="0 -0.261799388 0" contype="2" conaffinity="1" rgba="0.23 0.58 0.83 1" group="0" />
+    <geom name="long_ramp_15_top" type="box" pos="54.3185165 0 5.1513809" size="1 1.2 0.025" rgba="0.23 0.58 0.83 1" contype="2" conaffinity="1" group="0" />
   </worldbody>
   <tendon />
   <equality>
@@ -266,22 +292,27 @@
     <joint name="brake_lock_right" joint1="drive_right_spin" polycoef="0 0 0 0 0" active="false" solref="0.004 1" />
     <joint name="brake_lock_front_left" joint1="front_left_spin" polycoef="0 0 0 0 0" active="false" solref="0.004 1" />
     <joint name="brake_lock_front_right" joint1="front_right_spin" polycoef="0 0 0 0 0" active="false" solref="0.004 1" />
+    <connect name="actuator_loop_right" site1="rod_tip_right" site2="seat_actuator_tip_right" solref="0.006 1" />
     <joint name="trunk_on_backrest" joint1="hip" joint2="back_compensation" polycoef="0 1 0 0 0" solref="0.01 1" />
   </equality>
   <actuator>
-    <intvelocity name="lift_actuator" joint="actuator_extension" gear="200" kp="250" kv="5" ctrlrange="-1 1" actrange="0 60" forcerange="-30 30" />
-    <velocity name="drive_left" joint="drive_left_spin" gear="0.16" kv="400" ctrlrange="-1.1133 1.1133" forcerange="-75.25 75.25" />
-    <velocity name="drive_front_left" joint="front_left_spin" gear="0.16" kv="400" ctrlrange="-1.1133 1.1133" forcerange="-75.25 75.25" />
-    <velocity name="drive_right" joint="drive_right_spin" gear="0.16" kv="400" ctrlrange="-1.1133 1.1133" forcerange="-75.25 75.25" />
-    <velocity name="drive_front_right" joint="front_right_spin" gear="0.16" kv="400" ctrlrange="-1.1133 1.1133" forcerange="-75.25 75.25" />
+    <intvelocity name="lift_actuator" joint="actuator_extension" gear="27.7777778" kp="12960" kv="259.2" ctrlrange="-1 1" actrange="0 8.33333333" forcerange="-57.6 72" />
+    <velocity name="drive_left" joint="drive_left_spin" gear="0.16" kv="400" ctrlrange="-1.11329972 1.11329972" forcerange="-75.25 75.25" />
+    <velocity name="drive_front_left" joint="front_left_spin" gear="0.16" kv="400" ctrlrange="-1.11329972 1.11329972" forcerange="-75.25 75.25" />
+    <velocity name="drive_right" joint="drive_right_spin" gear="0.16" kv="400" ctrlrange="-1.11329972 1.11329972" forcerange="-75.25 75.25" />
+    <velocity name="drive_front_right" joint="front_right_spin" gear="0.16" kv="400" ctrlrange="-1.11329972 1.11329972" forcerange="-75.25 75.25" />
     <damper name="brake_left" joint="drive_left_spin" kv="60" ctrlrange="0 1" />
     <damper name="brake_right" joint="drive_right_spin" kv="60" ctrlrange="0 1" />
     <damper name="brake_front_left" joint="front_left_spin" kv="60" ctrlrange="0 1" />
     <damper name="brake_front_right" joint="front_right_spin" kv="60" ctrlrange="0 1" />
+    <intvelocity name="lift_actuator_right" joint="actuator_extension_right" gear="27.7777778" kp="12960" kv="259.2" ctrlrange="-1 1" actrange="0 8.33333333" forcerange="-57.6 72" />
   </actuator>
   <sensor>
     <jointpos name="seat_angle" joint="lift_angle" />
     <jointpos name="actuator_stroke" joint="actuator_extension" />
+    <jointpos name="actuator_stroke_right" joint="actuator_extension_right" />
+    <jointactuatorfrc name="lift_force_right_N" joint="actuator_extension_right" />
+    <jointvel name="lift_speed_right_mps" joint="actuator_extension_right" />
     <jointactuatorfrc name="lift_force_N" joint="actuator_extension" />
     <jointvel name="lift_speed_mps" joint="actuator_extension" />
     <jointactuatorfrc name="wheel_left_torque_Nm" joint="drive_left_spin" />

@@ -28,8 +28,8 @@ GEOM = dict(
     BACK_FACE_X=BACK_PIVOT_LOCAL[0] + 0.03,   # backrest cushion front face in the seat frame
     KNEE_TARGET_X=0.0,               # the knee is placed on the pivot line
     KNEE_FLEX=-0.17,                 # shins inclined forward 10 deg: standing (+75 deg) leaves the knee 5 deg bent
-    SEAT_PIN_LOCAL=(-0.2176, -0.1515), # actuator pin under the seat cross tube (475 mm sitting, 775 mm at 75 deg)
-    FRAME_PIN=(0.24, 0.09),          # actuator pin on a bracket of the rear-lower cross tube
+    SEAT_PIN_LOCAL=(-0.2176, -0.1515), # single-drive legacy layout; builder supplies geometry for a pair
+    FRAME_PIN=(0.24, 0.09),
 )
 WHEEL_TRACK = 0.525
 FRONT_X, FRONT_Y = 0.70, WHEEL_TRACK / 2   # front axle, same track and wheels as at the rear
@@ -76,7 +76,8 @@ def box_inertia(m, sx, sy, sz):
     return f(m * (sy ** 2 + sz ** 2) / 3, m * (sx ** 2 + sz ** 2) / 3, m * (sx ** 2 + sy ** 2) / 3)
 
 
-def base_tree(frame_mat="steel", motor_mass=1.7, act_mass=4.0):
+def base_tree(frame_mat="steel", motor_mass=1.7, act_mass=4.0, act_count=1, geom=None):
+    G = geom or GEOM
     rho = 7.85 if frame_mat == "steel" else 2.70
     al = frame_mat != "steel"
     root = ET.Element("mujoco", model="V6 ESLEH-like")
@@ -108,12 +109,20 @@ def base_tree(frame_mat="steel", motor_mass=1.7, act_mass=4.0):
     T.add((0.30, -0.21, 0.17), (0.30, 0.21, 0.17), 25)                               # middle low cross tube
     T.add((0.60, -0.214, 0.335), (0.60, 0.214, 0.335), 25)                             # front cross tube (behind the calves)
     # actuator bracket (rear-lower) and front pivot posts (black)
-    pin = GEOM["FRAME_PIN"]
-    T.add((pin[0] - 0.09, -0.06, 0.19), (pin[0] - 0.09, 0.06, 0.19), 25, rgba=BLACK)
-    T.add((0.0, 0.06, 0.22), (pin[0] - 0.09, 0.06, 0.19), 25, rgba=BLACK, mirror=True)
-    for y in (0.035, -0.035):
-        ET.SubElement(fr, "geom", type="box", pos=f(pin[0] - 0.045, y, (pin[1] + 0.19) / 2), size=f(0.05, 0.004, 0.05),
-                      euler=f(0, 0.7, 0), rgba=BLACK, **VIS)
+    pin = G["FRAME_PIN"]
+    if act_count == 2:
+        # Welded supports connect the two clevises to the existing low cross tube.
+        # The old central bracket would leave the side actuators suspended in air.
+        for y in (-0.25, 0.25):
+            T.add((0.30, math.copysign(0.21, y), 0.17), (0.30, y, 0.17), 25, rgba=BLACK)
+            T.add((0.30, y, 0.17), (pin[0] - 0.06, y, pin[1]), 25, rgba=BLACK)
+            T.add((pin[0] - 0.06, y, pin[1]), (pin[0], y, pin[1]), 25, rgba=BLACK)
+    else:
+        T.add((pin[0] - 0.09, -0.06, 0.19), (pin[0] - 0.09, 0.06, 0.19), 25, rgba=BLACK)
+        T.add((0.0, 0.06, 0.22), (pin[0] - 0.09, 0.06, 0.19), 25, rgba=BLACK, mirror=True)
+        for y in (0.035, -0.035):
+            ET.SubElement(fr, "geom", type="box", pos=f(pin[0] - 0.045, y, (pin[1] + 0.19) / 2), size=f(0.05, 0.004, 0.05),
+                          euler=f(0, 0.7, 0), rgba=BLACK, **VIS)
     px, pz = PIVOT
     # vertical pivot posts outside the frame: welded to the lower and upper side tubes by short stubs,
     # carry the seat pivot (top) and the lower parallelogram link pivot (250 mm lower)
@@ -165,7 +174,7 @@ def base_tree(frame_mat="steel", motor_mass=1.7, act_mass=4.0):
     ET.SubElement(seat, "inertial", mass=f"{seat_m}", pos="-0.29 0 -0.06", diaginertia=box_inertia(seat_m, 0.25, 0.25, 0.08))
     S = Tubes(seat)
     S.add((-0.53, 0.235, -0.10), (-0.02, 0.235, -0.10), 25, rgba=BLACK, mirror=True)  # seat side rails
-    for x_ in (-0.51, GEOM["SEAT_PIN_LOCAL"][0], -0.05):
+    for x_ in (-0.51, G["SEAT_PIN_LOCAL"][0], -0.05):
         S.add((x_, -0.235, -0.10), (x_, 0.235, -0.10), 20, rgba=BLACK)
     ET.SubElement(seat, "geom", name="seat_cushion", type="box", pos="-0.29 0 -0.055", size="0.215 0.23 0.035",
                   rgba=DARK, **VIS)
@@ -190,7 +199,7 @@ def base_tree(frame_mat="steel", motor_mass=1.7, act_mass=4.0):
                       rgba=BLACK, **VIS)
         ET.SubElement(seat, "geom", type="cylinder", size="0.03", fromto=f(0, s_ * 0.241, 0, 0, s_ * 0.253, 0),
                       rgba=BLACK, **VIS)
-    ET.SubElement(seat, "site", name="seat_actuator_tip", pos=f(GEOM["SEAT_PIN_LOCAL"][0], 0, GEOM["SEAT_PIN_LOCAL"][1]),
+    ET.SubElement(seat, "site", name="seat_actuator_tip", pos=f(G["SEAT_PIN_LOCAL"][0], 0, G["SEAT_PIN_LOCAL"][1]),
                   size="0.005", rgba="1 0.5 0 1", group="4")
 
     # ---- backrest, armrests, joystick (kept vertical by the parallelogram) ----
