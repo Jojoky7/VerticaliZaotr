@@ -29,11 +29,12 @@ TOP_SPEED_CAP = 1.67              # m/s = 6 km/h, usual limit for power wheelcha
 PEAK_TIME = 5.0                   # s, how long the controller may give its peak current
 PEAK_RECOVERY = 0.25              # peak budget refills at 1/4 of real time below rated torque
 TURN_RATE = 1.6                   # rad/s at full joystick, scaled with level
-OBSTACLE_SPEED = 0.5 / 3.6        # m/s, automatic low-speed traction mode threshold
-OBSTACLE_STALL_TIME = 0.35        # s below 45% of command before traction mode starts
-OBSTACLE_TORQUE_MULT = 2        # short peak for quasi-static obstacle climbing
-OBSTACLE_KV = 1600.0              # strong low-speed velocity/current response
-ROAD_FRICTION, SKID_FRICTION = 0.5, 0.5
+OBSTACLE_STALL_TIME = 0.35        # s below 45% of ramped command before traction mode starts
+OBSTACLE_TORQUE_MULT = 2.0        # short peak for quasi-static obstacle climbing
+OBSTACLE_KV = 6400.0             # low-speed response; motor current limits still apply
+# Longitudinal grip in obstacle mode versus scrub grip for ordinary skid steering.
+# Both were 0.5, so the point-contact tyres kept slipping against the step.
+ROAD_FRICTION, SKID_FRICTION = 0.8, 0.5
 SKID_YAW_GAIN = 180.0            # N*m per rad/s error; represents lateral track/tyre forces
 SKID_YAW_TORQUE = 250.0          # N*m cap for the simplified skid-steer contact model
 ACCEL, DECEL, EBRAKE_DECEL = 0.6, 1.0, 2.5   # m/s^2
@@ -307,6 +308,8 @@ class Sim:
         self._body_vel = np.zeros(6)
         self.drive_geoms = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, f"{w}_contact")
                             for w in ("drive_left", "front_left", "drive_right", "front_right")]
+        self.drive_geom_set = set(self.drive_geoms)
+        self.obstacle_geoms = set(self.tel.ground) - {mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, "floor")}
 
     def set_config(self, mass, height, frame_mat, act, motor=None, motor_params=None, peak=None, chair=None):
         """Rebuild person/frame/actuator/motor and copy the new numbers into the running model (same topology).
@@ -359,6 +362,7 @@ class Sim:
         self.locked = False
         self.fast_target = None
         self.v_cmd = self.w_cmd = 0.0
+        self.peak_budget = [PEAK_TIME, PEAK_TIME]
         self.stall_time = self.recovered_time = 0.0
         self.obstacle_mode = False
         self.history.clear()
@@ -371,12 +375,13 @@ class Sim:
         d.qpos[3:7] = [math.cos(yaw / 2), 0, 0, math.sin(yaw / 2)]
         d.qvel[:] = 0
         self.v_cmd = self.w_cmd = 0.0
+        self.stall_time = self.recovered_time = 0.0
+        self.obstacle_mode = False
         mujoco.mj_forward(self.m, d)
 
     # control ---------------------------------------------------------------------------
     def apply_controls(self, dt):
         m, d, c = self.m, self.d, self.cmd
-        t = self.state or {}
         # dead-man: if the panel stops sending, centre the joystick and stop the seat
         if time.time() - self.last_input > 0.7:
             c["jx"] = c["jy"] = 0.0; c["lift"] = 0
@@ -386,7 +391,11 @@ class Sim:
         m.opt.gravity[:] = 9.80665 * gdir
         seat = math.degrees(d.qpos[self.tel.qadr["lift_angle"]])
         stroke = d.qpos[self.tel.qadr["actuator_extension"]]
-        speed = abs(t.get("speed", 0.0))
+        # Control uses the current physics step, independent of video frame rate.
+        R = d.xmat[self.frame].reshape(3, 3)
+        mujoco.mj_objectVelocity(m, d, mujoco.mjtObj.mjOBJ_BODY, self.frame, self._body_vel, 0)
+        forward_speed = float(np.dot(self._body_vel[3:], R[:, 0]))
+        speed = abs(forward_speed)
         msg = ""
         # --- driving ---
         top = min(self.mp["v_rated"], TOP_SPEED_CAP)
@@ -403,23 +412,38 @@ class Sim:
         acc = EBRAKE_DECEL if (c["brake"] or c["estop"]) else (ACCEL if abs(v_t) > abs(self.v_cmd) else DECEL)
         self.v_cmd += float(np.clip(v_t - self.v_cmd, -acc * dt, acc * dt))
         self.w_cmd += float(np.clip(w_t - self.w_cmd, -3 * dt, 3 * dt))
-        # Automatic obstacle mode: only for straight, deliberately slow travel.  It
-        # detects a stall, then supplies short-term current and longitudinal grip.
-        low_straight = (0.03 <= abs(v_t) <= OBSTACLE_SPEED * 1.05 and abs(w_t) < 0.08 and not hard_stop)
-        stalled = low_straight and speed < max(0.025, 0.45 * abs(v_t))
+        # Detect an obstruction at any selected speed. Compare with the acceleration
+        # ramp, so ordinary starts on level ground do not request peak current.
+        straight = (v_t != 0 and abs(w_t) < 0.08 and not hard_stop)
+        changing_direction = self.v_cmd * v_t <= 0
+        progress_speed = math.copysign(1.0, v_t) * forward_speed
+        stalled = (straight and not changing_direction and abs(self.v_cmd) >= 0.015
+                   and progress_speed < 0.45 * abs(self.v_cmd))
         self.stall_time = self.stall_time + dt if stalled else max(0.0, self.stall_time - 2 * dt)
         if self.stall_time >= OBSTACLE_STALL_TIME:
             self.obstacle_mode = True
-        if self.obstacle_mode and low_straight and speed > 0.8 * abs(v_t):
+        touching_obstacle = self.obstacle_mode and any(
+            (contact.geom1 in self.drive_geom_set and contact.geom2 in self.obstacle_geoms)
+            or (contact.geom2 in self.drive_geom_set and contact.geom1 in self.obstacle_geoms)
+            for contact in d.contact)
+        # Retain grip until the loaded axle actually leaves the obstacle. A brief
+        # speed recovery on the corner used to drop grip halfway over the step.
+        if self.obstacle_mode and straight and not touching_obstacle and progress_speed > 0.8 * abs(v_t):
             self.recovered_time += dt
         else:
             self.recovered_time = 0.0
-        if not low_straight or self.recovered_time > 0.5:
+        if not straight or changing_direction or self.recovered_time > 0.5:
             self.obstacle_mode = False
             self.stall_time = 0.0
         tyre_mu = ROAD_FRICTION if self.obstacle_mode else SKID_FRICTION
         m.geom_friction[self.drive_geoms, 0] = tyre_mu
-        drive_kv = OBSTACLE_KV if self.obstacle_mode else 400.0
+        drive_kv = 400.0
+        if self.obstacle_mode:
+            # At tiny joystick inputs a fixed gain cannot deliver the allowed
+            # current, even with stationary wheels. Reach the same torque reserve
+            # at every crawl speed; the force ranges below still enforce its cap.
+            peak_force = self.mp["wheel_torque"] * max(self.peak, OBSTACLE_TORQUE_MULT) / (2 * bh.WHEEL_R)
+            drive_kv = max(OBSTACLE_KV, 4 * peak_force / max(abs(self.v_cmd), 0.015))
         for acts in self.drive_acts:
             for a_id in acts:
                 m.actuator_gainprm[a_id, 0] = drive_kv
@@ -508,8 +532,6 @@ class Sim:
         # moment represents the distributed lateral forces of tyres/tracks while the
         # visible wheel actuators still provide longitudinal drive and consume power.
         d.xfrc_applied[self.frame] = 0
-        R = d.xmat[self.frame].reshape(3, 3)
-        mujoco.mj_objectVelocity(m, d, mujoco.mjtObj.mjOBJ_BODY, self.frame, self._body_vel, 0)
         yaw_rate = float(np.dot(self._body_vel[:3], R[:, 2]))
         yaw_torque = float(np.clip(SKID_YAW_GAIN * (self.w_cmd - yaw_rate),
                                    -SKID_YAW_TORQUE, SKID_YAW_TORQUE))
@@ -676,10 +698,24 @@ class Sim:
 class Video:
     """Renders the scene off-screen and serves it as an MJPEG stream into the control panel."""
 
+    MAX_SIZE = (3840, 2400)
+
+    @classmethod
+    def fit_size(cls, width, height):
+        width, height = float(width), float(height)
+        if not all(math.isfinite(v) and v >= 2 for v in (width, height)):
+            raise ValueError("Video size must contain two finite dimensions >= 2")
+        scale = min(1.0, cls.MAX_SIZE[0] / width, cls.MAX_SIZE[1] / height)
+        return tuple(max(2, min(limit, 2 * math.ceil(v * scale / 2)))
+                     for v, limit in zip((width, height), cls.MAX_SIZE))
+
     def __init__(self, sim, width, height):
         self.sim = sim
-        sim.m.vis.global_.offwidth = max(sim.m.vis.global_.offwidth, width)
-        sim.m.vis.global_.offheight = max(sim.m.vis.global_.offheight, height)
+        width, height = self.fit_size(width, height)
+        self.requested_size = (width, height)
+        self._version = sim.model_version
+        sim.m.vis.global_.offwidth = width
+        sim.m.vis.global_.offheight = height
         self.renderer = mujoco.Renderer(sim.m, height, width)
         self.opt = mujoco.MjvOption()
         self.cam = mujoco.MjvCamera()
@@ -700,6 +736,9 @@ class Video:
             self.ctype = "image/png"
 
     def control(self, c):
+        if "size" in c:
+            # HTTP workers queue a request. OpenGL resources belong to render().
+            self.requested_size = self.fit_size(*c["size"])
         cam = self.cam
         if "orbit" in c:
             cam.azimuth -= 0.4 * float(c["orbit"][0])
@@ -730,6 +769,7 @@ class Video:
 
     def state(self):
         return dict(human=bool(self.opt.geomgroup[2]), com=self.show_com,
+                    size=list(self.requested_size), max_size=list(self.MAX_SIZE),
                     forces=bool(self.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTFORCE]))
 
     def _yaw(self):
@@ -738,14 +778,16 @@ class Video:
 
     def render(self):
         sim = self.sim
-        if getattr(self, "_version", 0) != sim.model_version:
-            sim.m.vis.global_.offwidth = max(sim.m.vis.global_.offwidth, self.renderer.width)
-            sim.m.vis.global_.offheight = max(sim.m.vis.global_.offheight, self.renderer.height)
-            w, h = self.renderer.width, self.renderer.height
+        model_changed = self._version != sim.model_version
+        if model_changed or (self.renderer.width, self.renderer.height) != self.requested_size:
+            w, h = self.requested_size
             self.renderer.close()
+            sim.m.vis.global_.offwidth = w
+            sim.m.vis.global_.offheight = h
             self.renderer = mujoco.Renderer(sim.m, h, w)
             self._version = sim.model_version
-            self.lookat = None
+            if model_changed:
+                self.lookat = None
         d = sim.d
         R = d.xmat[sim.frame].reshape(3, 3)
         target = d.xpos[sim.frame] + R @ np.array([0.35, 0, 0]) + np.array([0, 0, 0.55])
@@ -758,7 +800,7 @@ class Video:
         buf = io.BytesIO()
         if self.pil:
             from PIL import Image
-            Image.fromarray(img).save(buf, "JPEG", quality=82)
+            Image.fromarray(img).save(buf, "JPEG", quality=94, subsampling=0)
         else:
             buf.write(_png(img))
         with self.cond:
@@ -861,9 +903,13 @@ def make_handler(sim, video=None):
             elif self.path.startswith("/api/event"):
                 sim.event(data)
             elif self.path.startswith("/api/cam") and video is not None:
-                with sim.lock:
-                    video.control(data)
-                self._send(json.dumps(video.state()).encode()); return
+                try:
+                    with sim.lock:
+                        video.control(data)
+                        state = video.state()
+                except (TypeError, ValueError):
+                    self.send_error(400, "Invalid camera parameters"); return
+                self._send(json.dumps(state).encode()); return
             self._send(b"{}")
     return H
 
@@ -884,7 +930,7 @@ def main():
     ap.add_argument("--height", type=float, default=1.75)
     ap.add_argument("--no-browser", action="store_true")
     ap.add_argument("--viewer", action="store_true", help="separate MuJoCo window instead of video in the page (mjpython)")
-    ap.add_argument("--video", default="1120x700", help="video size in the page, WxH")
+    ap.add_argument("--video", default="1120x700", help="initial video size, WxH; browser adapts to its viewport")
     ap.add_argument("--headless", type=float, default=0, help="run N seconds without a window (test)")
     a = ap.parse_args()
 
