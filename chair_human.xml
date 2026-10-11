@@ -198,6 +198,24 @@
         <geom name="drive_left_contact" type="sphere" size="0.16" rgba="0 0 0 0" contype="1" conaffinity="2" group="3" solref="0.06 1" solimp="0.7 0.9 0.005 0.5 2" priority="1" friction="0.5 0.005 0.0001" />
         <geom type="cylinder" size="0.105 0.0455" quat="0.7071067812 0.7071067812 0 0" rgba="0.72 0.74 0.77 1" contype="0" conaffinity="0" group="1" />
         <geom type="cylinder" size="0.16 0.0425" quat="0.7071067812 0.7071067812 0 0" rgba="0.16 0.16 0.17 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_0" type="box" pos="0 0 0.159" size="0.006 0.0425 0.001" quat="1 0 0 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_1" type="box" pos="0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_2" type="box" pos="0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_3" type="box" pos="0.159 0 9.73594205e-18" size="0.006 0.0425 0.001" quat="0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_4" type="box" pos="0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_5" type="box" pos="0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_6" type="box" pos="1.94718841e-17 0 -0.159" size="0.006 0.0425 0.001" quat="6.123234e-17 0 1 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_7" type="box" pos="-0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="-0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_8" type="box" pos="-0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="-0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_9" type="box" pos="-0.159 0 -2.92078262e-17" size="0.006 0.0425 0.001" quat="-0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_10" type="box" pos="-0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="-0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_tread_11" type="box" pos="-0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="-0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_rotation_-1_0" type="capsule" fromto="0.00738800517 -0.0455 0.0238834122 0.0289609803 -0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_rotation_-1_1" type="capsule" fromto="0.0168865795 -0.0455 -0.0184348429 0.0661953917 -0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_rotation_-1_2" type="capsule" fromto="-0.0244382529 -0.0455 -0.00526989499 -0.0957979515 -0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_rotation_1_0" type="capsule" fromto="0.00738800517 0.0455 0.0238834122 0.0289609803 0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_rotation_1_1" type="capsule" fromto="0.0168865795 0.0455 -0.0184348429 0.0661953917 0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_left_rotation_1_2" type="capsule" fromto="-0.0244382529 0.0455 -0.00526989499 -0.0957979515 0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
         <site name="drive_left_site" type="sphere" size="0.19" rgba="1 0 0 0.1" group="4" />
       </body>
       <body name="drive_right" pos="0 -0.2625 0.16">
@@ -206,6 +224,24 @@
         <geom name="drive_right_contact" type="sphere" size="0.16" rgba="0 0 0 0" contype="1" conaffinity="2" group="3" solref="0.06 1" solimp="0.7 0.9 0.005 0.5 2" priority="1" friction="0.5 0.005 0.0001" />
         <geom type="cylinder" size="0.105 0.0455" quat="0.7071067812 0.7071067812 0 0" rgba="0.72 0.74 0.77 1" contype="0" conaffinity="0" group="1" />
         <geom type="cylinder" size="0.16 0.0425" quat="0.7071067812 0.7071067812 0 0" rgba="0.16 0.16 0.17 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_0" type="box" pos="0 0 0.159" size="0.006 0.0425 0.001" quat="1 0 0 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_1" type="box" pos="0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_2" type="box" pos="0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_3" type="box" pos="0.159 0 9.73594205e-18" size="0.006 0.0425 0.001" quat="0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_4" type="box" pos="0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_5" type="box" pos="0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_6" type="box" pos="1.94718841e-17 0 -0.159" size="0.006 0.0425 0.001" quat="6.123234e-17 0 1 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_7" type="box" pos="-0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="-0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_8" type="box" pos="-0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="-0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_9" type="box" pos="-0.159 0 -2.92078262e-17" size="0.006 0.0425 0.001" quat="-0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_10" type="box" pos="-0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="-0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_tread_11" type="box" pos="-0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="-0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_rotation_-1_0" type="capsule" fromto="0.00738800517 -0.0455 0.0238834122 0.0289609803 -0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_rotation_-1_1" type="capsule" fromto="0.0168865795 -0.0455 -0.0184348429 0.0661953917 -0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_rotation_-1_2" type="capsule" fromto="-0.0244382529 -0.0455 -0.00526989499 -0.0957979515 -0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_rotation_1_0" type="capsule" fromto="0.00738800517 0.0455 0.0238834122 0.0289609803 0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_rotation_1_1" type="capsule" fromto="0.0168865795 0.0455 -0.0184348429 0.0661953917 0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+        <geom name="drive_right_rotation_1_2" type="capsule" fromto="-0.0244382529 0.0455 -0.00526989499 -0.0957979515 0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
         <site name="drive_right_site" type="sphere" size="0.19" rgba="1 0 0 0.1" group="4" />
       </body>
       <geom name="foot_support" type="box" pos="0.834333001 0 0.148455758" size="0.1715 0.2 0.008" rgba="0 0 0 0" contype="0" conaffinity="8" group="3" friction="0.5 0.005 0.0001" />
@@ -231,6 +267,24 @@
           <geom name="front_left_contact" type="sphere" size="0.16" rgba="0 0 0 0" contype="1" conaffinity="2" group="3" solref="0.06 1" solimp="0.7 0.9 0.005 0.5 2" priority="1" friction="0.5 0.005 0.0001" />
           <geom type="cylinder" size="0.105 0.0455" quat="0.7071067812 0.7071067812 0 0" rgba="0.72 0.74 0.77 1" contype="0" conaffinity="0" group="1" />
           <geom type="cylinder" size="0.16 0.0425" quat="0.7071067812 0.7071067812 0 0" rgba="0.16 0.16 0.17 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_0" type="box" pos="0 0 0.159" size="0.006 0.0425 0.001" quat="1 0 0 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_1" type="box" pos="0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_2" type="box" pos="0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_3" type="box" pos="0.159 0 9.73594205e-18" size="0.006 0.0425 0.001" quat="0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_4" type="box" pos="0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_5" type="box" pos="0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_6" type="box" pos="1.94718841e-17 0 -0.159" size="0.006 0.0425 0.001" quat="6.123234e-17 0 1 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_7" type="box" pos="-0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="-0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_8" type="box" pos="-0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="-0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_9" type="box" pos="-0.159 0 -2.92078262e-17" size="0.006 0.0425 0.001" quat="-0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_10" type="box" pos="-0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="-0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_tread_11" type="box" pos="-0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="-0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_rotation_-1_0" type="capsule" fromto="0.00738800517 -0.0455 0.0238834122 0.0289609803 -0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_rotation_-1_1" type="capsule" fromto="0.0168865795 -0.0455 -0.0184348429 0.0661953917 -0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_rotation_-1_2" type="capsule" fromto="-0.0244382529 -0.0455 -0.00526989499 -0.0957979515 -0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_rotation_1_0" type="capsule" fromto="0.00738800517 0.0455 0.0238834122 0.0289609803 0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_rotation_1_1" type="capsule" fromto="0.0168865795 0.0455 -0.0184348429 0.0661953917 0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_left_rotation_1_2" type="capsule" fromto="-0.0244382529 0.0455 -0.00526989499 -0.0957979515 0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
           <site name="front_left_site" type="sphere" size="0.19" rgba="1 0 0 0.1" group="4" />
         </body>
       </body>
@@ -245,6 +299,24 @@
           <geom name="front_right_contact" type="sphere" size="0.16" rgba="0 0 0 0" contype="1" conaffinity="2" group="3" solref="0.06 1" solimp="0.7 0.9 0.005 0.5 2" priority="1" friction="0.5 0.005 0.0001" />
           <geom type="cylinder" size="0.105 0.0455" quat="0.7071067812 0.7071067812 0 0" rgba="0.72 0.74 0.77 1" contype="0" conaffinity="0" group="1" />
           <geom type="cylinder" size="0.16 0.0425" quat="0.7071067812 0.7071067812 0 0" rgba="0.16 0.16 0.17 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_0" type="box" pos="0 0 0.159" size="0.006 0.0425 0.001" quat="1 0 0 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_1" type="box" pos="0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_2" type="box" pos="0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_3" type="box" pos="0.159 0 9.73594205e-18" size="0.006 0.0425 0.001" quat="0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_4" type="box" pos="0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_5" type="box" pos="0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_6" type="box" pos="1.94718841e-17 0 -0.159" size="0.006 0.0425 0.001" quat="6.123234e-17 0 1 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_7" type="box" pos="-0.0795 0 -0.137698039" size="0.006 0.0425 0.001" quat="-0.258819045 0 0.965925826 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_8" type="box" pos="-0.137698039 0 -0.0795" size="0.006 0.0425 0.001" quat="-0.5 0 0.866025404 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_9" type="box" pos="-0.159 0 -2.92078262e-17" size="0.006 0.0425 0.001" quat="-0.707106781 0 0.707106781 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_10" type="box" pos="-0.137698039 0 0.0795" size="0.006 0.0425 0.001" quat="-0.866025404 0 0.5 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_tread_11" type="box" pos="-0.0795 0 0.137698039" size="0.006 0.0425 0.001" quat="-0.965925826 0 0.258819045 0" rgba="0.32 0.33 0.35 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_rotation_-1_0" type="capsule" fromto="0.00738800517 -0.0455 0.0238834122 0.0289609803 -0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_rotation_-1_1" type="capsule" fromto="0.0168865795 -0.0455 -0.0184348429 0.0661953917 -0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_rotation_-1_2" type="capsule" fromto="-0.0244382529 -0.0455 -0.00526989499 -0.0957979515 -0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_rotation_1_0" type="capsule" fromto="0.00738800517 0.0455 0.0238834122 0.0289609803 0.0455 0.0936229759" size="0.002" rgba="0.1 0.45 0.85 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_rotation_1_1" type="capsule" fromto="0.0168865795 0.0455 -0.0184348429 0.0661953917 0.0455 -0.0722645841" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
+          <geom name="front_right_rotation_1_2" type="capsule" fromto="-0.0244382529 0.0455 -0.00526989499 -0.0957979515 0.0455 -0.0206579883" size="0.002" rgba="0.13 0.15 0.18 1" contype="0" conaffinity="0" group="1" mass="0" />
           <site name="front_right_site" type="sphere" size="0.19" rgba="1 0 0 0.1" group="4" />
         </body>
       </body>

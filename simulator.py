@@ -315,7 +315,7 @@ class Sim:
         self.frame = self.tel.frame
         self.lift_act = m.actuator_actadr[self.a_lift]
         self.lift_gear = float(m.actuator_gear[self.a_lift, 0])
-        self.parts = Parts(m, self.frame_mat, bh.ACTUATORS[self.act])
+        self.parts = Parts(m, self.frame_mat, bh.ACTUATORS[self.act], self.mp)
         self.selected_part = "chair"
         self.seat_pivot = m.body("seat").pos.copy()
         self._body_vel = np.zeros(6)
@@ -807,7 +807,7 @@ class Video:
                     size=list(self.requested_size), max_size=list(self.MAX_SIZE),
                     forces=bool(self.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTFORCE]))
 
-    def pick(self, x, y):
+    def pick(self, x, y, select=True):
         if not all(math.isfinite(v) and 0 <= v <= 1 for v in (x, y)):
             raise ValueError("Invalid selection coordinates")
         if self._version != self.sim.model_version:
@@ -818,7 +818,12 @@ class Video:
                           self.renderer.width / self.renderer.height, x, 1-y,
                           self.renderer.scene, point, geom, flex, skin)
         key = self.sim.parts.geom_part.get(int(geom[0]))
-        self.sim.selected_part = key
+        # Empty scene/floor clicks dismiss the selected assembly. Hover only reads.
+        if key == "track_floor":
+            key = None
+        if select:
+            key = None if key == self.sim.selected_part else key
+            self.sim.selected_part = key
         return self.sim.parts.inspect(self.sim.d, key) if key else None
 
     def _yaw(self):
@@ -956,14 +961,17 @@ def make_handler(sim, video=None):
             if self.path.startswith("/api/inspect"):
                 try:
                     with sim.lock:
-                        if "id" in data:
+                        if data.get("clear") is True:
+                            sim.selected_part = None
+                            selected = None
+                        elif "id" in data:
                             key = data["id"]
                             if key not in sim.parts.groups:
                                 raise ValueError("Unknown part")
                             sim.selected_part = key
                             selected = sim.parts.inspect(sim.d, key)
                         elif video is not None:
-                            selected = video.pick(*map(float, data["point"]))
+                            selected = video.pick(*map(float, data["point"]), select=not data.get("preview", False))
                         else:
                             raise ValueError("Video unavailable")
                     self._send(json.dumps(selected).encode()); return

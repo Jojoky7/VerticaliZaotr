@@ -211,6 +211,8 @@ MOTORS = {
 }
 DEFAULT_MOTOR = "N150"
 MOTOR_FIELDS = ("T", "n_rated", "n0", "ratio", "eta", "I0", "I", "mass")
+MOTOR_SOURCE_A = "https://www.dcmotorfactory.com/product/brushless-reduction-motor-for-wheelchairs/brushless-wheelchair-reduction-motor-reduced-version.html"
+MOTOR_SOURCE_F = "https://www.dcmotorfactory.com/product/brushless-reduction-motor-for-wheelchairs/24v-dc-200w-brushless-electric-wheelchair-reduction-motor.html"
 
 
 def motor_profile(key=DEFAULT_MOTOR, params=None):
@@ -226,6 +228,10 @@ def motor_profile(key=DEFAULT_MOTOR, params=None):
     m["w_rated"], m["w0"] = w(m["n_rated"]), w(m["n0"])
     m["v_rated"], m["v0"] = m["w_rated"] * WHEEL_R, m["w0"] * WHEEL_R
     m["kt"] = m["T"] / max(m["I"] - m["I0"], 0.1)              # N*m per A on the motor shaft
+    m["voltage"] = 24
+    m["power_w"] = m["T"] * m["n_rated"] * 2 * math.pi / 60 if key == "custom" else (150 if key in ("N150", "N1502") else 200)
+    m["source"] = None if key == "custom" else MOTOR_SOURCE_F if key == "N200F" else MOTOR_SOURCE_A
+    m["catalog_ratio"] = None if key == "custom" else 16.75
     m["key"] = key
     return m
 
@@ -361,6 +367,7 @@ def apply_hardware(root, frame, seat, act=DEFAULT_ACTUATOR, motor=None, G=None, 
         body = root.find(f".//body[@name='{w}']")
         ET.SubElement(body, "geom", type="cylinder", size=f(r, hw_), quat=g.get("quat"), rgba=g.get("rgba"),
                       contype="0", conaffinity="0", group="1", mass="0")
+        wheel_rotation_marks(body, r, hw_)
         g.attrib.pop("quat", None)
         g.set("type", "sphere"); g.set("size", f(r)); g.set("rgba", "0 0 0 0"); g.set("group", "3")
 
@@ -374,6 +381,28 @@ def apply_hardware(root, frame, seat, act=DEFAULT_ACTUATOR, motor=None, G=None, 
             g.set("priority", "1")
             g.set("friction", "0.5 0.005 0.0001")
     # Auxiliary rear wheels removed from the ESLEH model.
+
+
+def wheel_rotation_marks(body, radius, half_width):
+    """Visible tread and asymmetric hub marks rotate with the wheel joint.
+
+    Explicit zero mass and no contact keep the existing tyre physics unchanged.
+    These are visual markers, not a manufactured tread specification.
+    """
+    visual = dict(contype="0", conaffinity="0", group="1", mass="0")
+    for i in range(12):
+        angle = i * math.tau / 12
+        ET.SubElement(body, "geom", name=f"{body.get('name')}_tread_{i}", type="box",
+                      pos=f((radius - .001) * math.sin(angle), 0, (radius - .001) * math.cos(angle)),
+                      size=f(.006, half_width, .001), quat=f(math.cos(angle/2), 0, math.sin(angle/2), 0),
+                      rgba="0.32 0.33 0.35 1", **visual)
+    for face in (-1, 1):
+        for i, angle in enumerate((.3, 2.4, 4.5)):
+            y = face * (half_width + .003)
+            ET.SubElement(body, "geom", name=f"{body.get('name')}_rotation_{face}_{i}", type="capsule",
+                          fromto=f(.025*math.sin(angle), y, .025*math.cos(angle),
+                                   .098*math.sin(angle), y, .098*math.cos(angle)), size="0.002",
+                          rgba="0.1 0.45 0.85 1" if i == 0 else "0.13 0.15 0.18 1", **visual)
 
 
 def parallel_actuators(root, frame, seat, act):
