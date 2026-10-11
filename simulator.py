@@ -13,6 +13,7 @@ import numpy as np
 import mujoco
 
 import build_human as bh
+from parts import Parts
 
 HERE = pathlib.Path(__file__).resolve().parent
 MODEL = HERE / "chair_human.xml"
@@ -21,8 +22,6 @@ PORT = 8765
 WHEELS = ["drive_left", "drive_right", "front_left", "front_right"]
 TRACK = 0.525                     # m, drive wheel track
 BATTERY_V, BATTERY_AH = 25.6, 20.0
-ETA_DRIVE = 0.8
-MOTOR_IDLE_A = 1.5                # A per motor when turning (datasheet no-load current)
 LIFT_IDLE_A, ETA_LIFT = 1.25, 0.30
 LEVEL_FRACTIONS = [0.25, 0.42, 0.6, 0.8, 1.0]  # speed levels 1..5 as a share of the top speed
 TOP_SPEED_CAP = 1.67              # m/s = 6 km/h, usual limit for power wheelchairs
@@ -56,6 +55,11 @@ class Telemetry:
                     ["drive_left_spin", "drive_right_spin", "front_left_spin", "front_right_spin",
                      "actuator_extension"]}
         self.qadr = {n: m.jnt_qposadr[jid(n)] for n in ["lift_angle", "actuator_extension"]}
+        self.lift_joints = ["actuator_extension"]
+        if jid("actuator_extension_right") >= 0:
+            self.lift_joints.append("actuator_extension_right")
+        for name in self.lift_joints:
+            self.dof[name], self.qadr[name] = int(m.jnt_dofadr[jid(name)]), int(m.jnt_qposadr[jid(name)])
         self.hip_dof = m.jnt_dofadr[jid("hip")] if jid("hip") >= 0 else None
         self.wheel_geom = {}
         for g in range(m.ngeom):
@@ -95,7 +99,13 @@ class Telemetry:
         t["yaw_rate"] = math.degrees(v6[2]) if self.free else 0.0
         t["pitch"] = math.degrees(math.asin(max(-1, min(1, -R[2, 0]))))
         t["roll"] = math.degrees(math.atan2(R[2, 1], R[2, 2]))
-        pm = 0.0
+        t["wheels"] = {}
+        for wheel in WHEELS:
+            dof = self.dof[f"{wheel}_spin"]
+            omega = float(d.qvel[dof])
+            torque = float(d.qfrc_actuator[dof])
+            t["wheels"][wheel] = dict(rpm=omega * 60 / (2 * math.pi),
+                                      torque=torque, power=torque * omega)
         for side in ("left", "right"):
             rear_dof = self.dof[f"drive_{side}_spin"]
             front_dof = self.dof[f"front_{side}_spin"]
@@ -107,19 +117,17 @@ class Telemetry:
             t[f"torque_{side}"] = tau + tau_f
             t[f"power_{side}"] = tau * w + tau_f * wf
         t["seat_angle"] = math.degrees(d.qpos[self.qadr["lift_angle"]])
-        t["stroke"] = float(d.qpos[self.qadr["actuator_extension"]])
-        t["stroke_speed"] = float(d.qvel[self.dof["actuator_extension"]])
-        t["lift_force"] = float(d.qfrc_actuator[self.dof["actuator_extension"]])
-        t["lift_power"] = t["lift_force"] * t["stroke_speed"]
-        # battery current estimate
-        amps = 0.0
-        for side in ("left", "right"):
-            if abs(t[f"rpm_{side}"]) > 1:
-                amps += MOTOR_IDLE_A
-            amps += max(t[f"power_{side}"], 0) / ETA_DRIVE / BATTERY_V
-        if abs(t["stroke_speed"]) > 1e-4:
-            amps += max(LIFT_IDLE_A, max(t["lift_power"], 0) / ETA_LIFT / BATTERY_V)
-        t["battery_A"] = amps
+        t["lifts"] = []
+        for joint in self.lift_joints:
+            force = float(d.qfrc_actuator[self.dof[joint]])
+            velocity = float(d.qvel[self.dof[joint]])
+            t["lifts"].append(dict(force=force, speed=velocity,
+                                   stroke=float(d.qpos[self.qadr[joint]]), power=force * velocity))
+        t["stroke"] = sum(a["stroke"] for a in t["lifts"]) / len(t["lifts"])
+        t["stroke_speed"] = sum(a["speed"] for a in t["lifts"]) / len(t["lifts"])
+        t["lift_force"] = sum(a["force"] for a in t["lifts"])
+        t["lift_power"] = sum(a["power"] for a in t["lifts"])
+        t["lift_skew_mm"] = (max(a["stroke"] for a in t["lifts"]) - min(a["stroke"] for a in t["lifts"])) * 1000
         # contact loads
         gravity_dir = m.opt.gravity / np.linalg.norm(m.opt.gravity)
         loads = {w: 0.0 for w in WHEELS}
@@ -287,6 +295,10 @@ class Sim:
         m = self.m
         A = lambda n: mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_ACTUATOR, n)
         self.a_lift = A("lift_actuator")
+        self.lift_acts = [self.a_lift]
+        if A("lift_actuator_right") >= 0:
+            self.lift_acts.append(A("lift_actuator_right"))
+        self.lift_states = [int(m.actuator_actadr[a]) for a in self.lift_acts]
         self.drive_acts = [[A("drive_left"), A("drive_front_left")],
                            [A("drive_right"), A("drive_front_right")]]
         self.brake_acts = [A(n) for n in ("brake_left", "brake_front_left",
@@ -303,7 +315,8 @@ class Sim:
         self.frame = self.tel.frame
         self.lift_act = m.actuator_actadr[self.a_lift]
         self.lift_gear = float(m.actuator_gear[self.a_lift, 0])
-        self.lift_frange = m.actuator_forcerange[self.a_lift].copy()
+        self.parts = Parts(m, self.frame_mat, bh.ACTUATORS[self.act])
+        self.selected_part = "chair"
         self.seat_pivot = m.body("seat").pos.copy()
         self._body_vel = np.zeros(6)
         self.drive_geoms = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, f"{w}_contact")
@@ -312,10 +325,8 @@ class Sim:
         self.obstacle_geoms = set(self.tel.ground) - {mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_GEOM, "floor")}
 
     def set_config(self, mass, height, frame_mat, act, motor=None, motor_params=None, peak=None, chair=None):
-        """Rebuild person/frame/actuator/motor and copy the new numbers into the running model (same topology).
-        A different chair design has a different layout: then the model is replaced."""
+        """Rebuild physics and inertials; topology can change with actuator count."""
         self.mass, self.height, self.frame_mat, self.act = mass, height, frame_mat, act
-        new_chair = chair and chair != self.chair
         if chair:
             self.chair = chair
         if motor:
@@ -328,24 +339,9 @@ class Sim:
         self.peak_budget = [PEAK_TIME, PEAK_TIME]
         self._write_model()
         m2 = mujoco.MjModel.from_xml_path(str(MODEL))
-        if new_chair:
-            self.m, self.d = m2, mujoco.MjData(m2)
-            self.model_version += 1
-            self.tel.reload(self.m)
-            self._ids()
-            self.reset()
-            self.msg = f"Конструкция: {bh.CHAIRS[self.chair]}"
-            return
-        for name in dir(m2):
-            if name.startswith("_"):
-                continue
-            try:
-                src, dst = getattr(m2, name), getattr(self.m, name)
-            except Exception:
-                continue
-            if isinstance(src, np.ndarray) and isinstance(dst, np.ndarray) and src.shape == dst.shape and dst.flags.writeable:
-                dst[...] = src
-        assert mujoco.mj_name2id(self.m, mujoco.mjtObj.mjOBJ_BODY, "frame") >= 0, "model layout changed"
+        # Changes in the number of actuators alter joints, constraints and state sizes.
+        self.m, self.d = m2, mujoco.MjData(m2)
+        self.model_version += 1
         self.tel.reload(self.m)
         self._ids()
         self.reset()
@@ -361,6 +357,8 @@ class Sim:
         self.settle_until = 0.5
         self.locked = False
         self.fast_target = None
+        self.lift_velocity_cmd = 0.0
+        self.lift_running = False
         self.v_cmd = self.w_cmd = 0.0
         self.peak_budget = [PEAK_TIME, PEAK_TIME]
         self.stall_time = self.recovered_time = 0.0
@@ -490,34 +488,55 @@ class Sim:
                 m.eq_data[eq, 0] = d.qpos[q]
                 d.eq_active[eq] = 1 if em_brake else 0
             self.locked = em_brake
-        # --- seat lift (with the actuator's built-in limit switches) ---
-        lift = int(c["lift"])
-        if lift and (speed > 0.05 or not neutral):
-            lift = 0; msg = "Подъём только на стоящем кресле"
-        if (lift > 0 and stroke >= bh.ACT_STROKE - 0.0002) or (lift < 0 and stroke <= 0.0002):
-            lift = 0
-        if c["estop"]:
-            lift = 0
+        # One position reference controls both real kinematic chains. It models
+        # a feedback controller; each actuator keeps its own force limit.
         A = bh.ACTUATORS[self.act]
-        F = abs(d.qfrc_actuator[self.tel.dof["actuator_extension"]])
+        requested = int(c["lift"])
+        allowed = speed <= 0.05 and neutral and not c["estop"]
+        if not allowed and (requested or self.fast_target is not None):
+            msg = "Подъём только на стоящем кресле" if not c["estop"] else msg
+            self.fast_target = None
+        lift = requested if allowed else 0
         if lift:
             self.fast_target = None
-        if self.fast_target is not None and not c["estop"]:
-            # quick seat slider: move the actuator target fast (not the real actuator speed)
-            a = self.lift_act
-            goal = self.fast_target * self.lift_gear
-            step = bh.FAST_SEAT_SPEED * self.lift_gear * dt
-            d.act[a] += float(np.clip(goal - d.act[a], -step, step))
-            m.actuator_forcerange[self.a_lift] = self.lift_frange * 20
-            d.ctrl[self.a_lift] = 0.0
-            if abs(goal - d.act[a]) < 1e-9 and abs(stroke - self.fast_target) < 0.002:
+        target = float(d.act[self.lift_act] / self.lift_gear)
+        if self.fast_target is not None:
+            error = self.fast_target - target
+            lift = 1 if error > 1e-7 else -1 if error < -1e-7 else 0
+            if not lift:
                 self.fast_target = None
-                self.settle_until = d.time + 1.0
-            msg = "Быстрое перемещение сиденья (не реальная скорость привода)"
+            else:
+                msg = "Сиденье движется к выбранному углу"
+        endpoint = None
+        if lift > 0 and stroke >= bh.ACT_STROKE - 0.0002:
+            endpoint = bh.ACT_STROKE
+        elif lift < 0 and stroke <= 0.0002:
+            endpoint = 0.0
+        if endpoint is not None:
+            # Snap the reference, rather than leaving a random sub-millimetre
+            # preload after every cycle at the lower limit.
+            target = endpoint
+            self.fast_target = None
+            lift = 0
+        forces = [abs(float(d.qfrc_actuator[self.tel.dof[j]])) for j in self.tel.lift_joints]
+        force_limit = A["unit_force"] if lift >= 0 else A["unit_retract_force"]
+        desired_velocity = lift * A["speed"] * max(0.2, 1 - bh.LOAD_SPEED_DROP * max(forces) / force_limit)
+        ramp = 0.08 * dt  # modest shaft acceleration avoids a force spike on startup
+        if lift:
+            self.lift_velocity_cmd += float(np.clip(desired_velocity - self.lift_velocity_cmd, -ramp, ramp))
         else:
-            m.actuator_forcerange[self.a_lift] = self.lift_frange
-            # real actuator: speed drops with load (~30 % at rated force)
-            d.ctrl[self.a_lift] = float(lift) * max(0.2, 1 - bh.LOAD_SPEED_DROP * min(F / A["force"], 1.2))
+            self.lift_velocity_cmd = 0.0
+        if self.fast_target is not None:
+            if abs(self.fast_target - target) < abs(self.lift_velocity_cmd * dt):
+                self.lift_velocity_cmd = (self.fast_target - target) / dt
+        # Limit servo windup on a stalled actuator to its elastic tracking error.
+        tracking_error = (A["unit_force"] + 2e5 * abs(self.lift_velocity_cmd)) / 1e7
+        if lift:
+            target = float(np.clip(target, stroke - tracking_error, stroke + tracking_error))
+        for a, state in zip(self.lift_acts, self.lift_states):
+            d.act[state] = target * self.lift_gear
+            d.ctrl[a] = self.lift_velocity_cmd * self.lift_gear
+        self.lift_running = bool(abs(self.lift_velocity_cmd) > 1e-9)
         if c["estop"]:
             msg = "АВАРИЙНЫЙ СТОП"
         elif c["park"]:
@@ -586,12 +605,36 @@ class Sim:
                                 ev.get("chair"))
             elif name == "seat_fast":
                 th = math.radians(min(75.0, max(0.0, float(ev["angle"]))))
-                G = bh.geometry(self.chair)
+                G = bh.geometry(self.chair, self.act)
                 sx, sz = G["SEAT_PIN_LOCAL"]
                 c_, s_ = math.cos(th), math.sin(th)
                 tip = self.seat_pivot + np.array([sx * c_ + sz * s_, 0, -sx * s_ + sz * c_])
                 P = np.array([G["FRAME_PIN"][0], 0, G["FRAME_PIN"][1]])
                 self.fast_target = float(np.clip(np.linalg.norm(tip - P) - bh.ACT_RETRACTED, 0, bh.ACT_STROKE))
+
+    def _battery_current(self):
+        """Estimated electrical current, sampled at each physics step.
+
+        Screw holding is assumed passive. Numerical settling with a stopped
+        controller therefore consumes no simulated energy. No regeneration.
+        """
+        d, mp = self.d, self.mp
+        amps = 0.0
+        if not self.status["em_brake"]:
+            for dofs in self.wdofs:
+                tau = sum(float(d.qfrc_actuator[i]) for i in dofs)
+                power = sum(float(d.qfrc_actuator[i] * d.qvel[i]) for i in dofs)
+                turning = any(abs(float(d.qvel[i])) > 2 * math.pi / 60 for i in dofs)
+                if turning:
+                    amps += mp["I0"]
+                if power > 0.01:
+                    amps += abs(tau) / (mp["ratio"] * mp["eta"]) / mp["kt"]
+        if self.lift_running:
+            for joint in self.tel.lift_joints:
+                i = self.tel.dof[joint]
+                power = float(d.qfrc_actuator[i] * d.qvel[i])
+                amps += max(LIFT_IDLE_A, max(power, 0) / ETA_LIFT / BATTERY_V)
+        return amps
 
     # main step -------------------------------------------------------------------------
     def advance(self, frame_dt):
@@ -601,24 +644,14 @@ class Sim:
             for _ in range(n):
                 self.apply_controls(self.m.opt.timestep)
                 mujoco.mj_step(self.m, self.d)
-                self.energy_Wh += self.state.get("battery_A", 0) * BATTERY_V * self.m.opt.timestep / 3600
+                self.energy_Wh += self._battery_current() * BATTERY_V * self.m.opt.timestep / 3600
                 if not np.isfinite(self.d.qpos).all():
                     self.reset(); self.msg = "Симуляция разошлась, сброс"
                     break
             t = self.tel.compute(self.d)
             t.update(self.status)
             mp = self.mp
-            amps = 0.0
-            for side in ("left", "right"):
-                tw, rpm = t[f"torque_{side}"], t[f"rpm_{side}"]
-                motoring = tw * rpm > 0
-                if abs(rpm) > 1:
-                    amps += mp["I0"]
-                if motoring:
-                    amps += abs(tw) / (mp["ratio"] * mp["eta"]) / mp["kt"]
-            if abs(t["stroke_speed"]) > 1e-4:
-                amps += max(LIFT_IDLE_A, max(t["lift_power"], 0) / ETA_LIFT / BATTERY_V)
-            t["battery_A"] = amps
+            t["battery_A"] = self._battery_current()
             t["motor_info"] = {k: mp[k] for k in ("name", "note", "wheel_torque", "v_rated", "v0", "I", "mass", "key")}
             t["motor_params"] = {k: mp[k] for k in bh.MOTOR_FIELDS}
             t["peak"] = self.peak
@@ -662,15 +695,14 @@ class Sim:
             w.append(f"Моторы на пределе момента ({self.mp['wheel_torque']:.1f} Н·м на колесе)")
         if self.peak > 1 and min(self.peak_budget) <= 0:
             w.append("Пиковый ток исчерпан, моторы перегреты — только номинальный момент")
-        Fmax = bh.ACTUATORS[self.act]["force"]
-        if abs(t["lift_force"]) > Fmax * 0.95 and self.fast_target is None:
-            w.append(f"Привод подъёма перегружен ({Fmax:.0f} Н)")
+        profile = bh.ACTUATORS[self.act]
+        if any(abs(a["force"]) > (profile["unit_force"] if a["force"] >= 0 else profile["unit_retract_force"]) * 0.95 for a in t["lifts"]):
+            w.append(f"Актуатор на пределе усилия ({bh.ACTUATORS[self.act]['unit_force']:.0f} Н/шт)")
+        if t["lift_skew_mm"] > 1.0:
+            w.append("Рассогласование актуаторов больше 1 мм")
         for k, name in (("tip_fwd", "вперёд"), ("tip_back", "назад"), ("tip_side", "вбок")):
             if t[k] is not None and t[k] < 6:
                 w.append(f"Запас до опрокидывания {name} меньше 6°")
-        for k, name, sup in (("lean_fwd", "вперёд", "ролики подножки"), ("lean_back", "назад", "антиопрокидыватели")):
-            if t.get(k) is not None and t[k] < 4 and (t[k.replace("lean", "tip")] or 0) >= 6:
-                w.append(f"Кресло вот-вот ляжет {name} на {sup}")
         if abs(t["pitch"]) > 25 or abs(t["roll"]) > 25:
             w.append("КРЕСЛО ОПРОКИНУЛОСЬ")
         return w
@@ -679,6 +711,9 @@ class Sim:
         with self.lock:
             s = dict(self.state)
             s["history"] = list(self.history)
+            s["model_version"] = self.model_version
+            s["parts"] = self.parts.list()
+            s["selection"] = self.parts.inspect(self.d, self.selected_part) if self.selected_part else None
         return s
 
     def command(self, data):
@@ -719,7 +754,7 @@ class Video:
         self.renderer = mujoco.Renderer(sim.m, height, width)
         self.opt = mujoco.MjvOption()
         self.cam = mujoco.MjvCamera()
-        self.cam.azimuth, self.cam.elevation, self.cam.distance = 140.0, -18.0, 3.0
+        self.cam.azimuth, self.cam.elevation, self.cam.distance = 140.0, -18.0, 2.6
         self.follow = True
         self.pan = np.zeros(3)
         self.show_com = True
@@ -755,8 +790,8 @@ class Video:
             p = c["preset"]
             self.pan[:] = 0
             self.follow = True
-            rel = {"follow": (140, -18, 3.0), "back": (0, -15, 3.0), "side": (90, -10, 2.8),
-                   "front": (180, -12, 3.0), "top": (90, -89, 3.6)}[p]
+            rel = {"follow": (140, -18, 2.6), "back": (0, -15, 2.6), "side": (90, -10, 2.6),
+                   "front": (180, -12, 2.6), "top": (90, -89, 3.0)}[p]
             cam.azimuth = (yaw + rel[0]) if p != "follow" else rel[0]
             cam.elevation, cam.distance = rel[1], rel[2]
         if "human" in c:
@@ -771,6 +806,20 @@ class Video:
         return dict(human=bool(self.opt.geomgroup[2]), com=self.show_com,
                     size=list(self.requested_size), max_size=list(self.MAX_SIZE),
                     forces=bool(self.opt.flags[mujoco.mjtVisFlag.mjVIS_CONTACTFORCE]))
+
+    def pick(self, x, y):
+        if not all(math.isfinite(v) and 0 <= v <= 1 for v in (x, y)):
+            raise ValueError("Invalid selection coordinates")
+        if self._version != self.sim.model_version:
+            return None
+        point = np.zeros(3)
+        geom, flex, skin = (np.full(1, -1, dtype=np.int32) for _ in range(3))
+        mujoco.mjv_select(self.sim.m, self.sim.d, self.opt,
+                          self.renderer.width / self.renderer.height, x, 1-y,
+                          self.renderer.scene, point, geom, flex, skin)
+        key = self.sim.parts.geom_part.get(int(geom[0]))
+        self.sim.selected_part = key
+        return self.sim.parts.inspect(self.sim.d, key) if key else None
 
     def _yaw(self):
         R = self.sim.d.xmat[self.sim.frame].reshape(3, 3)
@@ -790,10 +839,16 @@ class Video:
                 self.lookat = None
         d = sim.d
         R = d.xmat[sim.frame].reshape(3, 3)
-        target = d.xpos[sim.frame] + R @ np.array([0.35, 0, 0]) + np.array([0, 0, 0.55])
+        target = d.xpos[sim.frame] + R @ np.array([0.35, 0, 0]) + np.array([0, 0, 0.8])
         self.lookat = target if self.lookat is None else self.lookat + 0.25 * (target - self.lookat)
         self.cam.lookat[:] = self.lookat + self.pan
         self.renderer.update_scene(d, self.cam, self.opt)
+        selected = sim.parts.groups.get(sim.selected_part)
+        if selected and sim.selected_part != "chair":
+            selected_geoms = set(selected["geoms"])
+            for g in self.renderer.scene.geoms[:self.renderer.scene.ngeom]:
+                if g.objtype == mujoco.mjtObj.mjOBJ_GEOM and g.objid in selected_geoms:
+                    g.rgba[:3] = 0.55 * g.rgba[:3] + 0.45 * np.array([1.0, 0.65, 0.15])
         if self.show_com and sim.state:
             self._overlay(self.renderer.scene, sim.state, d)
         img = self.renderer.render()
@@ -898,7 +953,23 @@ def make_handler(sim, video=None):
         def do_POST(self):
             n = int(self.headers.get("Content-Length", 0))
             data = json.loads(self.rfile.read(n) or b"{}")
-            if self.path.startswith("/api/cmd"):
+            if self.path.startswith("/api/inspect"):
+                try:
+                    with sim.lock:
+                        if "id" in data:
+                            key = data["id"]
+                            if key not in sim.parts.groups:
+                                raise ValueError("Unknown part")
+                            sim.selected_part = key
+                            selected = sim.parts.inspect(sim.d, key)
+                        elif video is not None:
+                            selected = video.pick(*map(float, data["point"]))
+                        else:
+                            raise ValueError("Video unavailable")
+                    self._send(json.dumps(selected).encode()); return
+                except (KeyError, TypeError, ValueError):
+                    self.send_error(400, "Invalid part selection"); return
+            elif self.path.startswith("/api/cmd"):
                 sim.command(data)
             elif self.path.startswith("/api/event"):
                 sim.event(data)
@@ -986,21 +1057,27 @@ def main():
         os._exit(0)                                  # skip noisy OpenGL teardown at interpreter exit
 
     from mujoco import viewer as mjviewer
-    with mjviewer.launch_passive(sim.m, sim.d) as v:
-        v.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING
-        v.cam.trackbodyid = sim.frame
-        v.cam.distance, v.cam.azimuth, v.cam.elevation = 3.2, 140, -18
-        last = 0
-        while v.is_running():
-            t0 = time.time()
-            t = sim.advance(1 / 60)
-            with v.lock():
-                if time.time() - last > 0.2:
-                    l, r = overlay(t)
-                    v.set_texts((mujoco.mjtFontScale.mjFONTSCALE_100, mujoco.mjtGridPos.mjGRID_TOPLEFT, l, r))
-                    last = time.time()
-            v.sync()
-            time.sleep(max(0, 1 / 60 - (time.time() - t0)))
+    while True:
+        version = sim.model_version
+        with mjviewer.launch_passive(sim.m, sim.d) as v:
+            v.cam.type = mujoco.mjtCamera.mjCAMERA_TRACKING
+            v.cam.trackbodyid = sim.frame
+            v.cam.distance, v.cam.azimuth, v.cam.elevation = 3.2, 140, -18
+            last = 0
+            while v.is_running() and version == sim.model_version:
+                t0 = time.time()
+                t = sim.advance(1 / 60)
+                if version != sim.model_version:
+                    break  # reopen the viewer with the rebuilt model and state
+                with v.lock():
+                    if time.time() - last > 0.2:
+                        l, r = overlay(t)
+                        v.set_texts((mujoco.mjtFontScale.mjFONTSCALE_100, mujoco.mjtGridPos.mjGRID_TOPLEFT, l, r))
+                        last = time.time()
+                v.sync()
+                time.sleep(max(0, 1 / 60 - (time.time() - t0)))
+        if version == sim.model_version:
+            break
     srv.shutdown()
 
 

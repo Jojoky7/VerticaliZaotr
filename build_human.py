@@ -6,7 +6,7 @@ Human = 14 rigid segments, masses and centres of mass from de Leva (1996, male).
 Pelvis and thighs are fixed to the seat, the trunk hinges at the hip and is kept parallel
 to the backrest, shanks hinge at the knees and the feet stand (and can slide) on a footplate.
 """
-import argparse, math, pathlib
+import argparse, copy, math, pathlib
 import xml.etree.ElementTree as ET
 import numpy as np
 
@@ -28,7 +28,7 @@ BACK_FACE_X = -0.42      # backrest front face in seat frame (back pivot -0.44 +
 
 
 def f(*v):
-    return " ".join(f"{x:.6g}" for x in np.concatenate([np.ravel(np.asarray(x, float)) for x in v]))
+    return " ".join(f"{x:.9g}" for x in np.concatenate([np.ravel(np.asarray(x, float)) for x in v]))
 
 
 def cyl_inertia(m, p0, p1, r):
@@ -86,10 +86,20 @@ ACTUATORS = {
     "PTL":  dict(name="PTL 24 В · 2000 Н · 36 мм/с", force=2000.0, speed=0.036, retracted=0.475, mass=2.6,
                  note="длина во втянутом не указана, принята 475 мм"),
 }
-DEFAULT_ACTUATOR = "DTL6000"
+ACTUATORS["2xPTL"] = dict(
+    name="2× PTL · по 2000 Н · 36 мм/с (проект)", force=4000.0, speed=0.036,
+    retracted=0.475, mass=5.2, retract_force=3200.0,
+    note="Пара 24 В, ход 300 мм; скорость без нагрузки. Длина 475 мм и масса 2,6 кг/шт приняты в модели; требуется обратная связь для синхронизации.",
+    source="https://duxe.ru/catalog/aktuatory_lineynye_privody_1/aktuator_lineynyy_privod_ptl_dc_24v_1000mm_36mm_s_2000n/")
+for key, profile in ACTUATORS.items():
+    profile["count"] = 2 if key.startswith("2x") else 1
+    profile["unit_force"] = profile["force"] / profile["count"]
+    profile["unit_mass"] = profile["mass"] / profile["count"]
+    profile["unit_retract_force"] = profile.get("retract_force", profile["force"]) / profile["count"]
+DEFAULT_ACTUATOR = "2xPTL"
+ACTUATOR_HALF_SPACING = 0.25     # outside the cushion: 500 mm between actuator axes
 ACT_STROKE = 0.300               # m (all three)
 ACT_RETRACTED = 0.475
-FAST_SEAT_SPEED = 0.08          # m/s, quick seat slider in the simulator (not a real actuator speed)
 LOAD_SPEED_DROP = 0.3            # speed falls ~30 % from no load to rated force (typical DC actuator)
 # Pivot positions so that 475 mm <-> seat 0 deg and 775 mm <-> seat 75 deg exactly
 # (the actuator runs limit switch to limit switch). Old ChatGPT model: 0.300 / z 0.100.
@@ -105,11 +115,14 @@ KNEEPAD_KG = 0.8                      # two knee pads with brackets
 SEAT_PIN_BEHIND_PIVOT = -SEAT_PIN_LOCAL[0]   # kept for older scripts
 
 
-def geometry(chair=None):
+def geometry(chair=None, act=DEFAULT_ACTUATOR):
     """Seat-frame geometry the person and the actuator are fitted to, per chair design."""
     chair = chair or DEFAULT_CHAIR
     if chair == "esleh":
         g = dict(ce.GEOM)
+        if ACTUATORS[act]["count"] == 2:
+            g.update(SEAT_PIN_LOCAL=(-0.218, -0.120),
+                     FRAME_PIN=(0.32775859186445927, 0.08073995501896059))
         g["PIVOT"] = ce.PIVOT
         return g
     return dict(SEAT_TOP=SEAT_TOP, BACK_FACE_X=BACK_FACE_X, KNEE_TARGET_X=PIVOT_SHIFT[0], KNEE_FLEX=KNEE_FLEX,
@@ -237,6 +250,11 @@ def apply_hardware(root, frame, seat, act=DEFAULT_ACTUATOR, motor=None, G=None, 
     if glob is None:
         glob = ET.SubElement(vis, "global")
     glob.set("offwidth", "1920"); glob.set("offheight", "1200")     # video in the control panel
+    quality = vis.find("quality")
+    if quality is None:
+        quality = ET.SubElement(vis, "quality")
+    quality.set("numslices", "64"); quality.set("numstacks", "32")
+    quality.set("offsamples", "4"); quality.set("shadowsize", "4096")
     root.find("option").set("noslip_iterations", "4")      # no creeping of locked tyres on slopes
     # --- actuator geometry ---
     seat.find("site[@name='seat_actuator_tip']").set("pos", f(pin_l[0], 0, pin_l[1]))
@@ -278,6 +296,9 @@ def apply_hardware(root, frame, seat, act=DEFAULT_ACTUATOR, motor=None, G=None, 
     j.set("damping", "50")
     # reflected motor+screw inertia (lead screw, not back-drivable); scales with the gear ratio squared
     j.set("armature", f"{max(200.0, 2000.0 * (0.004 / A['speed']) ** 2):.4g}")
+    # Inertial centres follow the drawn shaft, rather than the old vertical placeholder.
+    cyl.find("inertial").set("pos", f(u * 0.19 + nrm * 0.015))
+    rod.find("inertial").set("pos", f(-u * 0.15))
 
     # --- actuators ---
     acts = root.find("actuator")
@@ -285,11 +306,11 @@ def apply_hardware(root, frame, seat, act=DEFAULT_ACTUATOR, motor=None, G=None, 
         acts.remove(a)
     # Linear actuator: lead-screw drive = constant speed, self-locking when stopped
     # (integrated-velocity servo: the slider sets the speed, the position is held at 0).
-    # ctrl +1 = extend (stand up) at 4 mm/s, -1 = retract, 0 = hold. Force limited to 6000 N.
+    # ctrl +1 = extend at the selected profile speed, -1 = retract, 0 = hold.
     ET.SubElement(acts, "intvelocity", name="lift_actuator", joint="actuator_extension", gear=f(gear),
                   kp=f(1e7 / gear ** 2), kv=f(2e5 / gear ** 2), ctrlrange="-1 1",
                   actrange=f(0, ACT_STROKE * gear),
-                  forcerange=f(-A["force"] / gear, A["force"] / gear))
+                  forcerange=f(-A["unit_retract_force"] / gear, A["unit_force"] / gear))
     # Four-wheel skid steering.  Each physical side motor drives both wheels on its
     # side, so its available rim force is split between the front and rear wheel.
     # Keeping the sum unchanged avoids inventing twice the motor power/torque.
@@ -353,6 +374,53 @@ def apply_hardware(root, frame, seat, act=DEFAULT_ACTUATOR, motor=None, G=None, 
             g.set("priority", "1")
             g.set("friction", "0.5 0.005 0.0001")
     # Auxiliary rear wheels removed from the ESLEH model.
+
+
+def parallel_actuators(root, frame, seat, act):
+    """Duplicate the complete kinematic chain, including joints, motor and closure.
+
+    The two motors have individual force limits. Their common position command
+    represents a controller with feedback; no extra equality supplies lift force.
+    """
+    A = ACTUATORS[act]
+    if A["count"] == 1:
+        return
+    cylinder = frame.find("body[@name='actuator_cylinder']")
+    for inert in cylinder.iter("inertial"):
+        inert.set("mass", f(float(inert.get("mass")) / 2))
+        inert.set("diaginertia", f(np.array(inert.get("diaginertia").split(), float) / 2))
+    other = copy.deepcopy(cylinder)
+    for el in other.iter():
+        if el.get("name"):
+            el.set("name", el.get("name") + "_right")
+    for body, y in ((cylinder, ACTUATOR_HALF_SPACING), (other, -ACTUATOR_HALF_SPACING)):
+        p = np.array(body.get("pos").split(), float); p[1] = y
+        body.set("pos", f(p))
+    frame.append(other)
+    site = seat.find("site[@name='seat_actuator_tip']")
+    p = np.array(site.get("pos").split(), float); p[1] = ACTUATOR_HALF_SPACING
+    site.set("pos", f(p))
+    second_site = copy.deepcopy(site)
+    second_site.set("name", "seat_actuator_tip_right")
+    p[1] = -ACTUATOR_HALF_SPACING; second_site.set("pos", f(p)); seat.append(second_site)
+    loop = copy.deepcopy(root.find("equality/connect[@name='actuator_loop']"))
+    loop.set("name", "actuator_loop_right"); loop.set("site1", "rod_tip_right")
+    loop.set("site2", "seat_actuator_tip_right"); root.find("equality").append(loop)
+    motor = copy.deepcopy(root.find("actuator/intvelocity[@name='lift_actuator']"))
+    motor.set("name", "lift_actuator_right"); motor.set("joint", "actuator_extension_right")
+    root.find("actuator").append(motor)
+    sensors = root.find("sensor")
+    ET.SubElement(sensors, "jointpos", name="actuator_stroke_right", joint="actuator_extension_right")
+    ET.SubElement(sensors, "jointactuatorfrc", name="lift_force_right_N", joint="actuator_extension_right")
+    ET.SubElement(sensors, "jointvel", name="lift_speed_right_mps", joint="actuator_extension_right")
+    for y in (ACTUATOR_HALF_SPACING, -ACTUATOR_HALF_SPACING):
+        # Visible clevis plates at both ends. These are included in assembly mass.
+        for parent, pin in ((frame, np.array(cylinder.get("pos").split(), float)),
+                            (seat, np.array(site.get("pos").split(), float))):
+            for offset in (-0.015, 0.015):
+                p = pin.copy(); p[1] = y + offset
+                ET.SubElement(parent, "geom", type="box", pos=f(p), size="0.025 0.004 0.024",
+                              rgba="0.16 0.18 0.21 1", contype="0", conaffinity="0", group="1")
 
 
 def _shift(el, d):
@@ -466,14 +534,14 @@ def add_test_track(world):
 
 def build(mass=80.0, height=1.75, frame_mat=DEFAULT_FRAME, act=DEFAULT_ACTUATOR, motor=DEFAULT_MOTOR,
           motor_params=None, chair=DEFAULT_CHAIR, src="chair_drive.xml"):
-    G = geometry(chair)
+    G = geometry(chair, act)
     M = motor_profile(motor, motor_params)
     if chair == "esleh":
-        tree = ce.base_tree(frame_mat, M["mass"], ACTUATORS[act]["mass"])
+        tree = ce.base_tree(frame_mat, M["mass"], ACTUATORS[act]["mass"], ACTUATORS[act]["count"], G)
     else:
         tree = ET.parse(HERE / src)
     root = tree.getroot()
-    root.set("model", "Vert V5 + human")          # fixed: the simulator hot-swaps models of equal layout
+    root.set("model", "Verticalizer + human")
     root.insert(0, ET.Comment(f" chair {chair}, frame {frame_mat}, actuator {act}, motor {motor}, human {mass:g} kg / {height:g} m "))
     world = root.find("worldbody")
     frame = world.find("body[@name='frame']")
@@ -549,7 +617,7 @@ def build(mass=80.0, height=1.75, frame_mat=DEFAULT_FRAME, act=DEFAULT_ACTUATOR,
                   fromto=f(0.01, 0, sh_z, 0.01, 0, sh_z + 0.08 * s), **skin)
     ET.SubElement(tor, "geom", name="h_head", type="sphere", size=f(0.105 * s), pos=f(head_c), **skin)
     for side, sg in (("L", 1), ("R", -1)):
-        y = sg * (sw + r_ar + 0.005)
+        y = sg * (sw + r_ar)  # tangent shoulder surfaces, without the old visible gap
         shoulder = [0, y, sh_z - 0.03 * s]
         elbow = [0.02, y, sh_z - 0.03 * s - Lua]
         wrist = [0.02 + Lfa, y, elbow[2]]
@@ -627,6 +695,18 @@ def build(mass=80.0, height=1.75, frame_mat=DEFAULT_FRAME, act=DEFAULT_ACTUATOR,
         move_battery_to_rack(root, frame)
         apply_hardware(root, frame, seat, act, M, G, chair)
         apply_masses(root, frame, frame_mat, act, [fp_x, 0, sole_z - 0.008], M)
+    parallel_actuators(root, frame, seat, act)
+    # Fork plates must sit outside the 85 mm tyre, rather than intersect it.
+    for side in ("left", "right"):
+        fork = frame.find(f"body[@name='front_fork_{side}']")
+        for plate in fork.findall("geom"):
+            pos = np.array(plate.get("pos").split(), float)
+            if abs(pos[1]) > 0.001:
+                pos[1] = math.copysign(0.052, pos[1]); plate.set("pos", f(pos))
+                plate.set("size", "0.012 0.004 0.095")
+                pos[2] = 0.09; plate.set("pos", f(pos))
+            else:
+                pos[2] = 0.18; plate.set("pos", f(pos)); plate.set("size", f(CASTER_TRAIL / 2 + 0.01, 0.056, 0.006))
     # Удаляем дополнительные колёса вместе с их телами
     EXTRA_WHEELS = (
         "antitip_left",
