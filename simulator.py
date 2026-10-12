@@ -32,6 +32,12 @@ TOP_SPEED_CAP = MAX_SPEED_KMH / 3.6   # m/s
 OVERRUN_KV = 40000.0              # N per m/s; stiff speed hold while overrunning
 GEARBOX_HOLD_MULT = 10.0          # holding torque as a multiple of the rated wheel torque
 OVERRUN_TOL = 0.005               # m/s above the command before the hold engages
+# Speed controller: proportional gain plus a slow integral term. Real chair controllers
+# hold the set speed under load until the motor runs out of current; the proportional
+# gain alone made every motor sag equally on a hill.
+DRIVE_KV = 400.0                  # N per m/s
+SPEED_KI = 3.0                    # 1/s, integral action of the speed controller
+SPEED_I_MAX = 0.35                # m/s, integral correction limit
 PEAK_TIME = 5.0                   # s, how long the controller may give its peak current
 PEAK_RECOVERY = 0.25              # peak budget refills at 1/4 of real time below rated torque
 TURN_RATE = 1.6                   # rad/s at full joystick, scaled with level
@@ -274,6 +280,9 @@ class Sim:
         self.peak_budget = [PEAK_TIME, PEAK_TIME]
         self.torque_limit = [self.mp["wheel_torque"]] * 2
         self.overrun = [False, False]
+        self.backdriven = [False, False]
+        self.side_saturated = [False, False]
+        self.v_int = [0.0, 0.0]
         self._write_model()
         self.m = mujoco.MjModel.from_xml_path(str(MODEL))
         self.d = mujoco.MjData(self.m)
@@ -371,6 +380,7 @@ class Sim:
         self.peak_budget = [PEAK_TIME, PEAK_TIME]
         self.stall_time = self.recovered_time = 0.0
         self.obstacle_mode = False
+        self.v_int = [0.0, 0.0]
         self.history.clear()
         self.energy_Wh = 0.0
 
@@ -383,6 +393,7 @@ class Sim:
         self.v_cmd = self.w_cmd = 0.0
         self.stall_time = self.recovered_time = 0.0
         self.obstacle_mode = False
+        self.v_int = [0.0, 0.0]
         mujoco.mj_forward(self.m, d)
 
     # control ---------------------------------------------------------------------------
@@ -443,7 +454,7 @@ class Sim:
             self.stall_time = 0.0
         tyre_mu = ROAD_FRICTION if self.obstacle_mode else SKID_FRICTION
         m.geom_friction[self.drive_geoms, 0] = tyre_mu
-        drive_kv = 400.0
+        drive_kv = DRIVE_KV
         if self.obstacle_mode:
             # At tiny joystick inputs a fixed gain cannot deliver the allowed
             # current, even with stationary wheels. Reach the same torque reserve
@@ -460,13 +471,30 @@ class Sim:
         else:
             side_speed = (self.v_cmd - self.w_cmd * TRACK / 2,
                           self.v_cmd + self.w_cmd * TRACK / 2)
-            for acts, target in zip(self.drive_acts, side_speed):
-                d.ctrl[acts] = target
+            for k, (acts, dofs, target) in enumerate(zip(self.drive_acts, self.wdofs, side_speed)):
+                # Integral part: only while driving on a steady command, not at an obstacle
+                # (traction mode has its own gain) and not while the motor is at its limit.
+                measured = 0.5 * (d.qvel[dofs[0]] + d.qvel[dofs[1]]) * bh.WHEEL_R
+                steady = abs(v_t - self.v_cmd) < 1e-9 and abs(w_t - self.w_cmd) < 1e-9
+                if (steady and abs(target) > 0.02 and not em_brake and not self.obstacle_mode
+                        and self.stall_time == 0.0 and not self.side_saturated[k]):
+                    self.v_int[k] += SPEED_KI * (target - measured) * dt
+                elif abs(target) <= 0.02 or em_brake or self.obstacle_mode:
+                    self.v_int[k] = 0.0
+                self.v_int[k] = float(np.clip(self.v_int[k], -SPEED_I_MAX, SPEED_I_MAX))
+                # never command beyond the target direction's speed limit
+                corrected = target + self.v_int[k]
+                if target > 0:
+                    corrected = float(np.clip(corrected, 0.0, target + SPEED_I_MAX))
+                elif target < 0:
+                    corrected = float(np.clip(corrected, target - SPEED_I_MAX, 0.0))
+                d.ctrl[acts] = corrected
         d.ctrl[self.brake_acts] = 1.0 if em_brake else 0.0
         # --- motor torque limit: controller current (with peak) and back-EMF above rated speed ---
         mp = self.mp
         gear_hold = False
         self.overrun = [False, False]
+        self.backdriven = [False, False]
         for k, (acts, dofs) in enumerate(zip(self.drive_acts, self.wdofs)):
             w = max(abs(d.qvel[dofs[0]]), abs(d.qvel[dofs[1]]))
             requested_peak = max(self.peak, OBSTACLE_TORQUE_MULT if self.obstacle_mode else 1.0)
@@ -490,10 +518,19 @@ class Sim:
                 # (or keeps rolling when the command is zero), e.g. on a downhill.
                 overrun = (abs(v_wheel) > abs(target) + OVERRUN_TOL
                            and (abs(target) < 1e-6 or v_wheel * target > 0))
-                kv = max(drive_kv, OVERRUN_KV) if overrun else drive_kv
+                # Back-driven: the load turns the wheel against the command, e.g. a motor
+                # too weak for the hill. The motor keeps its full torque and the gearbox
+                # back-drives it as a generator, so the wheel only creeps backwards.
+                backdriven = (abs(target) > 1e-6 and v_wheel * target < 0
+                              and abs(v_wheel) > OVERRUN_TOL)
+                kv = max(drive_kv, OVERRUN_KV) if (overrun or backdriven) else drive_kv
                 m.actuator_gainprm[a_id, 0] = kv
                 m.actuator_biasprm[a_id, 2] = -kv
-                limit = hold_force if overrun else half_rim_force
+                if backdriven:
+                    # force = motor torque towards the command + generator braking of the motion
+                    d.ctrl[a_id] = math.copysign(half_rim_force / kv, target)
+                    self.backdriven[k] = True
+                limit = hold_force if (overrun or backdriven) else half_rim_force
                 m.actuator_forcerange[a_id] = [-limit, limit]
                 if overrun:
                     self.overrun[k] = True
@@ -501,6 +538,7 @@ class Sim:
                         gear_hold = True
             # Braking torque held by the gearbox does not use the motor's peak current.
             used = abs(d.qfrc_actuator[dofs[0]]) + abs(d.qfrc_actuator[dofs[1]])
+            self.side_saturated[k] = bool(used >= 0.97 * t_lim or self.backdriven[k])
             if used > mp["wheel_torque"] * 1.02 and not self.overrun[k]:
                 self.peak_budget[k] = max(0.0, self.peak_budget[k] - dt)
             else:
@@ -711,13 +749,15 @@ class Sim:
             ru = {"drive_left": "ведущее левое", "drive_right": "ведущее правое",
                   "front_left": "переднее левое", "front_right": "переднее правое"}
             w.append("Колесо оторвалось: " + ", ".join(ru[x] for x in t["lifted"]))
-        sat = (not self.status["em_brake"]) and any(abs(t[f"torque_{s_}"]) > 0.97 * self.torque_limit[k]
-                                                     and not self.overrun[k]
+        sat = (not self.status["em_brake"]) and any((abs(t[f"torque_{s_}"]) > 0.97 * self.torque_limit[k]
+                                                      and not self.overrun[k]) or self.backdriven[k]
                                                      for k, s_ in enumerate(("left", "right")))
         if not sat:
             self.sat_since = self.d.time
         if self.d.time - self.sat_since > 1.5:     # at the limit for 1.5 s (normal starts are shorter)
             w.append(f"Моторы на пределе момента ({self.mp['wheel_torque']:.1f} Н·м на колесе)")
+            if any(self.backdriven):
+                w.append("Мотор не тянет подъём: кресло стоит, редуктор не даёт скатиться")
         if self.peak > 1 and min(self.peak_budget) <= 0:
             w.append("Пиковый ток исчерпан, моторы перегреты — только номинальный момент")
         profile = bh.ACTUATORS[self.act]

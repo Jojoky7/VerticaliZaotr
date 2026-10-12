@@ -180,6 +180,43 @@ class SpeedLimitTests(unittest.TestCase):
         self.assertLess(max(speeds) * 3.6, 3.0)
 
 
+class MotorTests(unittest.TestCase):
+    """Different motors behave differently on a hill; a weak one stalls instead of rolling back."""
+
+    def climb(self, motor, slope, seconds=8):
+        sim = make_sim(motor=motor)
+        sim.teleport(0, y=6)
+        advance_for(sim, 1, jy=0, slope_fwd=-slope)
+        x0 = sim.d.qpos[0]
+        states = advance_for(sim, seconds, jy=1, level=5, slope_fwd=-slope)
+        return sim, states, sim.d.qpos[0] - x0
+
+    def test_uphill_speed_held_until_motor_limit(self):
+        _, states, _ = self.climb("N150", 6)
+        self.assertGreater(states[-1]["speed"] * 3.6, 2.3)
+
+    def test_weak_motor_stalls_and_does_not_roll_back(self):
+        for motor in ("B57_50", "B57_69"):
+            with self.subTest(motor=motor):
+                sim, states, dx = self.climb(motor, 10)
+                self.assertGreater(dx, -0.2)
+                self.assertLess(max(abs(st["speed"]) for st in states) * 3.6, 2.6)
+                self.assertTrue(any("не тянет" in w for st in states for w in st["warnings"]))
+
+    def test_weaker_catalogue_motors(self):
+        torques = []
+        for key in ("N150", "B57_138", "B57_103", "B57_69", "B57_50"):
+            mp = s.bh.motor_profile(key)
+            torques.append(mp["wheel_torque"])
+            if key.startswith("B57"):
+                self.assertEqual(mp["ratio"], 30.0)
+                self.assertTrue(mp["source"].startswith("https://"))
+        self.assertEqual(torques, sorted(torques, reverse=True))
+        _, _, slow = self.climb("B57_103", 6, seconds=12)
+        _, _, fast = self.climb("N150", 6, seconds=12)
+        self.assertLess(slow, fast - 1.0)
+
+
 class VideoTests(unittest.TestCase):
     def test_resize_is_queued_then_applied_to_encoded_frames(self):
         sim = make_sim()

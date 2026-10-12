@@ -206,6 +206,26 @@ MOTORS = {
                  I0=2.0, I=11.0, mass=1.8, note="та же серия, мощнее · dcmotorfactory.com"),
     "N200F": dict(name="Norton ZW1012L4F-S · 200 Вт", T=0.95, n_rated=2000, n0=2600, ratio=16.75, eta=0.8,
                   I0=1.8, I=10.9, mass=3.0, note="быстрее, тяжелее · dcmotorfactory.com"),
+    # Weaker options: there are practically no wheelchair gear motors below 150 W, so these
+    # are 57 mm (NEMA 23) 24 V BLDC motors with a separate two-stage planetary gearbox 30:1.
+    # Motor values are from the cited datasheets; gearbox efficiency 0.9 and mass 0.8 kg,
+    # and values marked "оценка" in the note are assumptions.
+    "B57_50": dict(name="BLM57050 · 50 Вт + редуктор 30:1", T=0.16, n_rated=3000, n0=3700, ratio=30.0, eta=0.9,
+                   I0=0.5, I=3.0, mass=1.3, power=50, catalog_ratio=30.0, gearbox="планетарный 30:1, отдельно",
+                   source="https://chelyabinsk.purelogic.ru/docs/elektroprivod/besshchetochnye_servodvigateli_bldc_seriya_blm_user_manual_ru.pdf",
+                   note="самый слабый · PureLogic · х.х. и ток х.х. — оценка"),
+    "B57_69": dict(name="57BLY04 · 69 Вт + редуктор 30:1", T=0.22, n_rated=3000, n0=3690, ratio=30.0, eta=0.9,
+                   I0=0.6, I=4.4, mass=1.5, power=69, catalog_ratio=30.0, gearbox="планетарный 30:1, отдельно",
+                   source="https://cdn.robotshop.com/rbm/a00a7635-653b-4220-aac9-b0c23c5c5e2c/2/2fa6b89b-835e-443c-943b-136f2b71eca2/14806b47_56pg-57bly04-motor-and-driver.pdf",
+                   note="E-S Motor · х.х. из Ke 6,5 В/1000 об/мин"),
+    "B57_103": dict(name="ACT 57BL05 · 103 Вт + редуктор 30:1", T=0.33, n_rated=3000, n0=3700, ratio=30.0, eta=0.9,
+                    I0=0.8, I=5.4, mass=1.9, power=103, catalog_ratio=30.0, gearbox="планетарный 30:1, отдельно",
+                    source="https://www.ebay.de/p/27054846788",
+                    note="ACT Motor · токи и х.х. — оценка"),
+    "B57_138": dict(name="ACT 57BL06 · 138 Вт + редуктор 30:1", T=0.44, n_rated=3000, n0=3700, ratio=30.0, eta=0.9,
+                    I0=1.0, I=7.2, mass=2.1, power=138, catalog_ratio=30.0, gearbox="планетарный 30:1, отдельно",
+                    source="https://www.ebay.de/p/25054845284",
+                    note="ACT Motor · токи и х.х. — оценка"),
     "custom": dict(name="Свой мотор", T=1.0, n_rated=1500, n0=2000, ratio=16.75, eta=0.8,
                    I0=1.5, I=9.0, mass=1.7, note="параметры задаются ниже"),
 }
@@ -229,9 +249,12 @@ def motor_profile(key=DEFAULT_MOTOR, params=None):
     m["v_rated"], m["v0"] = m["w_rated"] * WHEEL_R, m["w0"] * WHEEL_R
     m["kt"] = m["T"] / max(m["I"] - m["I0"], 0.1)              # N*m per A on the motor shaft
     m["voltage"] = 24
-    m["power_w"] = m["T"] * m["n_rated"] * 2 * math.pi / 60 if key == "custom" else (150 if key in ("N150", "N1502") else 200)
-    m["source"] = None if key == "custom" else MOTOR_SOURCE_F if key == "N200F" else MOTOR_SOURCE_A
-    m["catalog_ratio"] = None if key == "custom" else 16.75
+    if key == "custom":
+        m["power_w"] = m["T"] * m["n_rated"] * 2 * math.pi / 60
+    else:
+        m["power_w"] = m.get("power", 150 if key in ("N150", "N1502") else 200)
+    m["source"] = None if key == "custom" else m.get("source", MOTOR_SOURCE_F if key == "N200F" else MOTOR_SOURCE_A)
+    m["catalog_ratio"] = None if key == "custom" else m.get("catalog_ratio", 16.75)
     m["key"] = key
     return m
 
