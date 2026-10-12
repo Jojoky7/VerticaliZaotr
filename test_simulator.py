@@ -95,7 +95,7 @@ class ThresholdTests(unittest.TestCase):
         for sim in (normal, stale):
             sim.teleport(sim._threshold_start_x())
             advance_for(sim, 1, jy=0)
-        for _ in range(125):
+        for _ in range(160):           # ~5.3 s at level 2 (2.5 km/h top speed)
             stale.state["speed"] = 1000.0
             for sim in (normal, stale):
                 sim.command(dict(jy=1, level=2))
@@ -135,6 +135,49 @@ class ThresholdTests(unittest.TestCase):
         for acts in sim.drive_acts:
             total = sum(sim.m.actuator_forcerange[a,1]*s.bh.WHEEL_R for a in acts)
             self.assertAlmostEqual(total, sim.mp["wheel_torque"])
+
+
+class SpeedLimitTests(unittest.TestCase):
+    """The gearbox holds the 2.5 km/h limit downhill; the slope cannot overrun the wheels."""
+
+    def test_top_speed_is_project_limit(self):
+        self.assertAlmostEqual(s.TOP_SPEED_CAP * 3.6, 2.5)
+        sim = make_sim()
+        sim.teleport(0, y=6)
+        advance_for(sim, 1, jy=0)
+        top = max(abs(st["speed"]) for st in advance_for(sim, 6, jy=1, level=5))
+        self.assertLess(top * 3.6, 2.55)
+        self.assertGreater(top * 3.6, 2.3)
+
+    def test_downhill_does_not_overrun_gearbox(self):
+        for motor, mass in [("N150", 80), ("N150", 150), ("N200", 80)]:
+            for slope, jy in [(10, 1), (15, 1), (15, -1)]:
+                with self.subTest(motor=motor, mass=mass, slope=slope, jy=jy):
+                    sim = make_sim(motor=motor, mass=mass)
+                    sim.teleport(0, y=6)
+                    advance_for(sim, 1, jy=0, slope_fwd=slope * jy)
+                    states = advance_for(sim, 8, jy=jy, level=5, slope_fwd=slope * jy)
+                    top = max(abs(st["speed"]) for st in states[30:])
+                    self.assertLess(top * 3.6, 2.7)
+                    self.assertFalse(any("Моторы на пределе" in w for st in states for w in st["warnings"]))
+                    advance_for(sim, 3, jy=0, slope_fwd=slope * jy)
+                    self.assertTrue(sim.locked)
+
+    def test_long_15_degree_descent(self):
+        sim = make_sim(mass=150)
+        sim.teleport(54.6, yaw=math.pi, z=20 * math.sin(math.radians(15)))
+        advance_for(sim, 1, jy=0)
+        speeds = []
+        for _ in range(40 * 30):
+            sim.command(dict(jy=1, level=5))
+            state = sim.advance(1 / 30)
+            if 36 < sim.d.qpos[0] < 51:
+                speeds.append(abs(state["speed"]))
+            if sim.d.qpos[0] < 34:
+                break
+        self.assertGreater(len(speeds), 100)
+        self.assertLess(sum(speeds) / len(speeds) * 3.6, 2.6)
+        self.assertLess(max(speeds) * 3.6, 3.0)
 
 
 class VideoTests(unittest.TestCase):
