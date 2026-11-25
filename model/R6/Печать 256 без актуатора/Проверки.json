@@ -1,0 +1,261 @@
+{
+  "wheels": {
+    "WheelRearL": {
+      "solids": 1,
+      "volume_delta_mm3": 0.03023967848275788
+    },
+    "WheelFrontL": {
+      "solids": 1,
+      "volume_delta_mm3": 0.03519019823579583
+    },
+    "WheelRearR": {
+      "solids": 1,
+      "volume_delta_mm3": 0.029951971664559096
+    },
+    "WheelFrontR": {
+      "solids": 1,
+      "volume_delta_mm3": 0.03519019823579583
+    }
+  },
+  "assembly": {
+    "components": 207,
+    "pairs_per_full_pose": 21321,
+    "angles_deg": [
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35,
+      40,
+      45,
+      50,
+      55,
+      60,
+      65,
+      70,
+      75
+    ],
+    "exact_boolean_tests": 2736,
+    "threshold_mm3": 0.25,
+    "interferences": {}
+  },
+  "casters": {
+    "yaw_step_deg": 5,
+    "seat_step_deg": 5,
+    "exact_tests": 1556,
+    "threshold_mm3": 0.25,
+    "envelope_hits": {}
+  },
+  "plates": {
+    "00": {
+      "parts": [
+        "Ступица_D6_M3",
+        "Проба_стойки_8.6",
+        "Проба_втулка_16",
+        "Проба_колесо_16.2"
+      ],
+      "toolpaths_mm": [
+        [
+          60.847,
+          195.128
+        ],
+        [
+          112.339,
+          143.661
+        ],
+        [
+          0.2,
+          12.0
+        ]
+      ]
+    },
+    "01": {
+      "parts": [
+        "TowerL"
+      ],
+      "toolpaths_mm": [
+        [
+          19.31,
+          235.928
+        ],
+        [
+          13.595,
+          241.178
+        ],
+        [
+          0.2,
+          10.0
+        ]
+      ]
+    },
+    "02": {
+      "parts": [
+        "TowerR"
+      ],
+      "toolpaths_mm": [
+        [
+          19.31,
+          235.928
+        ],
+        [
+          14.866,
+          242.405
+        ],
+        [
+          0.2,
+          10.0
+        ]
+      ]
+    },
+    "03": {
+      "parts": [
+        "Footplate",
+        "LowerMount",
+        "RailL",
+        "RailR"
+      ],
+      "toolpaths_mm": [
+        [
+          20.502,
+          234.678
+        ],
+        [
+          4.453,
+          248.678
+        ],
+        [
+          0.2,
+          52.0
+        ]
+      ]
+    },
+    "04": {
+      "parts": [
+        "seat",
+        "UpperMount"
+      ],
+      "toolpaths_mm": [
+        [
+          10.738,
+          245.262
+        ],
+        [
+          69.527,
+          186.907
+        ],
+        [
+          0.2,
+          194.0
+        ]
+      ]
+    },
+    "05": {
+      "parts": [
+        "BackUpper"
+      ],
+      "toolpaths_mm": [
+        [
+          53.595,
+          202.405
+        ],
+        [
+          19.31,
+          236.69
+        ],
+        [
+          0.2,
+          246.0
+        ]
+      ]
+    },
+    "06": {
+      "parts": [
+        "link_left",
+        "link_right",
+        "BackPostL",
+        "BackPostR"
+      ],
+      "toolpaths_mm": [
+        [
+          9.033,
+          245.262
+        ],
+        [
+          10.052,
+          247.391
+        ],
+        [
+          0.2,
+          12.0
+        ]
+      ]
+    },
+    "07": {
+      "parts": [
+        "BatteryTray",
+        "Knee",
+        "CasterForkL",
+        "CasterForkR",
+        "CasterHubL",
+        "CasterHubR"
+      ],
+      "toolpaths_mm": [
+        [
+          9.308,
+          244.691
+        ],
+        [
+          45.322,
+          210.678
+        ],
+        [
+          0.2,
+          59.0
+        ]
+      ]
+    },
+    "08": {
+      "parts": [
+        "WheelRearL",
+        "WheelRearR"
+      ],
+      "toolpaths_mm": [
+        [
+          9.309,
+          246.691
+        ],
+        [
+          9.287,
+          246.874
+        ],
+        [
+          0.2,
+          34.0
+        ]
+      ]
+    },
+    "09": {
+      "parts": [
+        "WheelFrontL",
+        "WheelFrontR"
+      ],
+      "toolpaths_mm": [
+        [
+          11.287,
+          244.713
+        ],
+        [
+          11.235,
+          244.77
+        ],
+        [
+          0.2,
+          34.0
+        ]
+      ]
+    }
+  }
+}
