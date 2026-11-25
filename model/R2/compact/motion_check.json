@@ -1,0 +1,10 @@
+{
+  "method": "analytic joint-centre check, 0..75 degrees, 1 degree step; visual kinematics, not a physical simulation",
+  "max_vertical_joint_separation_error_mm": 2.842170943040401e-14,
+  "motor_centres_x_mm": [
+    -40,
+    40
+  ],
+  "opposed_motor_envelopes_actual_overlap_mm3": 0.0,
+  "opposed_motor_envelopes_same_x_overlap_mm3": 65944.29174556033
+}

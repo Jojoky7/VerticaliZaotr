@@ -1,0 +1,18 @@
+{
+  "elements": 47015,
+  "mesh_mm": 6,
+  "peak_displacement_mm": 3.827488127292004,
+  "peak_location_mm": [
+    345.815,
+    71.0,
+    119.0
+  ],
+  "region_peak_mm": {
+    "housing": 0.34198664586203203,
+    "seat": 1.4629404606610792,
+    "link": 0.5943910478698093
+  },
+  "max_vm_MPa": 22.67827718976319,
+  "seat_deg": 1.8886202368094407,
+  "near_start_load_kg": 8
+}

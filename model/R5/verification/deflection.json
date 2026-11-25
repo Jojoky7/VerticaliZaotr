@@ -1,0 +1,30 @@
+{
+  "R4_4": {
+    "elements": 68250,
+    "area_mm2": 12305.4,
+    "peak_loaded_patch_down_mm": 1.097304,
+    "flange_nodes": 520,
+    "pin_nodes": 332
+  },
+  "R4_6": {
+    "elements": 38870,
+    "area_mm2": 12277.5,
+    "peak_loaded_patch_down_mm": 1.091406,
+    "flange_nodes": 504,
+    "pin_nodes": 212
+  },
+  "R5_4": {
+    "elements": 47708,
+    "area_mm2": 12293.0,
+    "peak_loaded_patch_down_mm": 1.120863,
+    "flange_nodes": 520,
+    "pin_nodes": 332
+  },
+  "R5_6": {
+    "elements": 26662,
+    "area_mm2": 12263.5,
+    "peak_loaded_patch_down_mm": 1.12599,
+    "flange_nodes": 504,
+    "pin_nodes": 212
+  }
+}

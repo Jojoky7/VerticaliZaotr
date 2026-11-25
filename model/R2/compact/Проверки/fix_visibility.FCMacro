@@ -1,0 +1,23 @@
+import FreeCAD as App, FreeCADGui as Gui, os, json, traceback
+root=r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed'
+result={}
+try:
+ for fn in ['R2_ПРОСТАЯ_СБОРКА.FCStd','R2_ПРОСТАЯ_ДЕТАЛИ.FCStd']:
+  d=App.openDocument(os.path.join(root,fn))
+  for o in d.Objects:
+   if hasattr(o,'Shape') and not o.Shape.isNull():
+    o.ViewObject.Visibility=True
+    n=o.Label
+    if n.startswith('HW_'):o.ViewObject.ShapeColor=(.8,.8,.83)
+    elif n.startswith('SP_'):o.ViewObject.ShapeColor=(.95,.8,.22)
+    elif n=='act_envelope':o.ViewObject.ShapeColor=(.92,.32,.10)
+    elif 'wheel' in n:o.ViewObject.ShapeColor=(.3,.3,.32)
+    else:o.ViewObject.ShapeColor=(.18,.5,.75)
+  d.recompute();Gui.activeDocument().activeView().viewAxonometric();Gui.activeDocument().activeView().fitAll();d.save()
+  result[fn]=sum(1 for o in d.Objects if hasattr(o,'Shape') and o.ViewObject.Visibility)
+  App.closeDocument(d.Name)
+ result['ok']=all(result[n]>0 for n in result)
+except Exception:result['error']=traceback.format_exc();result['ok']=False
+open(os.path.join(root,'visibility_check.json'),'w',encoding='utf8').write(json.dumps(result,indent=2,ensure_ascii=False))
+os._exit(0)
+

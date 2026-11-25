@@ -1,0 +1,6 @@
+import FreeCAD as App,os,json
+r={}
+for folder in ('R2_compact_400','R2_compact_closed'):
+ d=App.openDocument(os.path.join(r'C:\Users\y9156\Desktop\Verticalizator',folder,'R2_ПРОСТАЯ_СБОРКА.FCStd'))
+ o=next(x for x in d.Objects if x.Label=='seat');r[folder]={'placement':str(o.Placement),'shapeplacement':str(o.Shape.Placement),'bounds':str(o.Shape.BoundBox)}
+open(r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed\seat_placement.json','w').write(json.dumps(r,indent=2));os._exit(0)

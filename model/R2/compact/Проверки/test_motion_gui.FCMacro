@@ -1,0 +1,33 @@
+import os, json, traceback, FreeCAD as App, FreeCADGui as Gui, math
+from FreeCAD import Vector
+root=r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed'
+result={'ok':False,'samples':[]}
+try:
+ App.openDocument(os.path.join(root,'R2_ПРОСТАЯ_СБОРКА.FCStd'))
+ globals()['__file__']=os.path.join(root,'ПОДЪЁМ_ПРОСТАЯ.FCMacro')
+ with open(globals()['__file__'],encoding='utf-8') as f:exec(f.read(),globals())
+ d=App.ActiveDocument;o={x.Label:x for x in d.Objects if hasattr(x,'Shape')}
+ def p(obj,x,y,z):return obj.Placement.multVec(Vector(x,y,z))
+ verticalizer_motion_dialog.slider.setValue(0)
+ back0=Vector(o['back'].Placement.Base)
+ fixed={n:Vector(v.Shape.BoundBox.Center) for n,v in o.items() if n.startswith(('HW_frame_', 'SP_frame_'))}
+ moving={n:Vector(v.Shape.BoundBox.Center) for n,v in o.items() if n.startswith(('HW_back_', 'SP_back_'))}
+ assert len(fixed)==10 and len(moving)==9,(len(fixed),len(moving))
+ for angle in (0,15,30,45,60,75):
+  verticalizer_motion_dialog.slider.setValue(angle)
+  pairs=[(p(o['seat'],72,0,200),p(o['back'],0,0,0)),(p(o['link_left'],-208,0,-60),p(o['back'],0,0,-100)),(p(o['link_right'],-208,0,-60),p(o['back'],0,0,-100))]
+  delta=o['back'].Placement.Base-back0
+  errors=[(a-b).Length for a,b in pairs]+[(o[n].Shape.BoundBox.Center-pos).Length for n,pos in fixed.items()]+[(o[n].Shape.BoundBox.Center-pos-delta).Length for n,pos in moving.items()]
+  result['samples'].append({'angle_deg':angle,'max_joint_or_hardware_drift_mm':max(errors)})
+  if angle==75:Gui.activeDocument().activeView().fitAll()
+ verticalizer_motion_dialog.slider.setValue(65)
+ try:Gui.activeDocument().activeView().saveImage(os.path.join(root,'ПРОСТАЯ_65.png'),1600,1200,'Current')
+ except Exception:result['preview_error']=traceback.format_exc()
+ result['ok']=all(r['max_joint_or_hardware_drift_mm']<1e-4 for r in result['samples'])
+ verticalizer_motion_dialog.slider.setValue(0)
+except Exception:result['error']=traceback.format_exc()
+with open(os.path.join(root,'motion_test.json'),'w',encoding='utf-8') as f:json.dump(result,f,indent=2)
+os._exit(0)
+
+
+

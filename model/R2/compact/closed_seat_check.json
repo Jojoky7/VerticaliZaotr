@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "top_uncovered_volume_mm3": 0.0,
+  "print_bbox_mm": [
+    227.0,
+    79.00000000000003,
+    202.00309457627057
+  ],
+  "seat_top_rise_mm": 20.5,
+  "flat_plate_mm": [
+    172,
+    184,
+    5
+  ],
+  "seat_valid": true,
+  "seat_solids": 1,
+  "actuator_anchors_unchanged": true
+}

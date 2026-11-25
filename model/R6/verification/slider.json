@@ -1,0 +1,7 @@
+{
+  "step_mm": 4,
+  "travel_mm": 121.6839030601748,
+  "boolean_tests": 1094,
+  "threshold_mm3": 0.25,
+  "interferences": {}
+}

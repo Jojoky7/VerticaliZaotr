@@ -1,0 +1,903 @@
+{
+ "parts": {
+  "seat": {
+   "group": "seat",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.19110229999623932,
+   "label": "Сиденье · площадка"
+  },
+  "back": {
+   "group": "back",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.2109591309992491,
+   "label": "Спинка · каркас"
+  },
+  "link_left": {
+   "group": "link",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.016732704561990455,
+   "label": "Рычаг подъёма · левая сторона"
+  },
+  "link_right": {
+   "group": "link",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.0167327045619901,
+   "label": "Рычаг подъёма · правая сторона"
+  },
+  "SeatPad": {
+   "group": "seat",
+   "color": [
+    53,
+    64,
+    75
+   ],
+   "mass": 0.05929983936149045,
+   "label": "Подушка сиденья"
+  },
+  "BackPad": {
+   "group": "back",
+   "color": [
+    53,
+    64,
+    75
+   ],
+   "mass": 0.1723608328719275,
+   "label": "Мягкая накладка спинки"
+  },
+  "ArmPadLeft": {
+   "group": "back",
+   "color": [
+    53,
+    64,
+    75
+   ],
+   "mass": 0.007869839911429696,
+   "label": "Накладка левого подлокотника"
+  },
+  "ArmPadRight": {
+   "group": "back",
+   "color": [
+    53,
+    64,
+    75
+   ],
+   "mass": 0.007869839911429696,
+   "label": "Накладка правого подлокотника"
+  },
+  "ControllerCase": {
+   "group": "back",
+   "color": [
+    48,
+    57,
+    65
+   ],
+   "mass": 0.01648808648244213,
+   "label": "Пульт · корпус"
+  },
+  "ControllerBoot": {
+   "group": "back",
+   "color": [
+    43,
+    50,
+    54
+   ],
+   "mass": 0.0007861033378508426,
+   "label": "Пульт · манжета"
+  },
+  "ControllerStick": {
+   "group": "back",
+   "color": [
+    104,
+    112,
+    117
+   ],
+   "mass": 0.00024392034282492324,
+   "label": "Пульт · джойстик"
+  },
+  "ControllerButtons": {
+   "group": "back",
+   "color": [
+    212,
+    151,
+    65
+   ],
+   "mass": 3.25847560826661e-05,
+   "label": "Пульт · кнопки"
+  },
+  "HW_frame_upper_L": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.006904049231229674,
+   "label": "HW_frame_upper_L"
+  },
+  "HW_frame_upper_R": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.006904049231229676,
+   "label": "HW_frame_upper_R"
+  },
+  "HW_frame_lower_L": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.010911543359965156,
+   "label": "HW_frame_lower_L"
+  },
+  "HW_frame_lower_R": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.010911543359965158,
+   "label": "HW_frame_lower_R"
+  },
+  "HW_back_lower_L": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.005208570945995416,
+   "label": "HW_back_lower_L"
+  },
+  "HW_back_lower_R": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.005208570945995416,
+   "label": "HW_back_lower_R"
+  },
+  "SP_frame_upper_L": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.002607103049638987,
+   "label": "SP_frame_upper_L"
+  },
+  "SP_frame_upper_R": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.002607103049638987,
+   "label": "SP_frame_upper_R"
+  },
+  "SP_frame_lower_L": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.00011850468407450382,
+   "label": "SP_frame_lower_L"
+  },
+  "SP_frame_lower_R": {
+   "group": "frame",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.00011850468407450382,
+   "label": "SP_frame_lower_R"
+  },
+  "SP_back_lower_L": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.0022120874360573224,
+   "label": "SP_back_lower_L"
+  },
+  "SP_back_lower_R": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.0022120874360573224,
+   "label": "SP_back_lower_R"
+  },
+  "SP_back_upper_L": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.003002118663220653,
+   "label": "SP_back_upper_L"
+  },
+  "SP_back_upper_R": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.003002118663220653,
+   "label": "SP_back_upper_R"
+  },
+  "HW_back_join_L": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.002187475256731304,
+   "label": "Крепёж составной спинки L"
+  },
+  "HW_back_join_R": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.002187475256731304,
+   "label": "Крепёж составной спинки R"
+  },
+  "HW_back_upper_through": {
+   "group": "back",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.03665198641761228,
+   "label": "HW_back_upper_through"
+  },
+  "HubNutL": {
+   "group": "driveL",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.00036038442528511756,
+   "label": "Гайка M3 L"
+  },
+  "HubScrewL": {
+   "group": "driveL",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.000324111328230727,
+   "label": "Стопорный винт M3×6 L"
+  },
+  "Rim0L": {
+   "group": "driveL",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.09439382297543895,
+   "label": "Диск driveL"
+  },
+  "Tire0L": {
+   "group": "driveL",
+   "color": [
+    43,
+    50,
+    54
+   ],
+   "mass": 0.054907289320679085,
+   "label": "Шина driveL"
+  },
+  "Rim280L": {
+   "group": "frontL",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.09061185412165489,
+   "label": "Диск frontL"
+  },
+  "Tire280L": {
+   "group": "frontL",
+   "color": [
+    43,
+    50,
+    54
+   ],
+   "mass": 0.04155870559735473,
+   "label": "Шина frontL"
+  },
+  "GearboxL": {
+   "group": "frame",
+   "color": [
+    104,
+    112,
+    117
+   ],
+   "mass": 0.077,
+   "label": "JGY-370 · редуктор L"
+  },
+  "CanL": {
+   "group": "frame",
+   "color": [
+    104,
+    112,
+    117
+   ],
+   "mass": 0.043,
+   "label": "JGY-370 · мотор L"
+  },
+  "DshaftL": {
+   "group": "driveL",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.003,
+   "label": "D-вал 6 мм L"
+  },
+  "CasterForkL": {
+   "group": "forkL",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.005119020801843246,
+   "label": "Вилка с вылетом 12 мм L"
+  },
+  "CasterAxleL": {
+   "group": "forkL",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.009987908443925353,
+   "label": "Ось ролика L"
+  },
+  "CasterHubL": {
+   "group": "frontL",
+   "color": [
+    198,
+    112,
+    60
+   ],
+   "mass": 0.003975413755353347,
+   "label": "Втулка ролика L"
+  },
+  "TowerL": {
+   "group": "frame",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.029726777542674603,
+   "label": "Опора четырёхзвенника L"
+  },
+  "RailL": {
+   "group": "frame",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.021769248945606254,
+   "label": "Балка с моторной пластиной L"
+  },
+  "HubNutR": {
+   "group": "driveR",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.00036038442528511756,
+   "label": "Гайка M3 R"
+  },
+  "HubScrewR": {
+   "group": "driveR",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.000324111328230727,
+   "label": "Стопорный винт M3×6 R"
+  },
+  "Rim0R": {
+   "group": "driveR",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.09439382303695638,
+   "label": "Диск driveR"
+  },
+  "Tire0R": {
+   "group": "driveR",
+   "color": [
+    43,
+    50,
+    54
+   ],
+   "mass": 0.054907289320679085,
+   "label": "Шина driveR"
+  },
+  "Rim280R": {
+   "group": "frontR",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.09061185412165489,
+   "label": "Диск frontR"
+  },
+  "Tire280R": {
+   "group": "frontR",
+   "color": [
+    43,
+    50,
+    54
+   ],
+   "mass": 0.04155870559735473,
+   "label": "Шина frontR"
+  },
+  "GearboxR": {
+   "group": "frame",
+   "color": [
+    104,
+    112,
+    117
+   ],
+   "mass": 0.077,
+   "label": "JGY-370 · редуктор R"
+  },
+  "CanR": {
+   "group": "frame",
+   "color": [
+    104,
+    112,
+    117
+   ],
+   "mass": 0.043,
+   "label": "JGY-370 · мотор R"
+  },
+  "DshaftR": {
+   "group": "driveR",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.003,
+   "label": "D-вал 6 мм R"
+  },
+  "CasterForkR": {
+   "group": "forkR",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.005119020801843239,
+   "label": "Вилка с вылетом 12 мм R"
+  },
+  "CasterAxleR": {
+   "group": "forkR",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.009987908443925353,
+   "label": "Ось ролика R"
+  },
+  "CasterHubR": {
+   "group": "frontR",
+   "color": [
+    198,
+    112,
+    60
+   ],
+   "mass": 0.003975413755353347,
+   "label": "Втулка ролика R"
+  },
+  "TowerR": {
+   "group": "frame",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.02972677754267461,
+   "label": "Опора четырёхзвенника R"
+  },
+  "RailR": {
+   "group": "frame",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.021769248945606254,
+   "label": "Балка с моторной пластиной R"
+  },
+  "RearBeam": {
+   "group": "frame",
+   "color": [
+    53,
+    111,
+    127
+   ],
+   "mass": 0.011388,
+   "label": "Задняя поперечина"
+  },
+  "Footplate": {
+   "group": "frame",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.05687435564497383,
+   "label": "Подножка с поперечиной вилок"
+  },
+  "Knee": {
+   "group": "frame",
+   "color": [
+    53,
+    64,
+    75
+   ],
+   "mass": 0.095,
+   "label": "Коленный упор"
+  },
+  "Battery": {
+   "group": "frame",
+   "color": [
+    48,
+    57,
+    65
+   ],
+   "mass": 2.2,
+   "label": "Yuasa NP7-12 · 12 В · 7 А·ч"
+  },
+  "BatteryTray": {
+   "group": "frame",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.04539744407006442,
+   "label": "Лоток аккумулятора"
+  },
+  "LowerMount": {
+   "group": "frame",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.013131108318326243,
+   "label": "Новая нижняя вилка E"
+  },
+  "UpperMount": {
+   "group": "seat",
+   "color": [
+    45,
+    99,
+    104
+   ],
+   "mass": 0.003420399547423989,
+   "label": "Новая верхняя вилка F"
+  },
+  "BasePin": {
+   "group": "frame",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.006658605629283564,
+   "label": "Палец Ø6 BasePin"
+  },
+  "TipPin": {
+   "group": "seat",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.0066586056292835686,
+   "label": "Палец Ø6 TipPin"
+  },
+  "Gruzdy0": {
+   "group": "housing",
+   "color": [
+    77,
+    124,
+    150
+   ],
+   "mass": 0.04059847025133368,
+   "label": "Задняя крышка"
+  },
+  "Gruzdy1": {
+   "group": "housing",
+   "color": [
+    77,
+    124,
+    150
+   ],
+   "mass": 0.1270397957594778,
+   "label": "Корпус"
+  },
+  "Gruzdy2": {
+   "group": "driven",
+   "color": [
+    212,
+    151,
+    65
+   ],
+   "mass": 0.003634114098311757,
+   "label": "Выходная шестерня 48"
+  },
+  "Gruzdy3": {
+   "group": "idler",
+   "color": [
+    212,
+    151,
+    65
+   ],
+   "mass": 0.005008809317069644,
+   "label": "Промежуточная шестерня 48"
+  },
+  "Gruzdy4": {
+   "group": "carriage",
+   "color": [
+    170,
+    91,
+    64
+   ],
+   "mass": 0.00641910233332645,
+   "label": "Каретка"
+  },
+  "Gruzdy5": {
+   "group": "pinion",
+   "color": [
+    212,
+    151,
+    65
+   ],
+   "mass": 0.00024859471125223537,
+   "label": "Шестерня двигателя 12"
+  },
+  "Gruzdy6": {
+   "group": "shaft",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.1402507447317819,
+   "label": "Винт Ø10, гладкая CAD-поверхность"
+  },
+  "Gruzdy7": {
+   "group": "housing",
+   "color": [
+    77,
+    124,
+    150
+   ],
+   "mass": 0.0296711810318251,
+   "label": "Передняя крышка"
+  },
+  "Stepper": {
+   "group": "housing",
+   "color": [
+    104,
+    112,
+    117
+   ],
+   "mass": 0.22,
+   "label": "M49SP-2K · корпус"
+  },
+  "RearAdapter": {
+   "group": "housing",
+   "color": [
+    198,
+    112,
+    60
+   ],
+   "mass": 0.013511788238850284,
+   "label": "Адаптер задней крышки"
+  },
+  "LeadscrewNut": {
+   "group": "carriage",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.008891477506056384,
+   "label": "Гайка M10×1,5 · SW16 · условная резьба"
+  },
+  "RodBush": {
+   "group": "carriage",
+   "color": [
+    158,
+    171,
+    176
+   ],
+   "mass": 0.009856413040049378,
+   "label": "Втулка штока · SW16"
+  },
+  "OutputRod": {
+   "group": "carriage",
+   "color": [
+    206,
+    210,
+    212
+   ],
+   "mass": 0.09007419825389619,
+   "label": "Выходной шток Ø9"
+  },
+  "RodEye": {
+   "group": "carriage",
+   "color": [
+    198,
+    112,
+    60
+   ],
+   "mass": 0.0010863319057451961,
+   "label": "Проушина штока"
+  }
+ },
+ "origins": {
+  "frame": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "seat": [
+   280.0,
+   0.0,
+   260.0
+  ],
+  "back": [
+   72.0,
+   0.0,
+   200.0
+  ],
+  "link": [
+   280.0,
+   0.0,
+   160.0
+  ],
+  "housing": [
+   45.0,
+   -32.0,
+   40.0
+  ],
+  "carriage": [
+   45.0,
+   -32.0,
+   40.0
+  ],
+  "driveL": [
+   0.0,
+   105.0,
+   64.0
+  ],
+  "forkL": [
+   251.0,
+   100.0,
+   149.0
+  ],
+  "frontL": [
+   239.0,
+   100.0,
+   64.0
+  ],
+  "driveR": [
+   0.0,
+   -105.0,
+   64.0
+  ],
+  "forkR": [
+   251.0,
+   -100.0,
+   149.0
+  ],
+  "frontR": [
+   239.0,
+   -100.0,
+   64.0
+  ],
+  "pinion": [
+   60.66632053876987,
+   32.81,
+   61.99015235910196
+  ],
+  "idler": [
+   60.66632053876987,
+   15.96,
+   61.99015235910196
+  ],
+  "driven": [
+   60.66632053876987,
+   -11.019999999999996,
+   61.99015235910196
+  ],
+  "shaft": [
+   60.87715167673194,
+   -10.869999999999997,
+   61.83971555753527
+  ]
+ },
+ "E": [
+  45.0,
+  -32.0,
+  40.0
+ ],
+ "F": [
+  182.0,
+  -32.0,
+  232.0
+ ],
+ "direction": [
+  0.5808370716860627,
+  0.0,
+  0.8140198376914163
+ ],
+ "pin_distance_mm": 235.8664876577425,
+ "stroke_mm": 121.6839030601748
+}

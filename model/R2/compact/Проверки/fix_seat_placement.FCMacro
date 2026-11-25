@@ -1,0 +1,14 @@
+import FreeCAD as App,FreeCADGui as Gui,Part,os,json,traceback
+from FreeCAD import Vector
+r={};root=r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed'
+try:
+ p=os.path.join(root,'R2_ПРОСТАЯ_СБОРКА.FCStd');d=App.openDocument(p)
+ o=next(x for x in d.Objects if x.Label=='seat');before=o.Shape.copy();loc=before.copy();loc.translate(Vector(-280,0,-260));o.Shape=loc;o.Placement=App.Placement(Vector(280,0,260),App.Rotation());d.recompute()
+ r['placement']=str(o.Placement);r['difference_volume']=(before.cut(o.Shape).Volume+o.Shape.cut(before).Volume)
+ assert r['difference_volume']<0.0001 and (o.Placement.Base-Vector(280,0,260)).Length<1e-6
+ for x in d.Objects:
+  if hasattr(x,'Shape') and not x.Shape.isNull():x.ViewObject.Visibility=True
+ Gui.activeDocument().activeView().viewAxonometric();Gui.activeDocument().activeView().fitAll();d.save();r['ok']=True
+except Exception:r['ok']=False;r['error']=traceback.format_exc()
+with open(os.path.join(root,'placement_fix_check.json'),'w',encoding='utf8') as f:json.dump(r,f,indent=2)
+os._exit(0)

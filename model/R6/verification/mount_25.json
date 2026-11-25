@@ -1,0 +1,29 @@
+[
+  {
+    "seat_deg": 0,
+    "force_N": 335.103216,
+    "max_pin_disp_mm": 0.5301969008422531,
+    "peak_vm_MPa": 41.33670290986242,
+    "integration_point_p99_vm_MPa": 6.845840754464926,
+    "elements": 34346,
+    "mesh_mm": 2.5
+  },
+  {
+    "seat_deg": 38,
+    "force_N": 335.103216,
+    "max_pin_disp_mm": 0.523671239792391,
+    "peak_vm_MPa": 33.270882089325326,
+    "integration_point_p99_vm_MPa": 6.147351152518754,
+    "elements": 34346,
+    "mesh_mm": 2.5
+  },
+  {
+    "seat_deg": 75,
+    "force_N": 335.103216,
+    "max_pin_disp_mm": 0.526869196905228,
+    "peak_vm_MPa": 35.830971380204296,
+    "integration_point_p99_vm_MPa": 6.3639444141676345,
+    "elements": 34346,
+    "mesh_mm": 2.5
+  }
+]

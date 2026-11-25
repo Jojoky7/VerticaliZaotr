@@ -1,0 +1,262 @@
+<mujoco model="R5 / central Gruzdy actuator">
+  <compiler angle="radian" meshdir="assets" balanceinertia="true" />
+  <option gravity="0 0 -9.80665" timestep="0.002" integrator="implicitfast" iterations="70" tolerance="1e-10" />
+  <statistic center="0.14 0 0.31" extent="0.75" />
+  <visual>
+    <global offwidth="1120" offheight="720" />
+    <headlight ambient="0.42 0.42 0.42" diffuse="0.68 0.68 0.68" />
+  </visual>
+  <default>
+    <geom contype="0" conaffinity="0" friction="0.8 0.002 0.0001" />
+    <joint armature="1e-06" />
+  </default>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.34 0.44 0.5" rgb2="0.82 0.88 0.89" width="256" height="1536" />
+    <mesh name="seat" file="seat.stl" scale="0.001 0.001 0.001" />
+    <mesh name="back" file="back.stl" scale="0.001 0.001 0.001" />
+    <mesh name="link_left" file="link_left.stl" scale="0.001 0.001 0.001" />
+    <mesh name="link_right" file="link_right.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SeatPad" file="SeatPad.stl" scale="0.001 0.001 0.001" />
+    <mesh name="BackPad" file="BackPad.stl" scale="0.001 0.001 0.001" />
+    <mesh name="ArmPadLeft" file="ArmPadLeft.stl" scale="0.001 0.001 0.001" />
+    <mesh name="ArmPadRight" file="ArmPadRight.stl" scale="0.001 0.001 0.001" />
+    <mesh name="ControllerCase" file="ControllerCase.stl" scale="0.001 0.001 0.001" />
+    <mesh name="ControllerBoot" file="ControllerBoot.stl" scale="0.001 0.001 0.001" />
+    <mesh name="ControllerStick" file="ControllerStick.stl" scale="0.001 0.001 0.001" />
+    <mesh name="ControllerButtons" file="ControllerButtons.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_frame_upper_L" file="HW_frame_upper_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_frame_upper_R" file="HW_frame_upper_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_frame_lower_L" file="HW_frame_lower_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_frame_lower_R" file="HW_frame_lower_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_back_lower_L" file="HW_back_lower_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_back_lower_R" file="HW_back_lower_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_frame_upper_L" file="SP_frame_upper_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_frame_upper_R" file="SP_frame_upper_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_frame_lower_L" file="SP_frame_lower_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_frame_lower_R" file="SP_frame_lower_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_back_lower_L" file="SP_back_lower_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_back_lower_R" file="SP_back_lower_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_back_upper_L" file="SP_back_upper_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="SP_back_upper_R" file="SP_back_upper_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_back_join_L" file="HW_back_join_L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_back_join_R" file="HW_back_join_R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HW_back_upper_through" file="HW_back_upper_through.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HubNutL" file="HubNutL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HubScrewL" file="HubScrewL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Rim0L" file="Rim0L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Tire0L" file="Tire0L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Rim280L" file="Rim280L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Tire280L" file="Tire280L.stl" scale="0.001 0.001 0.001" />
+    <mesh name="GearboxL" file="GearboxL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CanL" file="CanL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="DshaftL" file="DshaftL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CasterForkL" file="CasterForkL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CasterAxleL" file="CasterAxleL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CasterHubL" file="CasterHubL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="TowerL" file="TowerL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="RailL" file="RailL.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HubNutR" file="HubNutR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="HubScrewR" file="HubScrewR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Rim0R" file="Rim0R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Tire0R" file="Tire0R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Rim280R" file="Rim280R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Tire280R" file="Tire280R.stl" scale="0.001 0.001 0.001" />
+    <mesh name="GearboxR" file="GearboxR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CanR" file="CanR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="DshaftR" file="DshaftR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CasterForkR" file="CasterForkR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CasterAxleR" file="CasterAxleR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="CasterHubR" file="CasterHubR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="TowerR" file="TowerR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="RailR" file="RailR.stl" scale="0.001 0.001 0.001" />
+    <mesh name="RearBeam" file="RearBeam.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Footplate" file="Footplate.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Knee" file="Knee.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Battery" file="Battery.stl" scale="0.001 0.001 0.001" />
+    <mesh name="BatteryTray" file="BatteryTray.stl" scale="0.001 0.001 0.001" />
+    <mesh name="LowerMount" file="LowerMount.stl" scale="0.001 0.001 0.001" />
+    <mesh name="UpperMount" file="UpperMount.stl" scale="0.001 0.001 0.001" />
+    <mesh name="BasePin" file="BasePin.stl" scale="0.001 0.001 0.001" />
+    <mesh name="TipPin" file="TipPin.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy0" file="Gruzdy0.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy1" file="Gruzdy1.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy2" file="Gruzdy2.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy3" file="Gruzdy3.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy4" file="Gruzdy4.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy5" file="Gruzdy5.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy6" file="Gruzdy6.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Gruzdy7" file="Gruzdy7.stl" scale="0.001 0.001 0.001" />
+    <mesh name="Stepper" file="Stepper.stl" scale="0.001 0.001 0.001" />
+    <mesh name="RearAdapter" file="RearAdapter.stl" scale="0.001 0.001 0.001" />
+    <mesh name="LeadscrewNut" file="LeadscrewNut.stl" scale="0.001 0.001 0.001" />
+    <mesh name="RodBush" file="RodBush.stl" scale="0.001 0.001 0.001" />
+    <mesh name="OutputRod" file="OutputRod.stl" scale="0.001 0.001 0.001" />
+    <mesh name="RodEye" file="RodEye.stl" scale="0.001 0.001 0.001" />
+  </asset>
+  <worldbody>
+    <light pos="0.3 -0.5 1.3" dir="-0.2 0.3 -1" directional="true" />
+    <geom name="ground" type="plane" size="0 0 0.03" rgba="0.62 0.68 0.69 1" priority="1" solref="0.006 1" solimp="0.98 0.995 0.001" contype="1" conaffinity="1" />
+    <body name="frame" pos="0 0 0">
+      <body name="seat" pos="0.28 0 0.26">
+        <joint name="lift" axis="0 1 0" range="0 1.308996939" limited="true" damping="0.1" />
+        <body name="back" pos="-0.208 0 -0.06">
+          <joint name="back_hinge" axis="0 1 0" />
+          <geom name="back" type="mesh" mesh="back" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.2109591309992491" />
+          <geom name="BackPad" type="mesh" mesh="BackPad" rgba="0.207843137255 0.250980392157 0.294117647059 1" mass="0.1723608328719275" />
+          <geom name="ArmPadLeft" type="mesh" mesh="ArmPadLeft" rgba="0.207843137255 0.250980392157 0.294117647059 1" mass="0.007869839911429696" />
+          <geom name="ArmPadRight" type="mesh" mesh="ArmPadRight" rgba="0.207843137255 0.250980392157 0.294117647059 1" mass="0.007869839911429696" />
+          <geom name="ControllerCase" type="mesh" mesh="ControllerCase" rgba="0.188235294118 0.223529411765 0.254901960784 1" mass="0.01648808648244213" />
+          <geom name="ControllerBoot" type="mesh" mesh="ControllerBoot" rgba="0.16862745098 0.196078431373 0.211764705882 1" mass="0.0007861033378508426" />
+          <geom name="ControllerStick" type="mesh" mesh="ControllerStick" rgba="0.407843137255 0.439215686275 0.458823529412 1" mass="0.00024392034282492324" />
+          <geom name="ControllerButtons" type="mesh" mesh="ControllerButtons" rgba="0.83137254902 0.592156862745 0.254901960784 1" mass="3.25847560826661e-05" />
+          <geom name="HW_back_lower_L" type="mesh" mesh="HW_back_lower_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.005208570945995416" />
+          <geom name="HW_back_lower_R" type="mesh" mesh="HW_back_lower_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.005208570945995416" />
+          <geom name="SP_back_lower_L" type="mesh" mesh="SP_back_lower_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.0022120874360573224" />
+          <geom name="SP_back_lower_R" type="mesh" mesh="SP_back_lower_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.0022120874360573224" />
+          <geom name="SP_back_upper_L" type="mesh" mesh="SP_back_upper_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.003002118663220653" />
+          <geom name="SP_back_upper_R" type="mesh" mesh="SP_back_upper_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.003002118663220653" />
+          <geom name="HW_back_join_L" type="mesh" mesh="HW_back_join_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.002187475256731304" />
+          <geom name="HW_back_join_R" type="mesh" mesh="HW_back_join_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.002187475256731304" />
+          <geom name="HW_back_upper_through" type="mesh" mesh="HW_back_upper_through" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.03665198641761228" />
+        </body>
+        <geom name="seat" type="mesh" mesh="seat" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.19110229999623932" />
+        <geom name="SeatPad" type="mesh" mesh="SeatPad" rgba="0.207843137255 0.250980392157 0.294117647059 1" mass="0.05929983936149045" />
+        <geom name="UpperMount" type="mesh" mesh="UpperMount" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.003420399547423989" />
+        <geom name="TipPin" type="mesh" mesh="TipPin" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.0066586056292835686" />
+        <site name="rocker_pin" pos="-0.098 -0.032 -0.028" size="0.002" rgba="0.91 0.58 0.2 1" />
+        <body name="man_trunk" pos="-0.144 0 0.0253">
+          <joint name="hip_compensation" axis="0 1 0" />
+          <geom name="pelvis" type="ellipsoid" mass="0.72" rgba="0.16 0.25 0.36 1" group="2" size="0.036 0.058 0.03" />
+          <geom name="torso" type="ellipsoid" mass="2.0999999999999996" rgba="0.16 0.51 0.53 1" group="2" size="0.039 0.063 0.09" pos="0 0 0.087" />
+          <geom name="neck" type="capsule" mass="0.09" rgba="0.84 0.62 0.48 1" group="2" fromto="0 0 0.162 0 0 0.188" size="0.014" />
+          <geom name="head" type="ellipsoid" mass="0.44999999999999996" rgba="0.84 0.62 0.48 1" group="2" size="0.032 0.029 0.039" pos="0.006 0 0.217" />
+          <geom name="hair" type="ellipsoid" size="0.03 0.028 0.019" pos="0.003 0 0.238" rgba="0.14 0.11 0.08 1" mass="0" />
+          <geom name="upper_armL" type="capsule" mass="0.14400000000000002" rgba="0.16 0.51 0.53 1" group="2" fromto="0 0.058 0.15 0.015 0.068 0.074" size="0.013" />
+          <geom name="forearmL" type="capsule" mass="0.138" rgba="0.84 0.62 0.48 1" group="2" fromto="0.015 0.068 0.074 0.09 0.068 0.068" size="0.011" />
+          <geom name="upper_armR" type="capsule" mass="0.14400000000000002" rgba="0.16 0.51 0.53 1" group="2" fromto="0 -0.058 0.15 0.015 -0.068 0.074" size="0.013" />
+          <geom name="forearmR" type="capsule" mass="0.138" rgba="0.84 0.62 0.48 1" group="2" fromto="0.015 -0.068 0.074 0.09 -0.068 0.068" size="0.011" />
+        </body>
+        <geom name="thighL" type="capsule" mass="0.63" rgba="0.16 0.25 0.36 1" group="2" fromto="-0.144 0.037 0.0253 0 0.037 0" size="0.021" />
+        <geom name="thighR" type="capsule" mass="0.63" rgba="0.16 0.25 0.36 1" group="2" fromto="-0.144 -0.037 0.0253 0 -0.037 0" size="0.021" />
+      </body>
+      <body name="link" pos="0.28 0 0.16">
+        <joint name="lower_hinge" axis="0 1 0" />
+        <geom name="link_left" type="mesh" mesh="link_left" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.016732704561990455" />
+        <geom name="link_right" type="mesh" mesh="link_right" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.0167327045619901" />
+      </body>
+      <body name="housing" pos="0.045 -0.032 0.04">
+        <joint name="barrel_pitch" axis="0 1 0" damping="0.007" />
+        <body name="carriage" pos="0 0 0">
+          <joint name="extension" axis="0.580837071686 0 0.814019837691" type="slide" range="0 0.128" limited="true" armature="12" damping="1.8" />
+          <geom name="Gruzdy4" type="mesh" mesh="Gruzdy4" rgba="0.666666666667 0.356862745098 0.250980392157 1" mass="0.00641910233332645" />
+          <geom name="LeadscrewNut" type="mesh" mesh="LeadscrewNut" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.008891477506056384" />
+          <geom name="RodBush" type="mesh" mesh="RodBush" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.009856413040049378" />
+          <geom name="OutputRod" type="mesh" mesh="OutputRod" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.09007419825389619" />
+          <geom name="RodEye" type="mesh" mesh="RodEye" rgba="0.776470588235 0.439215686275 0.235294117647 1" mass="0.0010863319057451961" />
+          <site name="link_tip" pos="0.137 0 0.192" size="0.002" rgba="0.91 0.58 0.2 1" />
+        </body>
+        <body name="shaft" pos="0.0158771516767 0.02113 0.0218397155575">
+          <joint name="shaft_angle" axis="0.580837071686 0 0.814019837691" damping="0.0002" />
+          <geom name="Gruzdy6" type="mesh" mesh="Gruzdy6" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.1402507447317819" />
+        </body>
+        <body name="pinion" pos="0.0156663205388 0.06481 0.0219901523591">
+          <joint name="pinion_angle" axis="0.580837071686 0 0.814019837691" damping="0.0002" />
+          <geom name="Gruzdy5" type="mesh" mesh="Gruzdy5" rgba="0.83137254902 0.592156862745 0.254901960784 1" mass="0.00024859471125223537" />
+        </body>
+        <body name="idler" pos="0.0156663205388 0.04796 0.0219901523591">
+          <joint name="idler_angle" axis="0.580837071686 0 0.814019837691" damping="0.0002" />
+          <geom name="Gruzdy3" type="mesh" mesh="Gruzdy3" rgba="0.83137254902 0.592156862745 0.254901960784 1" mass="0.005008809317069644" />
+        </body>
+        <body name="driven" pos="0.0156663205388 0.02098 0.0219901523591">
+          <joint name="driven_angle" axis="0.580837071686 0 0.814019837691" damping="0.0002" />
+          <geom name="Gruzdy2" type="mesh" mesh="Gruzdy2" rgba="0.83137254902 0.592156862745 0.254901960784 1" mass="0.003634114098311757" />
+        </body>
+        <geom name="Gruzdy0" type="mesh" mesh="Gruzdy0" rgba="0.301960784314 0.486274509804 0.588235294118 0.35" mass="0.04059847025133368" />
+        <geom name="Gruzdy1" type="mesh" mesh="Gruzdy1" rgba="0.301960784314 0.486274509804 0.588235294118 0.35" mass="0.1270397957594778" />
+        <geom name="Gruzdy7" type="mesh" mesh="Gruzdy7" rgba="0.301960784314 0.486274509804 0.588235294118 0.35" mass="0.0296711810318251" />
+        <geom name="Stepper" type="mesh" mesh="Stepper" rgba="0.407843137255 0.439215686275 0.458823529412 1" mass="0.22" />
+        <geom name="RearAdapter" type="mesh" mesh="RearAdapter" rgba="0.776470588235 0.439215686275 0.235294117647 1" mass="0.013511788238850284" />
+      </body>
+      <body name="driveL" pos="0 0.105 0.064">
+        <joint name="wheelL" axis="0 1 0" damping="0.00016" armature="0.001" />
+        <geom name="contact_driveL" type="cylinder" size="0.064 0.017" quat="0.70710678 0.70710678 0 0" mass="0.0001" rgba="0 0 0 0" group="3" condim="3" />
+        <geom name="HubNutL" type="mesh" mesh="HubNutL" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.00036038442528511756" />
+        <geom name="HubScrewL" type="mesh" mesh="HubScrewL" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.000324111328230727" />
+        <geom name="Rim0L" type="mesh" mesh="Rim0L" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.09439382297543895" />
+        <geom name="Tire0L" type="mesh" mesh="Tire0L" rgba="0.16862745098 0.196078431373 0.211764705882 1" mass="0.054907289320679085" />
+        <geom name="DshaftL" type="mesh" mesh="DshaftL" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.003" />
+      </body>
+      <body name="forkL" pos="0.251 0.1 0.149">
+        <joint name="yawL" axis="0 0 1" damping="0.0016" />
+        <body name="frontL" pos="-0.012 0 -0.085">
+          <joint name="casterL" axis="0 1 0" damping="0.00015" />
+          <geom name="contact_frontL" type="ellipsoid" size="0.064 0.064 0.056" quat="0.70710678 0.70710678 0 0" mass="0.0001" rgba="0 0 0 0" group="3" condim="3" />
+          <geom name="Rim280L" type="mesh" mesh="Rim280L" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.09061185412165489" />
+          <geom name="Tire280L" type="mesh" mesh="Tire280L" rgba="0.16862745098 0.196078431373 0.211764705882 1" mass="0.04155870559735473" />
+          <geom name="CasterHubL" type="mesh" mesh="CasterHubL" rgba="0.776470588235 0.439215686275 0.235294117647 1" mass="0.003975413755353347" />
+        </body>
+        <geom name="CasterForkL" type="mesh" mesh="CasterForkL" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.005119020801843246" />
+        <geom name="CasterAxleL" type="mesh" mesh="CasterAxleL" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.009987908443925353" />
+      </body>
+      <body name="driveR" pos="0 -0.105 0.064">
+        <joint name="wheelR" axis="0 1 0" damping="0.00016" armature="0.001" />
+        <geom name="contact_driveR" type="cylinder" size="0.064 0.017" quat="0.70710678 0.70710678 0 0" mass="0.0001" rgba="0 0 0 0" group="3" condim="3" />
+        <geom name="HubNutR" type="mesh" mesh="HubNutR" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.00036038442528511756" />
+        <geom name="HubScrewR" type="mesh" mesh="HubScrewR" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.000324111328230727" />
+        <geom name="Rim0R" type="mesh" mesh="Rim0R" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.09439382303695638" />
+        <geom name="Tire0R" type="mesh" mesh="Tire0R" rgba="0.16862745098 0.196078431373 0.211764705882 1" mass="0.054907289320679085" />
+        <geom name="DshaftR" type="mesh" mesh="DshaftR" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.003" />
+      </body>
+      <body name="forkR" pos="0.251 -0.1 0.149">
+        <joint name="yawR" axis="0 0 1" damping="0.0016" />
+        <body name="frontR" pos="-0.012 0 -0.085">
+          <joint name="casterR" axis="0 1 0" damping="0.00015" />
+          <geom name="contact_frontR" type="ellipsoid" size="0.064 0.064 0.056" quat="0.70710678 0.70710678 0 0" mass="0.0001" rgba="0 0 0 0" group="3" condim="3" />
+          <geom name="Rim280R" type="mesh" mesh="Rim280R" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.09061185412165489" />
+          <geom name="Tire280R" type="mesh" mesh="Tire280R" rgba="0.16862745098 0.196078431373 0.211764705882 1" mass="0.04155870559735473" />
+          <geom name="CasterHubR" type="mesh" mesh="CasterHubR" rgba="0.776470588235 0.439215686275 0.235294117647 1" mass="0.003975413755353347" />
+        </body>
+        <geom name="CasterForkR" type="mesh" mesh="CasterForkR" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.005119020801843239" />
+        <geom name="CasterAxleR" type="mesh" mesh="CasterAxleR" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.009987908443925353" />
+      </body>
+      <geom name="HW_frame_upper_L" type="mesh" mesh="HW_frame_upper_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.006904049231229674" />
+      <geom name="HW_frame_upper_R" type="mesh" mesh="HW_frame_upper_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.006904049231229676" />
+      <geom name="HW_frame_lower_L" type="mesh" mesh="HW_frame_lower_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.010911543359965156" />
+      <geom name="HW_frame_lower_R" type="mesh" mesh="HW_frame_lower_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.010911543359965158" />
+      <geom name="SP_frame_upper_L" type="mesh" mesh="SP_frame_upper_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.002607103049638987" />
+      <geom name="SP_frame_upper_R" type="mesh" mesh="SP_frame_upper_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.002607103049638987" />
+      <geom name="SP_frame_lower_L" type="mesh" mesh="SP_frame_lower_L" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.00011850468407450382" />
+      <geom name="SP_frame_lower_R" type="mesh" mesh="SP_frame_lower_R" rgba="0.619607843137 0.670588235294 0.690196078431 1" mass="0.00011850468407450382" />
+      <geom name="GearboxL" type="mesh" mesh="GearboxL" rgba="0.407843137255 0.439215686275 0.458823529412 1" mass="0.077" />
+      <geom name="CanL" type="mesh" mesh="CanL" rgba="0.407843137255 0.439215686275 0.458823529412 1" mass="0.043" />
+      <geom name="TowerL" type="mesh" mesh="TowerL" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.029726777542674603" />
+      <geom name="RailL" type="mesh" mesh="RailL" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.021769248945606254" />
+      <geom name="GearboxR" type="mesh" mesh="GearboxR" rgba="0.407843137255 0.439215686275 0.458823529412 1" mass="0.077" />
+      <geom name="CanR" type="mesh" mesh="CanR" rgba="0.407843137255 0.439215686275 0.458823529412 1" mass="0.043" />
+      <geom name="TowerR" type="mesh" mesh="TowerR" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.02972677754267461" />
+      <geom name="RailR" type="mesh" mesh="RailR" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.021769248945606254" />
+      <geom name="RearBeam" type="mesh" mesh="RearBeam" rgba="0.207843137255 0.435294117647 0.498039215686 1" mass="0.011388" />
+      <geom name="Footplate" type="mesh" mesh="Footplate" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.05687435564497383" />
+      <geom name="Knee" type="mesh" mesh="Knee" rgba="0.207843137255 0.250980392157 0.294117647059 1" mass="0.095" />
+      <geom name="Battery" type="mesh" mesh="Battery" rgba="0.188235294118 0.223529411765 0.254901960784 1" mass="2.2" />
+      <geom name="BatteryTray" type="mesh" mesh="BatteryTray" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.04539744407006442" />
+      <geom name="LowerMount" type="mesh" mesh="LowerMount" rgba="0.176470588235 0.388235294118 0.407843137255 1" mass="0.013131108318326243" />
+      <geom name="BasePin" type="mesh" mesh="BasePin" rgba="0.807843137255 0.823529411765 0.83137254902 1" mass="0.006658605629283564" />
+      <geom name="shinL" type="capsule" mass="0.30000000000000004" rgba="0.16 0.25 0.36 1" group="2" fromto="0.28 0.037 0.26 0.308 0.037 0.142" size="0.015" />
+      <geom name="shoeL" type="capsule" mass="0.10799999999999998" rgba="0.2 0.22 0.24 1" group="2" fromto="0.309 0.037 0.14 0.337 0.037 0.139" size="0.011" />
+      <geom name="shinR" type="capsule" mass="0.30000000000000004" rgba="0.16 0.25 0.36 1" group="2" fromto="0.28 -0.037 0.26 0.308 -0.037 0.142" size="0.015" />
+      <geom name="shoeR" type="capsule" mass="0.10799999999999998" rgba="0.2 0.22 0.24 1" group="2" fromto="0.309 -0.037 0.14 0.337 -0.037 0.139" size="0.011" />
+    </body>
+  </worldbody>
+  <equality>
+    <joint joint1="lower_hinge" joint2="lift" polycoef="0 1 0 0 0" solref="0.004 1" solimp="0.999 0.9999 0.001" />
+    <joint joint1="back_hinge" joint2="lift" polycoef="0 -1 0 0 0" solref="0.004 1" solimp="0.999 0.9999 0.001" />
+    <joint joint1="hip_compensation" joint2="lift" polycoef="0 -1 0 0 0" solref="0.004 1" solimp="0.999 0.9999 0.001" />
+    <connect name="link_pin" site1="rocker_pin" site2="link_tip" solref="0.004 1" solimp="0.999 0.9999 0.0001" />
+  </equality>
+  <actuator>
+    <position name="screw_drive" joint="extension" kp="800000" kv="6000" forcelimited="true" forcerange="-335.1032164 335.1032164" ctrllimited="true" ctrlrange="0 0.128" />
+    <motor name="JGY_L" joint="wheelL" ctrllimited="true" ctrlrange="-0.588399 0.588399" />
+    <motor name="JGY_R" joint="wheelR" ctrllimited="true" ctrlrange="-0.588399 0.588399" />
+  </actuator>
+</mujoco>

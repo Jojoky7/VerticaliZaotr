@@ -1,0 +1,88 @@
+{
+  "ok": true,
+  "samples": [
+    {
+      "angle": 0,
+      "actuator": 197.0,
+      "collisions": []
+    },
+    {
+      "angle": 5,
+      "actuator": 205.7460670970213,
+      "collisions": []
+    },
+    {
+      "angle": 10,
+      "actuator": 215.15222388651333,
+      "collisions": []
+    },
+    {
+      "angle": 15,
+      "actuator": 225.06882348065147,
+      "collisions": []
+    },
+    {
+      "angle": 20,
+      "actuator": 235.36080312022747,
+      "collisions": []
+    },
+    {
+      "angle": 25,
+      "actuator": 245.90773037089144,
+      "collisions": []
+    },
+    {
+      "angle": 30,
+      "actuator": 256.60291744113067,
+      "collisions": []
+    },
+    {
+      "angle": 35,
+      "actuator": 267.35209185690684,
+      "collisions": []
+    },
+    {
+      "angle": 40,
+      "actuator": 278.071932493622,
+      "collisions": []
+    },
+    {
+      "angle": 45,
+      "actuator": 288.6886471203686,
+      "collisions": []
+    },
+    {
+      "angle": 50,
+      "actuator": 299.1366794518338,
+      "collisions": []
+    },
+    {
+      "angle": 55,
+      "actuator": 309.3575799476345,
+      "collisions": []
+    },
+    {
+      "angle": 60,
+      "actuator": 319.2990443604524,
+      "collisions": []
+    },
+    {
+      "angle": 65,
+      "actuator": 328.91410864345863,
+      "collisions": []
+    },
+    {
+      "angle": 70,
+      "actuator": 338.16048223089683,
+      "collisions": []
+    },
+    {
+      "angle": 75,
+      "actuator": 346.99999999999994,
+      "collisions": []
+    }
+  ],
+  "valid": true,
+  "solids": 1,
+  "vol_increase": 200896.00018627598
+}

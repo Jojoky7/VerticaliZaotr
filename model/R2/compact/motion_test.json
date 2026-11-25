@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "samples": [
+    {
+      "angle_deg": 0,
+      "max_joint_or_hardware_drift_mm": 0.0
+    },
+    {
+      "angle_deg": 15,
+      "max_joint_or_hardware_drift_mm": 4.0194366942304644e-14
+    },
+    {
+      "angle_deg": 30,
+      "max_joint_or_hardware_drift_mm": 4.0194366942304644e-14
+    },
+    {
+      "angle_deg": 45,
+      "max_joint_or_hardware_drift_mm": 5.684341886080802e-14
+    },
+    {
+      "angle_deg": 60,
+      "max_joint_or_hardware_drift_mm": 2.842170943040401e-14
+    },
+    {
+      "angle_deg": 75,
+      "max_joint_or_hardware_drift_mm": 6.355287432313019e-14
+    }
+  ]
+}

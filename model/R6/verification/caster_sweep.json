@@ -1,0 +1,7 @@
+{
+  "yaw_step_deg": 5,
+  "seat_step_deg": 5,
+  "exact_tests": 1510,
+  "threshold_mm3": 0.25,
+  "envelope_hits": {}
+}

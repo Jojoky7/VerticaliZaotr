@@ -1,0 +1,244 @@
+{
+  "mujoco": "3.14.0",
+  "scenarios": {
+    "reference": {
+      "torque_Nm": 0.08,
+      "efficiency": 0.25,
+      "lead_mm_per_rev": 1.5,
+      "force_limit_N": 335.1032163829113,
+      "stroke_mm": 121.68390306017487,
+      "speed_mm_per_s": 0.7812499999999999,
+      "trials": [
+        {
+          "mass_kg": 5,
+          "passed": true,
+          "max_angle_deg": 74.99,
+          "end_angle_deg": 74.99,
+          "time_to_74_5_s": 154.77,
+          "peak_motor_force_N": 113.81,
+          "gravity_peak_N": 111.9,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0059,
+          "time_s": 156.75
+        },
+        {
+          "mass_kg": 6,
+          "passed": true,
+          "max_angle_deg": 74.99,
+          "end_angle_deg": 74.99,
+          "time_to_74_5_s": 154.77,
+          "peak_motor_force_N": 130.85,
+          "gravity_peak_N": 128.77,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0064,
+          "time_s": 156.75
+        },
+        {
+          "mass_kg": 8,
+          "passed": true,
+          "max_angle_deg": 74.99,
+          "end_angle_deg": 74.99,
+          "time_to_74_5_s": 154.77,
+          "peak_motor_force_N": 164.91,
+          "gravity_peak_N": 162.52,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0073,
+          "time_s": 156.75
+        },
+        {
+          "mass_kg": 18,
+          "passed": true,
+          "max_angle_deg": 74.99,
+          "end_angle_deg": 74.99,
+          "time_to_74_5_s": 154.78,
+          "peak_motor_force_N": 335.06,
+          "gravity_peak_N": 331.29,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0089,
+          "time_s": 156.75
+        },
+        {
+          "mass_kg": 18.5,
+          "passed": false,
+          "max_angle_deg": 0.0,
+          "end_angle_deg": -0.0,
+          "time_to_74_5_s": null,
+          "peak_motor_force_N": 335.1,
+          "gravity_peak_N": 339.73,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0089,
+          "time_s": 2.02
+        }
+      ]
+    },
+    "higher_losses": {
+      "torque_Nm": 0.05,
+      "efficiency": 0.15,
+      "lead_mm_per_rev": 1.5,
+      "force_limit_N": 125.66370614359171,
+      "stroke_mm": 121.68390306017487,
+      "speed_mm_per_s": 0.7812499999999999,
+      "trials": [
+        {
+          "mass_kg": 5,
+          "passed": true,
+          "max_angle_deg": 74.99,
+          "end_angle_deg": 74.99,
+          "time_to_74_5_s": 154.77,
+          "peak_motor_force_N": 113.81,
+          "gravity_peak_N": 111.9,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0059,
+          "time_s": 156.75
+        },
+        {
+          "mass_kg": 6,
+          "passed": false,
+          "max_angle_deg": 0.0,
+          "end_angle_deg": -0.0,
+          "time_to_74_5_s": null,
+          "peak_motor_force_N": 125.66,
+          "gravity_peak_N": 128.77,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0064,
+          "time_s": 2.02
+        },
+        {
+          "mass_kg": 8,
+          "passed": false,
+          "max_angle_deg": 0.0,
+          "end_angle_deg": -0.02,
+          "time_to_74_5_s": null,
+          "peak_motor_force_N": 125.66,
+          "gravity_peak_N": 162.52,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0073,
+          "time_s": 1.99
+        }
+      ]
+    },
+    "higher_losses_long_lead": {
+      "torque_Nm": 0.05,
+      "efficiency": 0.15,
+      "lead_mm_per_rev": 3.0,
+      "force_limit_N": 62.831853071795855,
+      "stroke_mm": 121.68390306017487,
+      "speed_mm_per_s": 1.5624999999999998,
+      "trials": [
+        {
+          "mass_kg": 5,
+          "passed": false,
+          "max_angle_deg": 0.0,
+          "end_angle_deg": -0.04,
+          "time_to_74_5_s": null,
+          "peak_motor_force_N": 62.83,
+          "gravity_peak_N": 111.9,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0058,
+          "time_s": 1.49
+        },
+        {
+          "mass_kg": 6,
+          "passed": false,
+          "max_angle_deg": 0.0,
+          "end_angle_deg": -0.04,
+          "time_to_74_5_s": null,
+          "peak_motor_force_N": 62.83,
+          "gravity_peak_N": 128.77,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0063,
+          "time_s": 1.48
+        },
+        {
+          "mass_kg": 8,
+          "passed": false,
+          "max_angle_deg": 0.0,
+          "end_angle_deg": -0.04,
+          "time_to_74_5_s": null,
+          "peak_motor_force_N": 62.83,
+          "gravity_peak_N": 162.52,
+          "critical_deg": 0.0,
+          "max_constraint_error_mm": 0.0072,
+          "time_s": 1.48
+        }
+      ]
+    }
+  },
+  "on_wheels": [
+    {
+      "mass_kg": 5,
+      "passed": true,
+      "max_angle_deg": 74.99,
+      "end_angle_deg": 74.99,
+      "time_to_74_5_s": 154.77,
+      "peak_motor_force_N": 113.55,
+      "gravity_peak_N": 111.9,
+      "critical_deg": 0.0,
+      "max_constraint_error_mm": 0.0128,
+      "time_s": 156.75,
+      "min_sampled_wheel_load_N": 12.32,
+      "max_sampled_tilt_deg": 0.002,
+      "max_sampled_pin_force_N": 108.99,
+      "max_sampled_vertical_pin_force_N": 88.05
+    },
+    {
+      "mass_kg": 6,
+      "passed": true,
+      "max_angle_deg": 74.99,
+      "end_angle_deg": 74.99,
+      "time_to_74_5_s": 154.77,
+      "peak_motor_force_N": 130.53,
+      "gravity_peak_N": 128.77,
+      "critical_deg": 0.0,
+      "max_constraint_error_mm": 0.0136,
+      "time_s": 156.75,
+      "min_sampled_wheel_load_N": 11.34,
+      "max_sampled_tilt_deg": 0.002,
+      "max_sampled_pin_force_N": 125.62,
+      "max_sampled_vertical_pin_force_N": 101.61
+    },
+    {
+      "mass_kg": 8,
+      "passed": true,
+      "max_angle_deg": 74.99,
+      "end_angle_deg": 74.99,
+      "time_to_74_5_s": 154.77,
+      "peak_motor_force_N": 164.51,
+      "gravity_peak_N": 162.52,
+      "critical_deg": 0.0,
+      "max_constraint_error_mm": 0.0154,
+      "time_s": 156.75,
+      "min_sampled_wheel_load_N": 9.37,
+      "max_sampled_tilt_deg": 0.003,
+      "max_sampled_pin_force_N": 158.94,
+      "max_sampled_vertical_pin_force_N": 128.78
+    }
+  ],
+  "half_timestep_8kg": {
+    "mass_kg": 8,
+    "passed": true,
+    "max_angle_deg": 74.99,
+    "end_angle_deg": 74.99,
+    "time_to_74_5_s": 154.78,
+    "peak_motor_force_N": 164.66,
+    "gravity_peak_N": 162.52,
+    "critical_deg": 0.0,
+    "max_constraint_error_mm": 0.0023,
+    "time_s": 156.76
+  },
+  "drive": {
+    "mass_kg": 6,
+    "forward_2s_mm": 422.7,
+    "turn_2s_deg": 115.0,
+    "wheel_commands": [
+      [
+        0.6,
+        0.6
+      ],
+      [
+        -0.55,
+        0.55
+      ]
+    ]
+  }
+}

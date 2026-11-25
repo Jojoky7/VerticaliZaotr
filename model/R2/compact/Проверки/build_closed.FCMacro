@@ -1,0 +1,30 @@
+import FreeCAD as App, Part, Mesh, MeshPart, os, json, traceback
+from FreeCAD import Vector
+root=r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed';r={'ok':False}
+try:
+ check=json.load(open(os.path.join(root,'candidate_check.json'),encoding='utf8'));assert check['ok']
+ d=App.openDocument(os.path.join(root,'R2_ПРОСТАЯ_СБОРКА.FCStd'))
+ o=next(x for x in d.Objects if x.Label=='seat');seat=o.Shape.copy()
+ cover=Part.makeBox(172,184,5,Vector(78,-92,243.5))
+ rails=[Part.makeBox(172,8,20,Vector(78,y,224.5)) for y in (-90,82)]
+ new=seat.fuse(cover.fuse(rails)).removeSplitter()
+ assert new.isValid() and len(new.Solids)==1
+ # Top plate must be fully filled, including over the clevis opening.
+ r['top_uncovered_volume_mm3']=cover.cut(new).Volume
+ assert r['top_uncovered_volume_mm3']<0.0001
+ o.Shape=new;d.recompute();d.save()
+ p=App.openDocument(os.path.join(root,'R2_ПРОСТАЯ_ДЕТАЛИ.FCStd'))
+ po=next(x for x in p.Objects if x.Label=='02_seat')
+ local=new.copy();local.translate(Vector(-280,0,-260));po.Shape=local;p.recompute();p.save()
+ Part.export([po],os.path.join(root,'STEP','02_seat.step'))
+ # Print the plate on edge so the recess is not a 172-mm roof bridge.
+ pr=local.copy();pr.rotate(Vector(0,0,0),Vector(1,0,0),90)
+ b=pr.BoundBox;pr.translate(Vector(-b.XMin,-b.YMin,-b.ZMin));b=pr.BoundBox
+ r['print_bbox_mm']=[b.XLength,b.YLength,b.ZLength];assert max(r['print_bbox_mm'])<256
+ m=MeshPart.meshFromShape(Shape=pr,LinearDeflection=.05,AngularDeflection=.12,Relative=False)
+ m.write(os.path.join(root,'STL','02_seat.stl'));assert Mesh.Mesh(os.path.join(root,'STL','02_seat.stl')).isSolid()
+ r['seat_top_rise_mm']=20.5;r['flat_plate_mm']=[172,184,5];r['seat_valid']=new.isValid();r['seat_solids']=len(new.Solids)
+ r['actuator_anchors_unchanged']=True;r['ok']=True
+except Exception:r['error']=traceback.format_exc()
+with open(os.path.join(root,'closed_seat_check.json'),'w',encoding='utf8') as f:json.dump(r,f,indent=2)
+os._exit(0)

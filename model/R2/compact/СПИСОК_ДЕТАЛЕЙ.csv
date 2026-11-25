@@ -1,0 +1,14 @@
+﻿STL;Количество;Материал;X мм;Y мм;Z мм
+frame_rear.stl;1;PETG;206.0;176.0;133.34
+frame_front.stl;1;PETG;176.0;233.0;218.0
+back_upper.stl;1;PETG;140.0;246.0;208.0
+back_lower_left.stl;1;PETG;19.99;156.0;12.0
+back_lower_right.stl;1;PETG;19.99;156.0;12.0
+02_seat.stl;1;PETG;226.99;79.0;202.0
+04_link_left.stl;1;PETG;228.0;80.0;12.0
+05_link_right.stl;1;PETG;228.0;80.0;12.0
+06_wheel_rim.stl;4;PETG;119.99;119.98;34.0
+07_wheel_tread_TPU.stl;4;TPU;127.99;127.98;34.0
+09_foot_support.stl;1;PETG;82.87;166.0;46.42
+10_motor_mount_left.stl;1;PETG;52.0;18.0;60.5
+11_motor_mount_right.stl;1;PETG;52.0;18.0;60.5

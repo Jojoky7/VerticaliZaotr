@@ -1,0 +1,6 @@
+{
+  "placement": "Placement [Pos=(280,0,260), Yaw-Pitch-Roll=(0,0,0)]",
+  "difference_volume": 1129302.8142067296,
+  "ok": false,
+  "error": "Traceback (most recent call last):\n  File \"C:/Users/y9156/Desktop/Verticalizator/R2_compact_closed/fix_seat_placement.FCMacro\", line 8, in <module>\n    assert r['difference_volume']<0.0001 and (o.Placement.Base-Vector(280,0,260)).Length<1e-6\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

@@ -1,0 +1,61 @@
+{
+  "closed_bounds_mm": [
+    -66.0,
+    345.815,
+    -126.00138286871996,
+    126.00138286871605,
+    0.0,
+    436.0
+  ],
+  "size_mm": [
+    411.815,
+    252.002765737436,
+    436.0
+  ],
+  "raised_size_mm": [
+    411.815,
+    252.002765737436,
+    681.383429161975
+  ],
+  "required_stroke_mm": 121.6839030601748,
+  "carriage_axial_mm": [
+    [
+      32,
+      47.4
+    ],
+    [
+      153.6839030601748,
+      169.0839030601748
+    ]
+  ],
+  "shaft_cylindrical_span_mm": [
+    17.2,
+    179.3
+  ],
+  "step_deg": 1,
+  "caster_step_deg": 5,
+  "sampled_clearances": {
+    "Gruzdy7 / seat": {
+      "gap_mm": 3.6253,
+      "at_deg": 0
+    },
+    "Gruzdy0 / CanL": {
+      "gap_mm": 3.91,
+      "at_deg": 75
+    },
+    "Gruzdy0 / CanR": {
+      "gap_mm": 3.8001,
+      "at_deg": 75
+    },
+    "RodEye / UpperMount": {
+      "gap_mm": 0.7,
+      "at_deg": 75
+    },
+    "carriage / housing": {
+      "gap_mm": 0.2792,
+      "at_deg": 0
+    }
+  },
+  "collision_volume_tolerance_mm3": 0.25,
+  "interferences": {}
+}

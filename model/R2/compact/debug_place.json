@@ -1,0 +1,23 @@
+{
+  "before": {
+    "bbox": "BoundBox (63, -101.001, 191, 290, 101.002, 270)",
+    "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+    "volume": 564651.4071033648,
+    "valid": true
+  },
+  "loc": {
+    "bbox": "BoundBox (-218.392, -109.214, -88.3164, 29.7216, 109.214, 20.332)",
+    "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+    "volume": 563361.5972509445,
+    "valid": true
+  },
+  "after": {
+    "bbox": "BoundBox (61.6077, -109.214, 171.684, 309.722, 109.214, 280.332)",
+    "placement": "Placement [Pos=(280,0,260), Yaw-Pitch-Roll=(0,0,0)]",
+    "volume": 563361.5972509447,
+    "valid": true
+  },
+  "common": 564675.5491784799,
+  "minus1": 0.0,
+  "minus2": 0.0
+}

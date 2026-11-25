@@ -1,0 +1,25 @@
+{
+  "components": 197,
+  "pairs_per_full_pose": 19306,
+  "angles_deg": [
+    0,
+    5,
+    10,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    65,
+    70,
+    75
+  ],
+  "exact_boolean_tests": 2644,
+  "threshold_mm3": 0.25,
+  "interferences": {}
+}

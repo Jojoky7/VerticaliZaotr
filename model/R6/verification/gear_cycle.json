@@ -1,0 +1,26 @@
+{
+  "8:2/3": {
+    "phase_deg": 0.0,
+    "max_area_mm2": 0.0
+  },
+  "8:3/5": {
+    "phase_deg": 0.0,
+    "max_area_mm2": 0.0
+  },
+  "12:2/3": {
+    "phase_deg": 0.0,
+    "max_area_mm2": 0.0
+  },
+  "12:3/5": {
+    "phase_deg": 0.0,
+    "max_area_mm2": 0.0
+  },
+  "16:2/3": {
+    "phase_deg": 0.0,
+    "max_area_mm2": 0.0
+  },
+  "16:3/5": {
+    "phase_deg": 0.0,
+    "max_area_mm2": 0.0
+  }
+}

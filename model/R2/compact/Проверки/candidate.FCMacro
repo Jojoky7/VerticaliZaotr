@@ -1,0 +1,50 @@
+import FreeCAD as App, Part, math, json, os, traceback
+from FreeCAD import Vector
+root=r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed'
+r={'ok':False,'samples':[]}
+try:
+ d=App.openDocument(os.path.join(root,'R2_ПРОСТАЯ_СБОРКА.FCStd'))
+ old={o.Label:o.Shape.copy() for o in d.Objects if hasattr(o,'Shape') and not o.Shape.isNull()}
+ seat=old['seat']
+ # Flat top, held by two full-length straight side risers. Existing actuator
+ # pin and clevis sit below the new seating surface.
+ cover=Part.makeBox(172,184,5,Vector(78,-92,243.5))
+ rails=[Part.makeBox(172,8,20,Vector(78,y,224.5)) for y in (-90,82)]
+ addition=cover.fuse(rails).removeSplitter()
+ new=seat.fuse(addition).removeSplitter()
+ r['valid']=new.isValid();r['solids']=len(new.Solids);r['vol_increase']=new.Volume-seat.Volume
+ assert new.isValid() and len(new.Solids)==1
+ extra=new.cut(seat).removeSplitter()
+ base=Vector(74.20982561799802,0,54.66121129457974)
+ def move(sh,pivot=None,angle=0,delta=None):
+  sh=sh.copy()
+  if pivot is not None:sh.rotate(pivot,Vector(0,1,0),angle)
+  if delta is not None:sh.translate(delta)
+  return sh
+ def scene(deg):
+  a=math.radians(deg);c,s=math.cos(a),math.sin(a)
+  delta=Vector(280-208*c-60*s-72,0,260+208*s-60*c-200)
+  q={}
+  for n,sh in old.items():
+   if n in ('seat','act_envelope'):continue
+   if n in ('link_left','link_right'):sh=move(sh,Vector(280,0,160),deg)
+   elif n=='back' or n.startswith(('HW_back_','SP_back_')):sh=move(sh,delta=delta)
+   q[n]=sh
+  tip=Vector(280-120*c-28*s,0,260+120*s-28*c);v=tip.sub(base);L=v.Length
+  aa=math.degrees(math.atan2(v.x,v.z))
+  body=Part.makeBox(36,20,70,Vector(-25.5,-10,4.5)).fuse(Part.makeCylinder(6,114,Vector(0,0,74)))
+  rod=Part.makeCylinder(4,max(.1,L-189.5),Vector(0,0,182))
+  def orient(sh):sh.rotate(Vector(0,0,0),Vector(0,1,0),aa);sh.translate(base);return sh
+  q['act_envelope']=Part.makeCompound([orient(body),orient(rod)])
+  return q,L
+ for a in range(0,76,5):
+  q,L=scene(a);x=move(extra,Vector(280,0,260),a);coll=[]
+  for n,sh in q.items():
+   if x.BoundBox.intersect(sh.BoundBox):
+    v=x.common(sh).Volume
+    if v>1e-4:coll.append({'object':n,'overlap':v})
+  r['samples'].append({'angle':a,'actuator':L,'collisions':coll})
+ r['ok']=not any(x['collisions'] for x in r['samples'])
+except Exception:r['error']=traceback.format_exc()
+open(os.path.join(root,'candidate_check.json'),'w',encoding='utf8').write(json.dumps(r,indent=2))
+os._exit(0)

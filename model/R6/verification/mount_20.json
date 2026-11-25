@@ -1,0 +1,11 @@
+[
+  {
+    "seat_deg": 0,
+    "force_N": 335.103216,
+    "max_pin_disp_mm": 0.5295270583412051,
+    "peak_vm_MPa": 47.33310748017793,
+    "integration_point_p99_vm_MPa": 6.27202885013952,
+    "elements": 55447,
+    "mesh_mm": 2.0
+  }
+]

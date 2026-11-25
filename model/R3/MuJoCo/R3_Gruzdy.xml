@@ -1,0 +1,208 @@
+<mujoco model="R3 / side-mounted Gruzdy">
+  <compiler angle="radian" meshdir="assets" boundmass="0.000001" boundinertia="1e-10" balanceinertia="true" />
+  <option timestep="0.002" integrator="implicitfast" iterations="60" tolerance="1e-10" gravity="0 0 -9.80665" />
+  <statistic center="0.06 -0.05 0.14" extent="0.45" />
+  <visual>
+    <global offwidth="1120" offheight="720" />
+    <headlight ambient="0.45 0.45 0.45" diffuse="0.65 0.65 0.65" />
+    <map znear="0.006" />
+  </visual>
+  <default>
+    <geom contype="0" conaffinity="0" friction="0.8 0.002 0.0001" />
+    <joint armature="1e-07" />
+  </default>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.42 0.48" rgb2="0.82 0.88 0.89" width="256" height="1536" />
+    <mesh name="r01_side_R" file="r01_side_R.stl" />
+    <mesh name="r14_leg_R" file="r14_leg_R.stl" />
+    <mesh name="r01_side_L" file="r01_side_L.stl" />
+    <mesh name="r14_leg_L" file="r14_leg_L.stl" />
+    <mesh name="r02_tray" file="r02_tray.stl" />
+    <mesh name="r03_bridge" file="r03_bridge.stl" />
+    <mesh name="r15_foot" file="r15_foot.stl" />
+    <mesh name="r16_knee" file="r16_knee.stl" />
+    <mesh name="r04_drive_L" file="r04_drive_L.stl" />
+    <mesh name="r05_fork_L" file="r05_fork_L.stl" />
+    <mesh name="r06_caster_L" file="r06_caster_L.stl" />
+    <mesh name="r04_drive_R" file="r04_drive_R.stl" />
+    <mesh name="r05_fork_R" file="r05_fork_R.stl" />
+    <mesh name="r06_caster_R" file="r06_caster_R.stl" />
+    <mesh name="r07_rocker_R" file="r07_rocker_R.stl" />
+    <mesh name="r07_rocker_L" file="r07_rocker_L.stl" />
+    <mesh name="r08_seat" file="r08_seat.stl" />
+    <mesh name="r10_post_R" file="r10_post_R.stl" />
+    <mesh name="r12_arm_R" file="r12_arm_R.stl" />
+    <mesh name="r10_post_L" file="r10_post_L.stl" />
+    <mesh name="r12_arm_L" file="r12_arm_L.stl" />
+    <mesh name="r11_back" file="r11_back.stl" />
+    <mesh name="r13_control" file="r13_control.stl" />
+    <mesh name="r09_link_R" file="r09_link_R.stl" />
+    <mesh name="r09_link_L" file="r09_link_L.stl" />
+    <mesh name="g0" file="g0.stl" />
+    <mesh name="g1" file="g1.stl" />
+    <mesh name="g7" file="g7.stl" />
+    <mesh name="g5" file="g5.stl" />
+    <mesh name="g3" file="g3.stl" />
+    <mesh name="g2" file="g2.stl" />
+    <mesh name="g6" file="g6.stl" />
+    <mesh name="g4" file="g4.stl" />
+  </asset>
+  <worldbody>
+    <light pos="0.1 -0.4 0.9" dir="-0.2 0.3 -1" directional="true" />
+    <geom type="plane" name="ground" priority="1" solref="0.006 1" solimp="0.98 0.995 0.001" size="0 0 0.01" contype="1" conaffinity="1" rgba="0.62 0.69 0.71 1" />
+    <body name="frame" pos="0 0 0">
+      <geom type="mesh" name="r01_side_R" mesh="r01_side_R" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.007767016147124241" />
+      <geom type="mesh" name="r14_leg_R" mesh="r14_leg_R" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.0020355844853210303" />
+      <geom type="mesh" name="r01_side_L" mesh="r01_side_L" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.007767016147124428" />
+      <geom type="mesh" name="r14_leg_L" mesh="r14_leg_L" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.002035584485321058" />
+      <geom type="mesh" name="r02_tray" mesh="r02_tray" rgba="0.2745098039 0.3137254902 0.3294117647 1" mass="0.08344390457387355" />
+      <geom type="mesh" name="r03_bridge" mesh="r03_bridge" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.01366183047640316" />
+      <geom type="mesh" name="r15_foot" mesh="r15_foot" rgba="0.3921568627 0.4666666667 0.5058823529 1" mass="0.005629064243951005" />
+      <geom type="mesh" name="r16_knee" mesh="r16_knee" rgba="0.2392156863 0.2823529412 0.3058823529 1" mass="0.0077262000433313315" />
+      <site name="anchor" pos="0.032 0 0.052" size="0.0025" rgba="1 0.6 0.16 1" />
+      <body name="driveL" pos="0 0.0565 0.032">
+        <joint name="wheelL" axis="0 1 0" damping="0.00012" armature="0.0006" />
+        <geom type="mesh" name="r04_drive_L" mesh="r04_drive_L" rgba="0.2156862745 0.2392156863 0.2549019608 1" mass="0.010598943541823693" />
+        <geom type="cylinder" size="0.032 0.0045" quat="0.70710678 0.70710678 0 0" mass="0.0001" contype="0" conaffinity="0" rgba="0 0 0 0" group="3" condim="3" name="contact_driveL" />
+      </body>
+      <body name="forkL" pos="0.142 0.049 0.048">
+        <joint name="yawL" axis="0 0 1" damping="0.00014" />
+        <geom type="mesh" name="r05_fork_L" mesh="r05_fork_L" rgba="0.3921568627 0.4666666667 0.5058823529 1" mass="0.0009132959106878765" />
+        <body name="frontL" pos="-0.008 0 -0.028">
+          <joint name="casterL" axis="0 1 0" damping="3e-05" />
+          <geom type="mesh" name="r06_caster_L" mesh="r06_caster_L" rgba="0.2156862745 0.2392156863 0.2549019608 1" mass="0.0027979324911548108" />
+          <geom type="cylinder" size="0.02 0.0032" quat="0.70710678 0.70710678 0 0" mass="0.0001" contype="0" conaffinity="0" rgba="0 0 0 0" group="3" condim="3" name="contact_frontL" />
+        </body>
+      </body>
+      <geom name="JGY370_L" type="box" size=".023 .011 .016" pos=".008 0.031 .032" mass=".077" rgba="0.34 0.37 0.38 1" />
+      <body name="driveR" pos="0 -0.0565 0.032">
+        <joint name="wheelR" axis="0 1 0" damping="0.00012" armature="0.0006" />
+        <geom type="mesh" name="r04_drive_R" mesh="r04_drive_R" rgba="0.2156862745 0.2392156863 0.2549019608 1" mass="0.010598943541823697" />
+        <geom type="cylinder" size="0.032 0.0045" quat="0.70710678 0.70710678 0 0" mass="0.0001" contype="0" conaffinity="0" rgba="0 0 0 0" group="3" condim="3" name="contact_driveR" />
+      </body>
+      <body name="forkR" pos="0.142 -0.049 0.048">
+        <joint name="yawR" axis="0 0 1" damping="0.00014" />
+        <geom type="mesh" name="r05_fork_R" mesh="r05_fork_R" rgba="0.3921568627 0.4666666667 0.5058823529 1" mass="0.0009132959106880311" />
+        <body name="frontR" pos="-0.008 0 -0.028">
+          <joint name="casterR" axis="0 1 0" damping="3e-05" />
+          <geom type="mesh" name="r06_caster_R" mesh="r06_caster_R" rgba="0.2156862745 0.2392156863 0.2549019608 1" mass="0.0027979324911559353" />
+          <geom type="cylinder" size="0.02 0.0032" quat="0.70710678 0.70710678 0 0" mass="0.0001" contype="0" conaffinity="0" rgba="0 0 0 0" group="3" condim="3" name="contact_frontR" />
+        </body>
+      </body>
+      <geom name="JGY370_R" type="box" size=".023 .011 .016" pos=".008 -0.031 .032" mass=".077" rgba="0.34 0.37 0.38 1" />
+      <body name="seat" pos="0.1 0 0.13">
+        <joint name="lift" axis="0 1 0" range="0 1.308996939" limited="true" damping="0.035" solreflimit="0.004 1" />
+        <geom type="mesh" name="r07_rocker_R" mesh="r07_rocker_R" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.001578488590715244" />
+        <geom type="mesh" name="r07_rocker_L" mesh="r07_rocker_L" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.0015784885907151117" />
+        <geom type="mesh" name="r08_seat" mesh="r08_seat" rgba="0.1960784314 0.2352941176 0.2784313725 1" mass="0.05036198443409407" />
+        <site name="tip" pos="-0.044 0 -0.03" size="0.0025" rgba="1 0.6 0.16 1" />
+        <body name="back" pos="-0.096 0 -0.026">
+          <joint name="back_hinge" axis="0 1 0" />
+          <geom type="mesh" name="r10_post_R" mesh="r10_post_R" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.00238463438126105" />
+          <geom type="mesh" name="r12_arm_R" mesh="r12_arm_R" rgba="0.2392156863 0.2823529412 0.3058823529 1" mass="0.0014838428523284608" />
+          <geom type="mesh" name="r10_post_L" mesh="r10_post_L" rgba="0.1764705882 0.4078431373 0.4901960784 1" mass="0.0023846343812610827" />
+          <geom type="mesh" name="r12_arm_L" mesh="r12_arm_L" rgba="0.2392156863 0.2823529412 0.3058823529 1" mass="0.001483842852328108" />
+          <geom type="mesh" name="r11_back" mesh="r11_back" rgba="0.2392156863 0.2823529412 0.3058823529 1" mass="0.08529080293668984" />
+          <geom type="mesh" name="r13_control" mesh="r13_control" rgba="0.1960784314 0.2352941176 0.2784313725 1" mass="0.00048297958157216285" />
+        </body>
+        <body name="man_trunk" pos="-0.07 0 0">
+          <joint name="hip_compensation" axis="0 1 0" />
+          <geom name="pelvis" type="ellipsoid" size="0.019 0.031 0.019" mass="0.72" rgba="0.16 0.25 0.36 1" group="2" />
+          <geom name="torso" type="ellipsoid" size="0.021 0.034 0.049" pos="-0.001 0 0.049" mass="2.0999999999999996" rgba="0.16 0.52 0.53 1" group="2" />
+          <geom name="neck" type="capsule" fromto="-0.001 0 0.089 -0.001 0 0.102" size="0.008" mass="0.09" rgba="0.82 0.6 0.45 1" group="2" />
+          <geom name="head" type="ellipsoid" pos="0.002 0 0.121" size="0.017 0.015 0.022" mass="0.44999999999999996" rgba="0.82 0.6 0.45 1" group="2" />
+          <geom type="ellipsoid" pos="0 0 0.133" size="0.016 0.015 0.0105" mass="0" rgba="0.16 0.12 0.09 1" />
+          <geom name="upper_armR" type="capsule" fromto="0 -0.033 0.081 0.008 -0.038 0.042" size="0.007" mass="0.14400000000000002" rgba="0.16 0.52 0.53 1" group="2" />
+          <geom name="forearmR" type="capsule" fromto="0.008 -0.038 0.042 0.047 -0.038 0.039" size="0.006" mass="0.138" rgba="0.82 0.6 0.45 1" group="2" />
+          <geom name="upper_armL" type="capsule" fromto="0 0.033 0.081 0.008 0.038 0.042" size="0.007" mass="0.14400000000000002" rgba="0.16 0.52 0.53 1" group="2" />
+          <geom name="forearmL" type="capsule" fromto="0.008 0.038 0.042 0.047 0.038 0.039" size="0.006" mass="0.138" rgba="0.82 0.6 0.45 1" group="2" />
+        </body>
+        <geom name="thighR" type="capsule" fromto="-0.07 -0.02 0 0 -0.02 0" size="0.012" mass="0.63" rgba="0.16 0.25 0.36 1" group="2" />
+        <geom name="thighL" type="capsule" fromto="-0.07 0.02 0 0 0.02 0" size="0.012" mass="0.63" rgba="0.16 0.25 0.36 1" group="2" />
+        <site name="rocker_pin" pos="-0.044 -0.10492 -0.03" size="0.002" rgba="0.8 0.37 0.12 1" />
+        <geom name="side_pin" type="capsule" fromto="-.044 -.111 -.030 -.044 -.098 -.030" size="0.003" mass=".004" rgba="0.61 0.67 0.68 1" />
+        <geom name="outboard_yoke_0" type="capsule" fromto="-0.075 -.045 -.025 -.044 -0.099 -.03" size=".003" mass=".015" rgba=".22 .38 .40 1" />
+        <geom name="outboard_yoke_1" type="capsule" fromto="-0.025 -.045 -.025 -.044 -0.11 -.03" size=".003" mass=".015" rgba=".22 .38 .40 1" />
+      </body>
+      <body name="link" pos="0.1 0 0.096">
+        <joint name="lower_hinge" axis="0 1 0" />
+        <geom type="mesh" name="r09_link_R" mesh="r09_link_R" rgba="0.3921568627 0.4666666667 0.5058823529 1" mass="0.0012653144210544851" />
+        <geom type="mesh" name="r09_link_L" mesh="r09_link_L" rgba="0.3921568627 0.4666666667 0.5058823529 1" mass="0.0012653144210544147" />
+      </body>
+      <geom name="shinR" type="capsule" fromto="0.1 -0.02 0.13 0.166 -0.02 0.03" size="0.009" mass="0.30000000000000004" rgba="0.16 0.25 0.36 1" group="2" />
+      <geom name="shoeR" type="capsule" fromto="0.166 -0.02 0.028 0.191 -0.02 0.026" size="0.006" mass="0.10799999999999998" rgba="0.2 0.22 0.24 1" group="2" />
+      <geom name="shinL" type="capsule" fromto="0.1 0.02 0.13 0.166 0.02 0.03" size="0.009" mass="0.30000000000000004" rgba="0.16 0.25 0.36 1" group="2" />
+      <geom name="shoeL" type="capsule" fromto="0.166 0.02 0.028 0.191 0.02 0.026" size="0.006" mass="0.10799999999999998" rgba="0.2 0.22 0.24 1" group="2" />
+      <body name="housing" pos="-0.16674534668 -0.106 0.12489">
+        <geom type="mesh" name="g0" mesh="g0" rgba="0.2352941176 0.3882352941 0.4784313725 0.22" mass="0.03871360363295303" />
+        <geom type="mesh" name="g1" mesh="g1" rgba="0.2352941176 0.3882352941 0.4784313725 0.22" mass="0.12122909583719593" />
+        <geom type="mesh" name="g7" mesh="g7" rgba="0.3725490196 0.4509803922 0.5098039216 0.22" mass="0.028298563559805576" />
+        <geom type="cylinder" size="0.0245 0.01475" pos="0.04 0.0011 0" quat="0.70710678 0 0.70710678 0" rgba="0.47 0.49 0.5 1" mass="0.22" />
+        <body name="carriage" pos="-0.0247851456605 0 0">
+          <joint type="slide" name="extension" axis="-1 0 0" range="0 0.07" limited="true" damping="1.8" armature="12.0" />
+          <geom type="mesh" name="g4" mesh="g4" rgba="0.7294117647 0.3411764706 0.2392156863 1" mass="0.0061228398783793395" />
+          <geom name="assumed_output_rod" type="cylinder" fromto="0.191 0.00108 -0.06489 0.35 0.00108 -0.06489" size="0.0045" mass="0.05" rgba="0.74 0.77 0.79 1" />
+          <site name="slider_pin" pos="0.35 0.00108 -0.06489" size="0.002" rgba="0.8 0.37 0.12 1" />
+          <body name="pushrod" pos="0.35 0.00108 -0.06489">
+            <joint name="pushrod_pitch" axis="0 1 0" damping="0.0002" />
+            <geom name="connecting_link" type="capsule" fromto="0 0 0 -0.10246950766 0 0.04" size="0.0032" mass="0.025" rgba="0.8 0.37 0.12 1" />
+            <site name="link_tip" pos="-0.10246950766 0 0.04" size="0.002" rgba="0.8 0.37 0.12 1" />
+            <geom name="pin_eye" type="cylinder" pos="-0.10246950766 0 0.04" quat="0.7071068 0.7071068 0 0" size="0.0052 0.0032" mass="0.002" rgba="0.8 0.37 0.12 1" />
+          </body>
+          <geom name="guide_block" type="box" pos="0.35 0.00108 -0.07789" size="0.006 0.005 0.0055" mass="0.015" rgba="0.18 0.32 0.37 1" />
+          <geom name="crosshead" type="capsule" fromto="0.35 0.00108 -0.07789 0.35 0.00108 -0.06489" size="0.003" mass="0.006" rgba="0.61 0.67 0.68 1" />
+        </body>
+        <body name="shaft" pos="0.012 0.001339 -0.04376">
+          <joint name="shaft_angle" type="hinge" axis="1 0 0" damping=".0001" />
+          <inertial pos="0 0 0" mass=".05" diaginertia=".000004 .000004 .000004" />
+          <geom type="mesh" name="g6" mesh="g6" rgba="0.5490196078 0.5803921569 0.5960784314 1" mass="0.011059970243996319" />
+        </body>
+        <body name="pinion" pos="0.012 0.00108 -8e-05">
+          <joint name="pinion_angle" type="hinge" axis="1 0 0" damping=".0001" />
+          <inertial pos="0 0 0" mass=".01" diaginertia=".000004 .000004 .000004" />
+          <geom type="mesh" name="g5" mesh="g5" rgba="0.7098039216 0.5568627451 0.2588235294 1" mass="0.00016903281412843668" />
+        </body>
+        <body name="driven" pos="0.012 0.00108 -0.04391">
+          <joint name="driven_angle" type="hinge" axis="1 0 0" damping=".0001" />
+          <inertial pos="0 0 0" mass=".01" diaginertia=".000004 .000004 .000004" />
+          <geom type="mesh" name="g2" mesh="g2" rgba="0.8235294118 0.5725490196 0.2196078431 1" mass="0.0024960824069723713" />
+        </body>
+        <body name="idler" pos="0.012 0.00108 -0.01693">
+          <joint name="idler_angle" type="hinge" axis="1 0 0" damping=".0001" />
+          <inertial pos="0 0 0" mass=".01" diaginertia=".000004 .000004 .000004" />
+          <geom type="mesh" name="g3" mesh="g3" rgba="0.8470588235 0.6352941176 0.3137254902 1" mass="0.003443158128505727" />
+        </body>
+      </body>
+      <geom name="guide_rail" type="capsule" fromto="0.076 -0.10492 0.047 0.177 -0.10492 0.047" size="0.0032" mass="0.038" rgba="0.61 0.67 0.68 1" />
+      <geom name="rail_support0" type="capsule" fromto="0.077 -0.043 0.042 0.077 -0.10492 0.042" size="0.0028" mass="0.012" rgba="0.18 0.32 0.37 1" />
+      <geom name="rail_support1" type="capsule" fromto="0.171 -0.043 0.042 0.171 -0.10492 0.042" size="0.0028" mass="0.012" rgba="0.18 0.32 0.37 1" />
+      <geom name="beam8" type="capsule" fromto="-0.151 -0.08 0.031 0.092 -0.08 0.031" size="0.003" mass="0.05" rgba="0.18 0.32 0.37 1" />
+      <geom name="beam13" type="capsule" fromto="-0.151 -0.13 0.031 0.092 -0.13 0.031" size="0.003" mass="0.05" rgba="0.18 0.32 0.37 1" />
+      <geom name="motor_saddle0" type="capsule" fromto="-0.135 -0.137 0.031 -0.135 -0.043 0.031" size="0.003" mass="0.018" rgba="0.18 0.32 0.37 1" />
+      <geom name="motor_saddle1" type="capsule" fromto="0.003 -0.137 0.031 0.003 -0.043 0.031" size="0.003" mass="0.018" rgba="0.18 0.32 0.37 1" />
+      <geom name="motor_saddle2" type="capsule" fromto="0.075 -0.137 0.031 0.075 -0.043 0.031" size="0.003" mass="0.018" rgba="0.18 0.32 0.37 1" />
+      <geom name="rear_strut" type="capsule" fromto="-0.135 -0.083 0.031 0.012 -0.043 0.066" size="0.0025" mass="0.019" rgba="0.18 0.32 0.37 1" />
+      <geom name="NP7_12" type="box" pos="0.04 0.105 0.08375" size="0.0755 0.0325 0.04875" rgba="0.17 0.21 0.23 1" mass="2.2" />
+      <geom type="box" size="0.003 0.003 0.004" pos="-0.01 0.081 0.136" rgba="0.82 0.22 0.16 1" mass=".002" />
+      <geom type="box" size="0.003 0.003 0.004" pos="-0.01 0.129 0.136" rgba="0.2 0.22 0.23 1" mass=".002" />
+      <geom name="battery_tray" type="box" pos="0.04 0.105 0.032" size="0.078 0.036 0.003" mass="0.085" rgba="0.18 0.32 0.37 1" />
+      <geom name="tray_bracket0" type="capsule" fromto="-0.014 0.042 0.03 -0.014 0.105 0.03" size="0.003" mass="0.017" rgba="0.18 0.32 0.37 1" />
+      <geom name="tray_bracket1" type="capsule" fromto="0.085 0.042 0.03 0.085 0.105 0.03" size="0.003" mass="0.017" rgba="0.18 0.32 0.37 1" />
+      <geom name="motor_can_L" type="cylinder" fromto=".031 0.031 .032 .062 0.031 .032" size=".0122" mass=".043" rgba=".62 .64 .64 1" />
+      <geom name="motor_shaft_L" type="cylinder" fromto="0 0.042 .032 0 0.06 .032" size=".003" mass=".002" rgba=".68 .70 .70 1" />
+      <geom name="motor_can_R" type="cylinder" fromto=".031 -0.031 .032 .062 -0.031 .032" size=".0122" mass=".043" rgba=".62 .64 .64 1" />
+      <geom name="motor_shaft_R" type="cylinder" fromto="0 -0.042 .032 0 -0.06 .032" size=".003" mass=".002" rgba=".68 .70 .70 1" />
+    </body>
+  </worldbody>
+  <equality>
+    <joint joint1="back_hinge" joint2="lift" polycoef="0 -1 0 0 0" solref="0.004 1" solimp="0.999 0.9999 0.001" />
+    <joint joint1="lower_hinge" joint2="lift" polycoef="0 1 0 0 0" solref="0.004 1" solimp="0.999 0.9999 0.001" />
+    <joint joint1="hip_compensation" joint2="lift" polycoef="0 -1 0 0 0" solref="0.004 1" solimp="0.999 0.9999 0.001" />
+    <connect name="link_pin" site1="rocker_pin" site2="link_tip" solref="0.004 1" solimp="0.999 0.9999 0.0001" />
+  </equality>
+  <actuator>
+    <position name="screw_drive" joint="extension" kp="800000" kv="6000" forcelimited="true" forcerange="-335.1032164 335.1032164" ctrllimited="true" ctrlrange="0 0.07" />
+    <motor name="JGY_L" joint="wheelL" ctrllimited="true" ctrlrange="-0.588399 0.588399" />
+    <motor name="JGY_R" joint="wheelR" ctrllimited="true" ctrlrange="-0.588399 0.588399" />
+  </actuator>
+</mujoco>

@@ -1,0 +1,232 @@
+{
+  "rail_tests": {
+    "RailL": {
+      "bearing_mm2": 234.46938311325073,
+      "nominal_overlap_mm3": 0.0,
+      "displaced_overlap_mm3": {
+        "-0.3": 5.11,
+        "0.3": 5.11
+      },
+      "max_insertion_overlap_mm3": 0.0
+    },
+    "RailR": {
+      "bearing_mm2": 234.46938311325073,
+      "nominal_overlap_mm3": 0.0,
+      "displaced_overlap_mm3": {
+        "-0.3": 5.11,
+        "0.3": 5.11
+      },
+      "max_insertion_overlap_mm3": 0.0
+    }
+  },
+  "paired_nuts": {
+    "MountL0Bolt": 0.02,
+    "MountL1Bolt": 0.02,
+    "TrayL0Bolt": 0.02,
+    "TrayL1Bolt": 0.02,
+    "BraceL0Bolt": 0.02,
+    "BraceL1Bolt": 0.02,
+    "PostL0Bolt": 0.02,
+    "PostL1Bolt": 0.02,
+    "FrontLBolt": 0.02,
+    "KneeL0Bolt": 0.02,
+    "KneeL1Bolt": 0.02,
+    "MountR0Bolt": 0.02,
+    "MountR1Bolt": 0.02,
+    "TrayR0Bolt": 0.02,
+    "TrayR1Bolt": 0.02,
+    "BraceR0Bolt": 0.02,
+    "BraceR1Bolt": 0.02,
+    "PostR0Bolt": 0.02,
+    "PostR1Bolt": 0.02,
+    "FrontRBolt": 0.02,
+    "KneeR0Bolt": 0.02,
+    "KneeR1Bolt": 0.02,
+    "TipPlate00Bolt": 0.02,
+    "TipPlate01Bolt": 0.02,
+    "TipPlate10Bolt": 0.02,
+    "TipPlate11Bolt": 0.02,
+    "Adapter00Bolt": 0.02,
+    "Adapter01Bolt": 0.02,
+    "Adapter10Bolt": 0.02,
+    "Adapter11Bolt": 0.02,
+    "Cart00Bolt": 0.14,
+    "Cart01Bolt": 0.14,
+    "Cart10Bolt": 0.14,
+    "Cart11Bolt": 0.14
+  },
+  "meshes": {
+    "STL": {
+      "BackPostL.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "BackPostR.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "BackUpper.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "BatteryTray.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "CarriageLid.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "CasterForkL.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "CasterForkR.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "CasterHubL.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "CasterHubR.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Footplate.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy0.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy1.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy2.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy3.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy4.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy5.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Gruzdy7.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Knee.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "LowerMount.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "RailL.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "RailR.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "RearAdapter.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Rim0L.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Rim0R.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Rim280L.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Rim280R.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "RodEye.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Tire0L.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Tire0R.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Tire280L.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Tire280R.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "TowerL.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "TowerR.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "UpperMount.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "link_left.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "link_right.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "seat.stl": {
+        "watertight": true,
+        "components": 1
+      }
+    },
+    "Проба посадки": {
+      "Канал_20мм.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Каретка.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Крышка каретки.stl": {
+        "watertight": true,
+        "components": 1
+      },
+      "Ступица_D6_M3.stl": {
+        "watertight": true,
+        "components": 1
+      }
+    }
+  },
+  "max_asset_bound_error_mm": 0.1285248802734375,
+  "max_relative_asset_volume_error": 0.014418509265793578,
+  "max_raised_bound_error_mm": 1.7053025658242404e-13,
+  "issues": []
+}

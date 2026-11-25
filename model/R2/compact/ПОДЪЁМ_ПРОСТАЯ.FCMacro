@@ -1,0 +1,138 @@
+# FreeCAD 1.1.4: kinematic visualisation of one actuator, 0..75 degrees.
+# This is a visual motion controller, not a joint solver or a physical simulation.
+import os, math, shutil, json, traceback
+import FreeCAD as App, FreeCADGui as Gui, Part
+from FreeCAD import Vector
+from PySide import QtCore, QtGui
+
+def launch_verticalizer():
+    # When run as a macro, locate it next to the assembly. The fallback supports
+    # starting it from the FreeCAD Python console after opening the assembly.
+    # FreeCAD may retain a stale __file__ from a previous macro. Prefer the
+    # currently open assembly, so the controller uses the selected project.
+    if App.ActiveDocument and App.ActiveDocument.FileName and os.path.exists(os.path.join(os.path.dirname(App.ActiveDocument.FileName), 'R2_ПРОСТАЯ_СБОРКА.FCStd')):
+        root=os.path.dirname(App.ActiveDocument.FileName)
+    elif '__file__' in globals() and os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'R2_ПРОСТАЯ_СБОРКА.FCStd')):
+        root=os.path.dirname(os.path.abspath(__file__))
+    else:
+        raise RuntimeError('Сначала откройте R2_ПРОСТАЯ_СБОРКА.FCStd из папки комплекта.')
+    source=os.path.join(root,'R2_ПРОСТАЯ_СБОРКА.FCStd')
+    target=os.path.join(root,'R2_ПРОСТАЯ_ПОДЪЁМ.FCStd')
+    if not os.path.isfile(source):raise RuntimeError('Не найдена сборка рядом с макросом: '+source)
+    # Leave the original document and existing open documents untouched.
+    suffix=2
+    while os.path.exists(target):
+        target=os.path.join(root,'R2_ПРОСТАЯ_ПОДЪЁМ_%d.FCStd'%suffix);suffix+=1
+    shutil.copy2(source,target)
+    doc=App.openDocument(target)
+    objects={o.Label:o for o in doc.Objects if hasattr(o,'Shape')}
+    required=['seat','back','link_left','link_right','act_envelope']
+    for name in required:
+        if name not in objects:raise RuntimeError('Не найдена деталь '+name)
+    # Local snapshots account for any saved Placement from a previous session.
+    seat0=objects['seat'].Shape.copy()
+    back0=objects['back'].Shape.copy()
+    left0=objects['link_left'].Shape.copy()
+    right0=objects['link_right'].Shape.copy()
+    plates0={name:o.Shape.copy() for name,o in objects.items() if name.startswith('splice_back')}
+    if plates0:raise RuntimeError('В упрощённой модели не должно быть старых накладок.')
+    hardware0={name:o.Shape.copy() for name,o in objects.items() if name.startswith(('HW_back_', 'SP_back_'))}
+    if len(hardware0)!=9:raise RuntimeError('Отсутствуют элементы крепежа спинки: %d'%len(hardware0))
+    base=Vector(74.20982561799802,0,54.66121129457974)
+    def move(shape,translation=None,pivot=None,angle=0):
+        result=shape.copy()
+        if pivot is not None: result.rotate(pivot,Vector(0,1,0),angle)
+        if translation is not None: result.translate(translation)
+        return result
+    def actuator(tip):
+        v=tip.sub(base);length=v.Length;angle=math.degrees(math.atan2(v.x,v.z))
+        body=Part.makeBox(36,20,70,Vector(-25.5,-10,4.5)).fuse(Part.makeCylinder(6,114,Vector(0,0,74)))
+        rod=Part.makeCylinder(4,max(0.1,length-189.5),Vector(0,0,182))
+        def orient(sh):
+            sh.rotate(Vector(0,0,0),Vector(0,1,0),angle);sh.translate(base);return sh
+        return Part.makeCompound([orient(body),orient(rod)])
+    def position(deg):
+        a=math.radians(deg);c,s=math.cos(a),math.sin(a)
+        delta=Vector(280-208*c-60*s-72,0,260+208*s-60*c-200)
+        objects['seat'].Shape=move(seat0,pivot=Vector(280,0,260),angle=deg)
+        objects['back'].Shape=move(back0,translation=delta)
+        objects['link_left'].Shape=move(left0,pivot=Vector(280,0,160),angle=deg)
+        objects['link_right'].Shape=move(right0,pivot=Vector(280,0,160),angle=deg)
+        for name,shape in plates0.items():objects[name].Shape=move(shape,translation=delta)
+        for name,shape in hardware0.items():objects[name].Shape=move(shape,translation=delta)
+        tip=Vector(280-120*c-28*s,0,260+120*s-28*c)
+        objects['act_envelope'].Shape=actuator(tip)
+        objects['act_envelope'].ViewObject.ShapeColor=(0.92,0.32,0.1)
+        doc.recompute()
+        return tip.sub(base).Length
+    # Numerical kinematic checks are distinct from collision/strength checks.
+    worst=0.0
+    for i in range(76):
+        a=math.radians(i);c,s=math.cos(a),math.sin(a)
+        dx=-208*c-60*s;dz=208*s-60*c
+        # Both the upper and lower back joints must have the same displacement.
+        upper=Vector(280+dx,0,260+dz)
+        lower=Vector(280+dx,0,160+dz)
+        worst=max(worst,abs((upper-lower).Length-100.0))
+    analysis={'method':'analytic joint-centre check, 0..75 degrees, 1 degree step; visual kinematics, not a physical simulation','max_vertical_joint_separation_error_mm':worst,'motor_centres_x_mm':[-40,40]}
+    m1=Part.makeCylinder(18.4,76,Vector(-40,-45,64),Vector(0,1,0))
+    m2=Part.makeCylinder(18.4,76,Vector(40,45,64),Vector(0,-1,0))
+    m_same=Part.makeCylinder(18.4,76,Vector(-40,45,64),Vector(0,-1,0))
+    analysis['opposed_motor_envelopes_actual_overlap_mm3']=m1.common(m2).Volume
+    analysis['opposed_motor_envelopes_same_x_overlap_mm3']=m1.common(m_same).Volume
+    position(0);Gui.activeDocument().activeView().viewAxonometric();Gui.activeDocument().activeView().fitAll()
+    # Save an independent still at 75 degrees, then return to the live view.
+    position(75)
+    Gui.activeDocument().activeView().fitAll()
+    vertical=os.path.join(root,'R2_ПРОСТАЯ_75.FCStd')
+    suffix=2
+    while os.path.exists(vertical):
+        vertical=os.path.join(root,'R2_ПРОСТАЯ_75_%d.FCStd'%suffix);suffix+=1
+    doc.saveCopy(vertical)
+    position(0)
+    with open(os.path.join(root,'motion_check.json'),'w',encoding='utf-8') as f:json.dump(analysis,f,indent=2)
+
+    class MotionDialog(QtGui.QDialog):
+        def __init__(self):
+            super(MotionDialog,self).__init__(Gui.getMainWindow())
+            self.setWindowTitle('Вертикализатор — подъём')
+            self.setWindowFlags(self.windowFlags() | QtCore.Qt.Tool)
+            self.setMinimumWidth(360)
+            lay=QtGui.QVBoxLayout(self)
+            self.label=QtGui.QLabel();lay.addWidget(self.label)
+            self.slider=QtGui.QSlider(QtCore.Qt.Horizontal);self.slider.setRange(0,75);self.slider.setValue(0);lay.addWidget(self.slider)
+            row=QtGui.QHBoxLayout();lay.addLayout(row)
+            for title,slot in [('▶ Поднять',self.up),('■ Пауза',self.pause),('▼ Опустить',self.down)]:
+                button=QtGui.QPushButton(title);button.clicked.connect(slot);row.addWidget(button)
+            note=QtGui.QLabel('Крепёж показан условно; перед печатью проверьте посадку. Привод не печатается.');note.setWordWrap(True);lay.addWidget(note)
+            self.timer=QtCore.QTimer(self);self.timer.setInterval(90);self.timer.timeout.connect(self.tick)
+            self.direction=0;self.slider.valueChanged.connect(self.changed);self.changed(0)
+        def changed(self,value):
+            try:
+                length=position(value)
+                self.label.setText('Угол подъёма: %d°   |   Между осями актуатора: %.1f мм'%(value,length))
+            except Exception:
+                self.timer.stop();raise
+        def up(self):self.direction=1;self.timer.start()
+        def down(self):self.direction=-1;self.timer.start()
+        def pause(self):self.timer.stop()
+        def tick(self):
+            n=self.slider.value()+self.direction
+            if n<0 or n>75:self.timer.stop();return
+            self.slider.setValue(n)
+        def closeEvent(self,event):self.timer.stop();event.accept()
+    global verticalizer_motion_dialog
+    try:
+        verticalizer_motion_dialog.close()
+    except (NameError, RuntimeError):
+        pass
+    verticalizer_motion_dialog=MotionDialog()
+    verticalizer_motion_dialog.show()
+    verticalizer_motion_dialog.move(Gui.getMainWindow().frameGeometry().center()-QtCore.QPoint(600,100))
+    return analysis
+
+try:
+    verticalizer_motion_analysis=launch_verticalizer()
+except Exception:
+    App.Console.PrintError(traceback.format_exc())
+    raise

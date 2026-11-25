@@ -1,0 +1,14 @@
+.DS_Store
+._*
+__MACOSX/
+.idea/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.FCBak
+*.FCStd[0-9]*
+*.FCStd1
+.env
+.env.*
+!.env.example

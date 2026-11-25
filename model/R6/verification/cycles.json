@@ -1,0 +1,32 @@
+[
+  {
+    "mass_kg": 5,
+    "raised_deg": 74.98937360058362,
+    "after_5s_deg": 74.98937360058709,
+    "lowered_deg": -0.055607362742302144,
+    "final_extension_mm": -0.06071674002693086,
+    "max_constraint_error_mm": 0.01286442294309875,
+    "numerical_warnings": 0,
+    "passed": true
+  },
+  {
+    "mass_kg": 6,
+    "raised_deg": 74.98851534050611,
+    "after_5s_deg": 74.9885153405101,
+    "lowered_deg": -0.06197381616479567,
+    "final_extension_mm": -0.06768618233430666,
+    "max_constraint_error_mm": 0.013563069747354144,
+    "numerical_warnings": 0,
+    "passed": true
+  },
+  {
+    "mass_kg": 8,
+    "raised_deg": 74.98679781757518,
+    "after_5s_deg": 74.98679781757906,
+    "lowered_deg": -0.07398441781219361,
+    "final_extension_mm": -0.08083250914992246,
+    "max_constraint_error_mm": 0.015298864095826991,
+    "numerical_warnings": 0,
+    "passed": true
+  }
+]

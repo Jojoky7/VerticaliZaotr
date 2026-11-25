@@ -1,0 +1,7 @@
+import FreeCAD as App,Part,os,json
+from FreeCAD import Vector
+p=r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed\R2_ПРОСТАЯ_СБОРКА.FCStd';d=App.openDocument(p);o=next(x for x in d.Objects if x.Label=='seat');before=o.Shape.copy();m=App.Matrix();m.move(Vector(-280,0,-260));loc=before.transformGeometry(m);o.Shape=loc;o.Placement=App.Placement(Vector(280,0,260),App.Rotation());d.recompute();after=o.Shape.copy()
+r={n:{'bbox':str(sh.BoundBox),'placement':str(sh.Placement),'volume':sh.Volume,'valid':sh.isValid()} for n,sh in [('before',before),('loc',loc),('after',after)]}
+r['common']=before.common(after).Volume;r['minus1']=before.cut(after).Volume;r['minus2']=after.cut(before).Volume
+open(r'C:\Users\y9156\Desktop\Verticalizator\R2_compact_closed\debug_place.json','w').write(json.dumps(r,indent=2));os._exit(0)
+
